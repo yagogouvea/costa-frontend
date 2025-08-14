@@ -38,12 +38,25 @@ A página de login foi otimizada para funcionar perfeitamente em todos os tamanh
 <LogoClienteCosta
   className="logo-costa-login object-contain mb-4 sm:mb-6 drop-shadow-lg"
   style={{
-    '--logo-size': '3rem',        // Mobile (< 640px)
-    '--logo-size-sm': '4rem',     // Tablet (640px - 1024px)
+    '--logo-size': '5rem',        // Mobile (< 640px) - AUMENTADO!
+    '--logo-size-sm': '6rem',     // Tablet (640px - 1024px) - AUMENTADO!
     '--logo-size-lg': '20rem'     // Desktop (> 1024px)
   } as React.CSSProperties}
 />
 ```
+
+### 📱 **Melhorias Específicas para Mobile**
+
+#### **Tamanhos Otimizados:**
+- **Mobile (< 640px)**: `5rem` (80px) + ajustes automáticos
+- **Tablet (640px - 1024px)**: `6rem` (96px)
+- **Desktop (> 1024px)**: `20rem` (320px)
+
+#### **Ajustes Automáticos para Telas Pequenas:**
+- **Tela < 480px**: Logo aumenta automaticamente para `6rem` (96px)
+- **Tela < 375px**: Logo aumenta automaticamente para `6.5rem` (104px)
+- **Sombra melhorada** para melhor visibilidade em mobile
+- **Transições suaves** para mudanças de tamanho
 
 ### 📱 **CSS Responsivo Implementado**
 

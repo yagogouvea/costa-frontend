@@ -15,6 +15,16 @@
   }
 }
 
+/* Responsividade para dispositivos móveis (telas muito pequenas) */
+@media (max-width: 639px) {
+  .logo-costa-login {
+    width: var(--logo-size, 15rem);
+    height: var(--logo-size, 15rem);
+    min-width: 12rem;
+    min-height: 12rem;
+  }
+}
+
 /* Responsividade para telas grandes */
 @media (min-width: 1024px) {
   .logo-costa-login {
@@ -32,12 +42,25 @@
 @media (max-width: 640px) {
   .logo-costa-login {
     margin-bottom: 1rem;
+    /* Garantir que o logo seja bem visível em mobile */
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
   }
   
   /* Ajustes para telas muito pequenas */
   @media (max-width: 480px) {
     .logo-costa-login {
       margin-bottom: 0.75rem;
+      /* Logo ainda maior para telas muito pequenas */
+      width: calc(var(--logo-size, 15rem) + 2rem) !important;
+      height: calc(var(--logo-size, 15rem) + 2rem) !important;
+    }
+  }
+  
+  /* Ajustes para smartphones pequenos */
+  @media (max-width: 375px) {
+    .logo-costa-login {
+      width: calc(var(--logo-size, 15rem) + 3rem) !important;
+      height: calc(var(--logo-size, 15rem) + 3rem) !important;
     }
   }
 }

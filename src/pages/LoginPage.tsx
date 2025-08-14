@@ -96,14 +96,14 @@ export default function LoginPage() {
             {/* Seção lateral esquerda - Logo e Boas-vindas */}
                          <div className="lg:w-1/2 bg-gradient-to-br from-gray-800 via-gray-700 to-slate-600 p-6 sm:p-8 lg:p-12 flex flex-col justify-center items-center text-center">
               <div className="mb-8">
-                                 <LogoClienteCosta
-                   className="logo-costa-login object-contain mb-4 sm:mb-6 drop-shadow-lg"
-                   style={{
-                     '--logo-size': '3rem',
-                     '--logo-size-sm': '4rem',
-                     '--logo-size-lg': '20rem'
-                   } as React.CSSProperties}
-                 />
+                                                 <LogoClienteCosta
+                  className="logo-costa-login object-contain mb-4 sm:mb-6 drop-shadow-lg"
+                  style={{
+                    '--logo-size': '15rem',
+                    '--logo-size-sm': '18rem',
+                    '--logo-size-lg': '20rem'
+                  } as React.CSSProperties}
+                />
               </div>
                              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-3 sm:mb-4">
                  Bem-vindo!
