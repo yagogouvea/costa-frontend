@@ -41,7 +41,7 @@
 /* Estilos específicos para dispositivos móveis */
 @media (max-width: 640px) {
   .logo-costa-login {
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     /* Garantir que o logo seja bem visível em mobile */
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
   }

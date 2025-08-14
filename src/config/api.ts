@@ -12,8 +12,8 @@ const getApiUrl = (): string => {
   }
 
   // 2. Domínio oficial de produção
-  if (hostname === 'app.costa.com.br') {
-    return 'https://api.costa.com.br';
+  if (hostname === 'painel.costaecamargo.seg.br') {
+    return 'https://api.costaecamargo.seg.br';
   }
 
   // 3. Ambiente Railway (mantém URL antiga por compatibilidade)
@@ -21,8 +21,13 @@ const getApiUrl = (): string => {
     return 'https://web-production-19090.up.railway.app';
   }
 
-  // 4. Fallback seguro para outros ambientes
-  return 'https://api.costa.com.br';
+  // 4. Domínio Costa & Camargo
+  if (hostname === 'painel.costaecamargo.seg.br') {
+    return 'https://api.costaecamargo.seg.br';
+  }
+
+  // 5. Fallback seguro para outros ambientes
+  return 'https://api.costaecamargo.seg.br';
 };
 
 // URL da API baseada no ambiente atual

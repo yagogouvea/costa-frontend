@@ -95,9 +95,9 @@ export default function LoginPage() {
            <div className="flex flex-col lg:flex-row min-h-[600px]">
             {/* Seção lateral esquerda - Logo e Boas-vindas */}
                          <div className="lg:w-1/2 bg-gradient-to-br from-gray-800 via-gray-700 to-slate-600 p-6 sm:p-8 lg:p-12 flex flex-col justify-center items-center text-center">
-              <div className="mb-8">
-                                                 <LogoClienteCosta
-                  className="logo-costa-login object-contain mb-4 sm:mb-6 drop-shadow-lg"
+                             <div className="mb-4">
+                 <LogoClienteCosta
+                   className="logo-costa-login object-contain mb-2 sm:mb-3 drop-shadow-lg"
                   style={{
                     '--logo-size': '15rem',
                     '--logo-size-sm': '18rem',
