@@ -5,13 +5,14 @@
 
 const getApiUrl = (): string => {
   const hostname = window.location.hostname;
+  const protocol = window.location.protocol;
 
   // 1. Ambiente de desenvolvimento local
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
     return 'http://localhost:3001';
   }
 
-  // 2. Domínio oficial de produção
+  // 2. Domínio oficial de produção Costa & Camargo
   if (hostname === 'painel.costaecamargo.seg.br') {
     return 'https://api.costaecamargo.seg.br';
   }
@@ -21,13 +22,18 @@ const getApiUrl = (): string => {
     return 'https://web-production-19090.up.railway.app';
   }
 
-  // 4. Domínio Costa & Camargo
-  if (hostname === 'painel.costaecamargo.seg.br') {
+  // 4. Domínios Segtrack
+  if (hostname === 'app.painelsegtrack.com.br' || hostname === 'cliente.painelsegtrack.com.br') {
     return 'https://api.costaecamargo.seg.br';
   }
 
-  // 5. Fallback seguro para outros ambientes
-  return 'https://api.costaecamargo.seg.br';
+  // 5. Fallback seguro para outros ambientes - usar HTTPS em produção
+  if (protocol === 'https:') {
+    return 'https://api.costaecamargo.seg.br';
+  }
+  
+  // 6. Fallback para desenvolvimento
+  return 'http://localhost:3001';
 };
 
 // URL da API baseada no ambiente atual
@@ -57,17 +63,20 @@ export const GOOGLE_MAPS_CONFIG = {
 if (import.meta.env.DEV) {
   console.log('🔧 API Configuration:', {
     hostname: window.location.hostname,
+    protocol: window.location.protocol,
     apiUrl: API_URL,
     environment: import.meta.env.MODE,
-    fullUrl: `${API_URL}/ocorrencias`,
+    fullUrl: `${API_URL}/api/auth/login`,
     googleMapsAvailable: GOOGLE_MAPS_CONFIG.isAvailable
   });
 } else {
   // Log em produção para debug
   console.log('🔧 API Configuration (Production):', {
     hostname: window.location.hostname,
+    protocol: window.location.protocol,
     apiUrl: API_URL,
     environment: import.meta.env.MODE,
+    fullUrl: `${API_URL}/api/auth/login`,
     googleMapsAvailable: GOOGLE_MAPS_CONFIG.isAvailable
   });
 } 
