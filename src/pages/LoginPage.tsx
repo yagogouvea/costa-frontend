@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import api from '@/services/api';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import LogoSegtrack from '@/components/LogoSegtrack';
+import LogoClienteCosta from '@/components/LogoClienteCosta';
+import './LoginPage.css';
 
 type ApiStatus = 'checking' | 'connected' | 'error';
 
@@ -85,74 +86,111 @@ export default function LoginPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center relative bg-gradient-to-br from-blue-100 via-white to-blue-200 overflow-hidden px-4 sm:px-6"
+      className="min-h-screen flex items-center justify-center relative bg-gradient-to-br from-blue-950 via-blue-900 to-slate-900 overflow-hidden px-4 sm:px-6"
       style={{ minHeight: '100vh' }}
     >
-      <div className="w-full max-w-sm sm:max-w-md space-y-6 z-10">
-        <div className="flex flex-col items-center">
-          {/* Logo no topo do card */}
-          <LogoSegtrack
-            variant="original"
-            className="w-32 h-24 sm:w-40 sm:h-32 lg:w-48 lg:h-36 object-contain mb-4 drop-shadow-lg"
-          />
-          <h2 className="text-center text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
-            Login
-          </h2>
-        </div>
-
-        {apiStatus === 'error' && (
-          <div className="rounded-md bg-red-50 p-4 shadow">
-            <div className="flex">
-              <div className="ml-3">
-                <h3 className="text-sm font-medium text-red-800">
-                  Erro de Conexão
-                </h3>
-                <div className="mt-2 text-sm text-red-700">
-                  {erro && formatErrorMessage(erro)}
-                </div>
+             <div className="w-full max-w-4xl space-y-6 z-10">
+         {/* Card principal dividido em duas seções */}
+         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+           <div className="flex flex-col lg:flex-row min-h-[600px]">
+            {/* Seção lateral esquerda - Logo e Boas-vindas */}
+                         <div className="lg:w-1/2 bg-gradient-to-br from-gray-800 via-gray-700 to-slate-600 p-6 sm:p-8 lg:p-12 flex flex-col justify-center items-center text-center">
+              <div className="mb-8">
+                                 <LogoClienteCosta
+                   className="logo-costa-login object-contain mb-4 sm:mb-6 drop-shadow-lg"
+                   style={{
+                     '--logo-size': '3rem',
+                     '--logo-size-sm': '4rem',
+                     '--logo-size-lg': '20rem'
+                   } as React.CSSProperties}
+                 />
               </div>
+                             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-3 sm:mb-4">
+                 Bem-vindo!
+               </h1>
+               <p className="text-base sm:text-lg text-gray-200 leading-relaxed px-2">
+                 Entre na sua conta para acessar todas as funcionalidades do sistema.
+               </p>
             </div>
-          </div>
-        )}
 
-        <form
-          className="space-y-6 bg-white/70 backdrop-blur-md rounded-2xl shadow-2xl px-6 sm:px-8 py-6 sm:py-8 border border-blue-100"
-          onSubmit={handleSubmit}
-        >
-          <div className="space-y-4">
+            {/* Seção direita - Formulário de Login */}
+                         <div className="lg:w-1/2 bg-white p-6 sm:p-8 lg:p-12">
+                             <div className="mb-6 sm:mb-8">
+                 <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
+                   Login
+                 </h2>
+                 <p className="text-sm sm:text-base text-gray-600">
+                   Acesse sua conta
+                 </p>
+               </div>
+
+              {apiStatus === 'error' && (
+                <div className="rounded-md bg-red-50 p-4 shadow mb-6">
+                  <div className="flex">
+                    <div className="ml-3">
+                      <h3 className="text-sm font-medium text-red-800">
+                        Erro de Conexão
+                      </h3>
+                      <div className="text-sm text-red-700">
+                        {erro && formatErrorMessage(erro)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <form
+                className="space-y-6"
+                onSubmit={handleSubmit}
+              >
+                     <div className="space-y-3 sm:space-y-4">
             <div>
               <label htmlFor="email" className="sr-only">
                 Email
               </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="appearance-none relative block w-full px-3 py-3 sm:py-4 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 text-sm sm:text-base bg-white/80"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={apiStatus !== 'connected'}
-              />
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                  </svg>
+                </div>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  className="appearance-none relative block w-full pl-10 pr-3 py-2.5 sm:py-3 lg:py-4 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 focus:z-10 text-sm sm:text-base bg-gray-50 focus:bg-white transition-colors"
+                  placeholder="Digite seu e-mail"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={apiStatus !== 'connected'}
+                />
+              </div>
             </div>
             <div>
               <label htmlFor="senha" className="sr-only">
                 Senha
               </label>
-              <input
-                id="senha"
-                name="senha"
-                type="password"
-                autoComplete="current-password"
-                required
-                className="appearance-none relative block w-full px-3 py-3 sm:py-4 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 text-sm sm:text-base bg-white/80"
-                placeholder="Senha"
-                value={senha}
-                onChange={(e) => setSenha(e.target.value)}
-                disabled={apiStatus !== 'connected'}
-              />
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+                <input
+                  id="senha"
+                  name="senha"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  className="appearance-none relative block w-full pl-10 pr-3 py-2.5 sm:py-3 lg:py-4 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 focus:z-10 text-sm sm:text-base bg-gray-50 focus:bg-white transition-colors"
+                  placeholder="Digite sua senha"
+                  value={senha}
+                  onChange={(e) => setSenha(e.target.value)}
+                  disabled={apiStatus !== 'connected'}
+                />
+              </div>
             </div>
           </div>
 
@@ -172,10 +210,10 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading || apiStatus !== 'connected'}
-              className={`group relative w-full flex justify-center py-3 sm:py-4 px-4 border border-transparent text-sm sm:text-base font-semibold rounded-lg text-white transition-all duration-200
+                             className={`group relative w-full flex justify-center items-center py-3 sm:py-4 px-4 sm:px-6 border border-transparent text-sm sm:text-base font-semibold rounded-xl text-white transition-all duration-200
                 ${loading || apiStatus !== 'connected'
-                  ? 'bg-blue-400 cursor-not-allowed'
-                  : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'}`}
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-gray-700 to-slate-600 hover:from-gray-600 hover:to-slate-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 shadow-lg'}`}
             >
               {loading ? (
                 <span className="absolute left-0 inset-y-0 flex items-center pl-3">
@@ -200,11 +238,18 @@ export default function LoginPage() {
                     ></path>
                   </svg>
                 </span>
-              ) : null}
+              ) : (
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              )}
               {loading ? 'Entrando...' : 'Entrar'}
             </button>
           </div>
-        </form>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

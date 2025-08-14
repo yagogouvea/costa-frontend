@@ -1,0 +1,89 @@
+/* Estilos personalizáveis para a página de login */
+
+/* Configuração do logo - Tamanhos padrão */
+.logo-costa-login {
+  width: var(--logo-size, 8rem);
+  height: var(--logo-size, 8rem);
+  transition: all 0.3s ease;
+}
+
+/* Responsividade para telas pequenas */
+@media (min-width: 640px) {
+  .logo-costa-login {
+    width: var(--logo-size-sm, 10rem);
+    height: var(--logo-size-sm, 10rem);
+  }
+}
+
+/* Responsividade para telas grandes */
+@media (min-width: 1024px) {
+  .logo-costa-login {
+    width: var(--logo-size-lg, 10rem);
+    height: var(--logo-size-lg, 10rem);
+  }
+}
+
+/* Hover effect para demonstração */
+.logo-costa-login:hover {
+  transform: scale(1.05);
+}
+
+/* Estilos específicos para dispositivos móveis */
+@media (max-width: 640px) {
+  .logo-costa-login {
+    margin-bottom: 1rem;
+  }
+  
+  /* Ajustes para telas muito pequenas */
+  @media (max-width: 480px) {
+    .logo-costa-login {
+      margin-bottom: 0.75rem;
+    }
+  }
+}
+
+/* Classes utilitárias para diferentes tamanhos */
+.logo-costa-login.logo-small {
+  --logo-size: 6rem;
+  --logo-size-lg: 8rem;
+}
+
+.logo-costa-login.logo-medium {
+  --logo-size: 8rem;
+  --logo-size-lg: 10rem;
+}
+
+.logo-costa-login.logo-large {
+  --logo-size: 10rem;
+  --logo-size-lg: 12rem;
+}
+
+.logo-costa-login.logo-xl {
+  --logo-size: 12rem;
+  --logo-size-lg: 14rem;
+}
+
+/* Comentários para facilitar a personalização */
+/*
+  PARA ALTERAR O TAMANHO DO LOGO MANUALMENTE:
+  
+  1. Altere os valores das variáveis CSS no componente:
+     - '--logo-size': para telas pequenas/médias
+     - '--logo-size-lg': para telas grandes
+  
+  2. Ou use as classes utilitárias:
+     - .logo-small (6rem/8rem)
+     - .logo-medium (8rem/10rem) - padrão
+     - .logo-large (10rem/12rem)
+     - .logo-xl (12rem/14rem)
+  
+  3. Ou defina tamanhos personalizados diretamente:
+     style={{ '--logo-size': '9rem', '--logo-size-lg': '11rem' }}
+  
+  EXEMPLOS DE TAMANHOS:
+  - Pequeno: 4rem, 6rem
+  - Médio: 6rem, 8rem
+  - Grande: 8rem, 10rem
+  - Extra Grande: 10rem, 12rem
+  - Gigante: 12rem, 14rem
+*/

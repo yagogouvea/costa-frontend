@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { LogOut, ChevronLeft, Menu, X } from "lucide-react";
-import LogoSegtrack from "./LogoSegtrack";
+import LogoClienteCosta from "./LogoClienteCosta";
 
 interface Button {
   label: string;
@@ -87,7 +87,7 @@ const DashboardLayout: React.FC<Props> = ({ sidebarButtons, children }) => {
         <div className="min-h-[100px] flex items-center justify-between px-6 relative">
           {!isSidebarCollapsed && (
             <div className="w-full flex items-center justify-center py-4">
-              <LogoSegtrack
+              <LogoClienteCosta
                 className="h-14 w-auto object-contain"
                 style={{
                   maxWidth: '220px',
@@ -208,7 +208,7 @@ const DashboardLayout: React.FC<Props> = ({ sidebarButtons, children }) => {
         {/* Mobile Header */}
         <div className="flex items-center justify-between p-4 border-b border-white/10">
           <div className="flex items-center justify-center py-4">
-            <LogoSegtrack
+            <LogoClienteCosta
               className="h-12 w-auto object-contain"
               style={{
                 maxWidth: '180px',

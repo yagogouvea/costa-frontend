@@ -11,7 +11,7 @@ import {
 import { formatTelefoneBR } from '@/utils/prestadorUtils';
 import { cepApi, geocodingApi } from '@/services/api';
 import { useDebounce } from '@/hooks/useDebounce';
-import logoSegtrack from '/assets/Logo-segtrack.png';
+import logoSegtrack from '/assets/LOGOCOSTA.png';
 
 interface Props {
   onSubmit: (prestador: PrestadorPublicoForm) => void;

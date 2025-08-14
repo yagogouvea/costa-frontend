@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { CheckCircle } from 'lucide-react';
-import logoSegtrack from '/assets/Logo-segtrack.png';
+import logoSegtrack from '/assets/LOGOCOSTA.png';
 
 interface Props {
   onNovoNadastro: () => void;
