@@ -97,3 +97,4 @@ O projeto está configurado para deploy no Railway com:
 - Adaptado para o cliente Costa
 - Porta do backend: 3001
 - Todas as referências ao Segtrack foram removidas
+
