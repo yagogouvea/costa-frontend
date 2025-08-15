@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { LogOut, ChevronLeft, Menu, X, User, Settings } from "lucide-react";
+import { LogOut, ChevronLeft, Menu, X, User } from "lucide-react";
 import LogoClienteCosta from "./LogoClienteCosta";
 import COSTA_THEME from "../config/theme";
 
@@ -213,7 +213,7 @@ const DashboardLayout: React.FC<Props> = ({ sidebarButtons, children }) => {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate" style={{ color: COSTA_THEME.colors.primary[100] }}>
-                    {user.name || 'Usuário'}
+                    {user.nome || 'Usuário'}
                   </p>
                   <p className="text-xs truncate" style={{ color: COSTA_THEME.colors.accent[400] }}>
                     {user.role || 'Admin'}
