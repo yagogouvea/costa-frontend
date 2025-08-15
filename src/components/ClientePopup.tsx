@@ -563,10 +563,10 @@ const ClientePopup: React.FC<Props> = ({ onClose, onSave, clienteEdicao }) => {
     const values = getValues();
     console.log('[DEBUG] Dados do formulário antes do envio:', values);
     
-    // Verificar se há contratos
+    // Verificar se há contratos (não obrigatório, mas log para debug)
     if (!values.contratos || values.contratos.length === 0) {
-      console.error("Nenhum contrato encontrado");
-      return;
+      console.log("Nenhum contrato encontrado - criando cliente sem contratos");
+      values.contratos = []; // Garantir que seja um array vazio
     }
 
     // Upload do logo se houver um arquivo selecionado
