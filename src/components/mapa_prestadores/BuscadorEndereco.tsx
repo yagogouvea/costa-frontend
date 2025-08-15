@@ -128,55 +128,75 @@ const BuscadorEndereco: React.FC<BuscadorEnderecoProps> = ({ onBuscar }) => {
 
   return (
     <div className="relative">
-      <form onSubmit={handleBuscar} className="flex gap-2 p-4 bg-white shadow-lg rounded-lg items-center border border-gray-200">
+      <form onSubmit={handleBuscar} className="flex gap-2 items-center">
         <div className="flex-1 relative">
-          <input
-            ref={inputRef}
-            type="text"
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Digite endereço, cidade, bairro, coordenadas (ex: -23.5505,-46.6333) ou CEP..."
-            value={valor}
-            onChange={e => {
-              console.log('📝 Input onChange:', e.target.value);
-              setValor(e.target.value);
-            }}
-            onKeyPress={handleKeyPress}
-            onFocus={() => {}}
-            onBlur={() => setTimeout(() => {}, 200)}
-          />
+          <div className="relative">
+            <input
+              ref={inputRef}
+              type="text"
+              className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2.5 pr-10 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm shadow-sm"
+              placeholder="🔍 Endereço, coordenadas ou CEP..."
+              value={valor}
+              onChange={e => {
+                console.log('📝 Input onChange:', e.target.value);
+                setValor(e.target.value);
+              }}
+              onKeyPress={handleKeyPress}
+              onFocus={() => {}}
+              onBlur={() => setTimeout(() => {}, 200)}
+            />
+            
+            {/* Indicador de carregamento */}
+            {carregando && (
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-200 border-t-blue-600"></div>
+              </div>
+            )}
+            
+            {/* Indicador de tipo de busca dentro do input */}
+            {valor.trim() && !carregando && (
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm">
+                {valor.match(/^-?\d+\.?\d*,\s*-?\d+\.?\d*$/) ? (
+                  <span className="text-blue-600" title="Coordenadas detectadas">📍</span>
+                ) : valor.match(/^\d{5}-?\d{3}$/) ? (
+                  <span className="text-green-600" title="CEP detectado">📮</span>
+                ) : (
+                  <span className="text-gray-400" title="Endereço">🏠</span>
+                )}
+              </div>
+            )}
+          </div>
           
-          {/* Indicador de carregamento */}
-          {carregando && (
-            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-            </div>
-          )}
-          
-          {/* Sugestões de endereço */}
+          {/* Sugestões de endereço modernizadas */}
           {showSugestoes && sugestoes.length > 0 && (
             <div 
               ref={sugestoesRef}
-              className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto z-50"
+              className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-xl max-h-60 overflow-y-auto z-50"
             >
-              {sugestoes.map((sugestao, index) => (
-                <div
-                  key={sugestao.id}
-                  className={`px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors ${
-                    index === sugestaoSelecionada ? 'bg-blue-50 border-l-4 border-blue-500' : ''
-                  }`}
-                  onClick={() => handleSugestaoClick(sugestao)}
-                >
-                  <div className="font-medium text-gray-900">{sugestao.descricao}</div>
-                  <div className="text-sm text-gray-500">{sugestao.enderecoCompleto}</div>
-                </div>
-              ))}
+              <div className="p-1">
+                <div className="text-xs text-gray-500 px-3 py-2 font-medium">Sugestões:</div>
+                {sugestoes.map((sugestao, index) => (
+                  <div
+                    key={sugestao.id}
+                    className={`px-3 py-2 cursor-pointer rounded-md transition-all duration-150 ${
+                      index === sugestaoSelecionada 
+                        ? 'bg-blue-50 border-l-3 border-blue-500' 
+                        : 'hover:bg-gray-50'
+                    }`}
+                    onClick={() => handleSugestaoClick(sugestao)}
+                  >
+                    <div className="font-medium text-gray-900 text-sm">{sugestao.descricao}</div>
+                    <div className="text-xs text-gray-600 mt-0.5 truncate">{sugestao.enderecoCompleto}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
-          {/* Removido bloco de dicas de busca */}
         </div>
+        
         <button
           type="submit"
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center gap-2"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg transition-all duration-200 font-medium flex items-center gap-1.5 shadow-sm hover:shadow-md text-sm"
           onClick={() => {
             if (valor.trim()) {
               onBuscar(valor.trim());
@@ -184,22 +204,10 @@ const BuscadorEndereco: React.FC<BuscadorEnderecoProps> = ({ onBuscar }) => {
             }
           }}
         >
-          🔍 Buscar
+          <span>🎯</span>
+          <span>Buscar</span>
         </button>
       </form>
-      
-      {/* Indicador de tipo de busca */}
-      {valor.trim() && (
-        <div className="absolute -bottom-8 left-4 text-xs text-gray-500">
-          {valor.match(/^-?\d+\.?\d*,\s*-?\d+\.?\d*$/) ? (
-            <span className="text-blue-600">📍 Coordenadas detectadas</span>
-          ) : valor.match(/^\d{5}-?\d{3}$/) ? (
-            <span className="text-green-600">📮 CEP detectado</span>
-          ) : (
-            <span className="text-gray-600">🏠 Endereço</span>
-          )}
-        </div>
-      )}
     </div>
   );
 };

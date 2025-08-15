@@ -13,6 +13,7 @@ interface PrestadorPin {
   cidade?: string;
   estado?: string;
   distanciaKm?: number;
+  modelo_antena?: string;
 }
 
 interface PrestadoresContextType {
@@ -58,9 +59,10 @@ export const PrestadoresProvider: React.FC<PrestadoresProviderProps> = ({
       console.log('🔄 [PrestadoresContext] Iniciando atualização dos prestadores...');
       // Lista de endpoints para tentar em ordem
       const endpoints = [
-              '/api/v1/prestadores/mapa',
-      '/api/v1/prestadores/public',
-      '/api/v1/prestadores', // Endpoint protegido como último recurso
+        '/api/v1/prestadores/public/mapa', // Novo endpoint público para mapa
+        '/api/v1/prestadores/mapa',
+        '/api/v1/prestadores/public',
+        '/api/v1/prestadores', // Endpoint protegido como último recurso
         '/prestadores/mapa', // Fallback para rotas legadas
         '/prestadores/public', // Fallback para rotas legadas
         '/prestadores-publico', // Endpoint público de cadastro
@@ -150,6 +152,7 @@ export const PrestadoresProvider: React.FC<PrestadoresProviderProps> = ({
           bairro: p.bairro || '',
           cidade: p.cidade || '',
           estado: p.estado || '',
+          modelo_antena: p.modelo_antena || '',
         }));
       console.log('✅ [PrestadoresContext] Prestadores processados:', {
         total: pins.length,

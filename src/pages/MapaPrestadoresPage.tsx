@@ -12,7 +12,7 @@ const MapaPrestadoresPage: React.FC = () => {
 
   return (
     <RequirePermission requiredPermission="read:prestador">
-      <PrestadoresProvider autoRefresh={true} refreshInterval={5000}>
+      <PrestadoresProvider autoRefresh={true} refreshInterval={3000}>
         <MapaPrestadores />
       </PrestadoresProvider>
     </RequirePermission>
