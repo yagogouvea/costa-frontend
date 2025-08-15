@@ -67,7 +67,7 @@ const ClientesPage: React.FC = () => {
   const handleSalvarCliente = async (cliente: Cliente) => {
     try {
       if (cliente.id) {
-        await api.put(`/clientes/${cliente.id}`, cliente);
+        await api.put(`/api/clientes/${cliente.id}`, cliente);
         toast({
           title: "Sucesso",
           description: "Cliente atualizado com sucesso.",
@@ -98,7 +98,7 @@ const ClientesPage: React.FC = () => {
     if (!confirm("Deseja realmente excluir este cliente?")) return;
 
     try {
-      await api.delete(`/clientes/${id}`);
+      await api.delete(`/api/clientes/${id}`);
       toast({
         title: "Cliente excluído",
         description: "O cliente foi excluído com sucesso.",

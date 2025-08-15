@@ -84,7 +84,7 @@ const CadastroClientes: React.FC = () => {
   const handleExcluir = async (id: number) => {
     if (!confirm("Deseja realmente excluir este cliente?")) return;
     try {
-      await api.delete(`/clientes/${id}`);
+      await api.delete(`/api/clientes/${id}`);
       toast.success('Cliente excluído com sucesso!');
       carregarClientes();
     } catch (err) {
