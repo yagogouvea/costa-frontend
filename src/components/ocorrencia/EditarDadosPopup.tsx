@@ -17,8 +17,7 @@ import {
   TIPOS_VEICULO, 
   TIPOS_OCORRENCIA_PADRAO,
   OPERACOES_OPENTECH,
-  isClienteOpentech,
-  getTiposOcorrenciaPorCliente
+  isClienteOpentech
 } from '@/constants/ocorrencia';
 
 interface Props {
@@ -34,13 +33,13 @@ const isClienteBrk = (nomeCliente: string): boolean => {
 
 
 
-// Função para formatar moeda brasileira
-function formatarMoedaBR(valor: string | number) {
-  console.log('[LOG] EditarDadosPopup - formatarMoedaBR - valor:', valor, typeof valor);
-  const numero = Number(String(valor ?? '').replace(/\D/g, ''));
-  if (isNaN(numero)) return '';
-  return (numero / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-}
+// Função para formatar moeda brasileira (não utilizada no momento)
+// function formatarMoedaBR(valor: string | number) {
+//   console.log('[LOG] EditarDadosPopup - formatarMoedaBR - valor:', valor, typeof valor);
+//   const numero = Number(String(valor ?? '').replace(/\D/g, ''));
+//   if (isNaN(numero)) return '';
+//   return (numero / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+// }
 
 // Função utilitária para converter ISO para yyyy-MM-dd
 function toDateInputValue(dateStr: string | null | undefined) {

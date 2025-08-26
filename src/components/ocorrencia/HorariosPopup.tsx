@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+// import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Ocorrencia } from '../../types/ocorrencia';
 import api from '@/services/api';
@@ -31,27 +31,27 @@ const toInputLocal = (isoString: string): string => {
   }
 };
 
-// Converte data para formato dd/MM/yyyy
-const toDateOnly = (isoString: string): string => {
-  if (!isoString) return '';
-  try {
-    const date = new Date(isoString);
-    if (isNaN(date.getTime())) return '';
-    return date.toLocaleDateString('pt-BR');
-  } catch (error) {
-    return '';
-  }
-};
+// Converte data para formato dd/MM/yyyy (não utilizada)
+// const toDateOnly = (isoString: string): string => {
+//   if (!isoString) return '';
+//   try {
+//     const date = new Date(isoString);
+//     if (isNaN(date.getTime())) return '';
+//     return date.toLocaleDateString('pt-BR');
+//   } catch (error) {
+//     return '';
+//   }
+// };
 
-// Converte de dd/MM/yyyy para yyyy-MM-dd
-const fromDateOnly = (dateStr: string): string => {
-  if (!dateStr) return '';
-  const parts = dateStr.split('/');
-  if (parts.length === 3) {
-    return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
-  }
-  return dateStr;
-};
+// Converte de dd/MM/yyyy para yyyy-MM-dd (não utilizada)
+// const fromDateOnly = (dateStr: string): string => {
+//   if (!dateStr) return '';
+//   const parts = dateStr.split('/');
+//   if (parts.length === 3) {
+//     return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+//   }
+//   return dateStr;
+// };
 
 const HorariosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
   // Campos originais
@@ -61,7 +61,7 @@ const HorariosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
   
   // Campos removidos: tipoRemocao, enderecoLoja, nomeLoja, nomeGuincho, enderecoBase, detalhesLocal
 
-  const isMobile = useMediaQuery({ maxWidth: 767 });
+  // const isMobile = useMediaQuery({ maxWidth: 767 });
 
   useEffect(() => {
     // Campos originais

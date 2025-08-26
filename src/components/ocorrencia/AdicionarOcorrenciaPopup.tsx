@@ -72,14 +72,14 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
   const [origemCidade, setOrigemCidade] = useState('');
   const [origemEstado, setOrigemEstado] = useState('');
   const [cpfCondutor, setCpfCondutor] = useState('');
-  const [nomeCondutor, setNomeCondutor] = useState('');
-  const [transportadora, setTransportadora] = useState('');
-  const [valorCarga, setValorCarga] = useState('');
-  const [notasFiscais, setNotasFiscais] = useState('');
+  const [nomeCondutor, _setNomeCondutor] = useState('');
+  const [transportadora, _setTransportadora] = useState('');
+  const [valorCarga, _setValorCarga] = useState('');
+  const [notasFiscais, _setNotasFiscais] = useState('');
 
-  const [plantaOrigem, setPlantaOrigem] = useState('');
-  const [cidadeDestino, setCidadeDestino] = useState('');
-  const [kmAcl, setKmAcl] = useState('');
+  const [plantaOrigem, _setPlantaOrigem] = useState('');
+  const [cidadeDestino, _setCidadeDestino] = useState('');
+  const [kmAcl, _setKmAcl] = useState('');
 
   const [operador, setOperador] = useState('');
   const [operacao, setOperacao] = useState('');

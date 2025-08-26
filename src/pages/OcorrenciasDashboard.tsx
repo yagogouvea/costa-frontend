@@ -1057,7 +1057,7 @@ const OcorrenciasDashboard: React.FC = () => {
                       {/* Botão Limpar Filtros */}
                       <div className="flex gap-2">
                         <Button
-                          variant="outline"
+                          variant="ghost"
                           size="sm"
                           onClick={limparFiltrosEmAndamento}
                           className="flex items-center gap-2"
@@ -1269,7 +1269,7 @@ const OcorrenciasDashboard: React.FC = () => {
                       {/* Botão Limpar Filtros */}
                       <div className="flex gap-2">
                         <Button
-                          variant="outline"
+                          variant="ghost"
                           size="sm"
                           onClick={limparFiltrosFinalizadas}
                           className="flex items-center gap-2"

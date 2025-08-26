@@ -8,16 +8,13 @@ import { Checkbox } from '@/components/ui/checkbox';
 import BadgeComponent from '@/components/ui/BadgeComponent';
 import { api } from '@/services/api';
 import { 
-  User, 
   Phone, 
-  MapPin, 
   Clock, 
   Car, 
   Plus, 
   Trash2, 
   Search,
   CheckCircle,
-  AlertCircle,
   Users,
   Edit
 } from 'lucide-react';
@@ -204,15 +201,16 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
     return Object.keys(novosErros).length === 0;
   };
 
-  const limparErro = (campo: string) => {
-    if (erros[campo]) {
-      setErros(prev => {
-        const novosErros = { ...prev };
-        delete novosErros[campo];
-        return novosErros;
-      });
-    }
-  };
+  // Função não utilizada no momento
+  // const limparErro = (campo: string) => {
+  //   if (erros[campo]) {
+  //     setErros(prev => {
+  //       const novosErros = { ...prev };
+  //       delete novosErros[campo];
+  //       return novosErros;
+  //     });
+  //   }
+  // };
 
   const adicionarApoio = () => {
     if (!validarApoio(novoApoio)) {
@@ -286,11 +284,12 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
     console.log('ℹ️ Apoio removido da lista local');
   };
 
-  const editarApoio = (index: number, campo: keyof ApoioAdicional, valor: any) => {
-    setApoiosAdicionais(prev => prev.map((apoio, i) => 
-      i === index ? { ...apoio, [campo]: valor } : apoio
-    ));
-  };
+  // Função não utilizada no momento
+  // const editarApoio = (index: number, campo: keyof ApoioAdicional, valor: any) => {
+  //   setApoiosAdicionais(prev => prev.map((apoio, i) => 
+  //     i === index ? { ...apoio, [campo]: valor } : apoio
+  //   ));
+  // };
 
   const iniciarEdicao = (index: number) => {
     const apoio = apoiosAdicionais[index];
@@ -467,14 +466,15 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
     return ordinais[ordem] || `${ordem}º`;
   };
 
-  const formatarHora = (hora: string): string => {
-    if (!hora) return '';
-    const data = new Date(hora);
-    return data.toLocaleTimeString('pt-BR', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
-  };
+  // Função não utilizada no momento
+  // const formatarHora = (hora: string): string => {
+  //   if (!hora) return '';
+  //   const data = new Date(hora);
+  //   return data.toLocaleTimeString('pt-BR', { 
+  //     hour: '2-digit', 
+  //     minute: '2-digit' 
+  //   });
+  // };
 
   const formatarDataHora = (dataHora: string | undefined): string => {
     if (!dataHora) return '';

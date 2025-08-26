@@ -458,11 +458,9 @@ const styles = StyleSheet.create({
 
 const RelatorioPDF = ({ dados }: { dados: RelatorioDados }) => {
   const {
-    id, cliente, tipo, data_acionamento, placa1, modelo1, cor1, placa2, modelo2, cor2,
-    placa3, modelo3, cor3, endereco, cidade, estado, coordenadas, inicio, chegada,
+    id, cliente, tipo, data_acionamento, placa1, modelo1, cor1, endereco, cidade, estado, coordenadas, inicio, chegada,
     termino, km_inicial, km_final, km, descricao, fotos = [], os,
-    origem_bairro, origem_cidade, origem_estado, condutor, resultado, sub_resultado, planta_origem, cidade_destino, km_acl,
-    nome_condutor, transportadora, valor_carga, notas_fiscais, cpf_condutor, conta,
+    origem_bairro, origem_cidade, origem_estado, resultado, sub_resultado,
     checklist, status, operador, tipo_veiculo, criado_em, despesas, despesas_detalhadas, bairro, sub_cliente
   } = dados;
 

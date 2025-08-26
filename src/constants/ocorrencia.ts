@@ -54,7 +54,7 @@ export const isClienteOpentech = (nomeCliente: string): boolean => {
   return nomeCliente.toUpperCase().includes('OPENTECH');
 };
 
-// Função para obter tipos de ocorrência - sempre retorna tipos padrão
-export const getTiposOcorrenciaPorCliente = (nomeCliente: string) => {
-  return TIPOS_OCORRENCIA_PADRAO;
-};
+// Função para obter tipos de ocorrência - sempre retorna tipos padrão (não utilizada)
+// export const getTiposOcorrenciaPorCliente = (nomeCliente: string) => {
+//   return TIPOS_OCORRENCIA_PADRAO;
+// };
