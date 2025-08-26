@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Ocorrencia } from '../../types/ocorrencia';
 import api from '@/services/api';
-import { useMediaQuery } from 'react-responsive';
+// import { useMediaQuery } from 'react-responsive';
 
 interface Props {
   ocorrencia: Ocorrencia;

@@ -459,9 +459,8 @@ const styles = StyleSheet.create({
 const RelatorioPDF = ({ dados }: { dados: RelatorioDados }) => {
   const {
     id, cliente, tipo, data_acionamento, placa1, modelo1, cor1, endereco, cidade, estado, coordenadas, inicio, chegada,
-    termino, km_inicial, km_final, km, descricao, fotos = [], os,
-    origem_bairro, origem_cidade, origem_estado, resultado, sub_resultado,
-    checklist, status, operador, tipo_veiculo, criado_em, despesas, despesas_detalhadas, bairro, sub_cliente
+    termino, km_inicial, km_final, km, descricao, fotos = [], resultado, sub_resultado,
+    checklist, status, operador, criado_em, despesas, despesas_detalhadas, bairro, sub_cliente
   } = dados;
 
   // Função para renderizar valor com fallback

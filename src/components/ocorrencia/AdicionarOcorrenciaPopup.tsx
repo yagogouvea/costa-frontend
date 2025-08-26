@@ -17,15 +17,13 @@ import { OPERADORES } from '@/constants/operadores';
 import { 
   TIPOS_VEICULO, 
   TIPOS_OCORRENCIA_PADRAO,
-  OPERACOES_OPENTECH,
-  isClienteOpentech,
-  getTiposOcorrenciaPorCliente
+  OPERACOES_OPENTECH
 } from '@/constants/ocorrencia';
 
-// Função auxiliar para identificar cliente BRK
-const isClienteBrk = (nomeCliente: string): boolean => {
-  return nomeCliente.toUpperCase().includes('BRK');
-};
+// Função auxiliar para identificar cliente BRK (não utilizada)
+// const isClienteBrk = (nomeCliente: string): boolean => {
+//   return nomeCliente.toUpperCase().includes('BRK');
+// };
 
 export interface ClienteResumo {
   id: string;
@@ -47,13 +45,13 @@ interface Props {
 
 // Função removida - cliente Marfrig não é utilizado neste sistema
 
-// Função para formatar moeda brasileira
-function formatarMoedaBR(valor: string | number) {
-  console.log('[LOG] AdicionarOcorrenciaPopup - formatarMoedaBR - valor:', valor, typeof valor);
-  const numero = Number(String(valor ?? '').replace(/\D/g, ''));
-  if (isNaN(numero)) return '';
-  return (numero / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-}
+// Função para formatar moeda brasileira (não utilizada)
+// function formatarMoedaBR(valor: string | number) {
+//   console.log('[LOG] AdicionarOcorrenciaPopup - formatarMoedaBR - valor:', valor, typeof valor);
+//   const numero = Number(String(valor ?? '').replace(/\D/g, ''));
+//   if (isNaN(numero)) return '';
+//   return (numero / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+// }
 
 const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }) => {
 
@@ -67,11 +65,11 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
   const [dataAcionamento, setDataAcionamento] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const [os, setOs] = useState('');
-  const [origemBairro, setOrigemBairro] = useState('');
-  const [origemCidade, setOrigemCidade] = useState('');
-  const [origemEstado, setOrigemEstado] = useState('');
-  const [cpfCondutor, setCpfCondutor] = useState('');
+  const [os, _setOs] = useState('');
+  const [origemBairro, _setOrigemBairro] = useState('');
+  const [origemCidade, _setOrigemCidade] = useState('');
+  const [origemEstado, _setOrigemEstado] = useState('');
+  const [cpfCondutor, _setCpfCondutor] = useState('');
   const [nomeCondutor, _setNomeCondutor] = useState('');
   const [transportadora, _setTransportadora] = useState('');
   const [valorCarga, _setValorCarga] = useState('');
