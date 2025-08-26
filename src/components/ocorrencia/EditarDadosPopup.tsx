@@ -12,6 +12,14 @@ import {
 import { Button } from '@/components/ui/button';
 import { DialogClose, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import type { Ocorrencia } from '@/types/ocorrencia';
+import { OPERADORES } from '@/constants/operadores';
+import { 
+  TIPOS_VEICULO, 
+  TIPOS_OCORRENCIA_PADRAO,
+  OPERACOES_OPENTECH,
+  isClienteOpentech,
+  getTiposOcorrenciaPorCliente
+} from '@/constants/ocorrencia';
 
 interface Props {
   ocorrencia: Ocorrencia;
@@ -19,37 +27,12 @@ interface Props {
   onClose: () => void;
 }
 
-// Função utilitária para normalizar nome do cliente
-function isClienteMarfrig(nome: string) {
-  return nome && nome.replace(/\s+/g, '').toUpperCase().includes('MARFRIG');
-}
+// Funções auxiliares para identificar tipo de cliente
+const isClienteBrk = (nomeCliente: string): boolean => {
+  return nomeCliente.toUpperCase().includes('BRK');
+};
 
-function isClienteIturan(nome: string) {
-  return nome && nome.toUpperCase().includes('ITURAN');
-}
 
-const tiposOcorrenciaPadrao = [
-  'Acidente', 'Furto', 'Perda de Sinal', 'Preservação', 'Suspeita', 'Roubo', 'Apropriação',
-  'Acompanhamento', 'Sindicância', 'Parada Indevida', 'Botão de Pânico', 'Verificação',
-  'Problema Mecânico', 'Iscagem', 'Blitz', 'Pernoite Seguro', 'Constatação',
-  'Violação Equipamento', 'Regulação'
-] as const;
-
-const tiposOcorrenciaIturan = [
-  'Roubo', 'Furto', 'Apropriação', 'Check de Segurança'
-] as const;
-
-const tiposOcorrenciaMarfrig = [
-  'Roubo', 'Furto', 'Suspeita', 'ACL', 'Investigação', 'Acidente', 'Preservação'
-];
-
-const tiposVeiculo = [
-  'Caminhão', 'Carreta', 'Van', 'Utilitário', 'Passeio', 'Moto', 'Ônibus', 'Outro'
-] as const;
-
-const operadores = [
-  'Marcio', 'Bia', 'Junior', 'Ozias', 'Yago', 'ADM'
-];
 
 // Função para formatar moeda brasileira
 function formatarMoedaBR(valor: string | number) {
@@ -71,6 +54,7 @@ function toDateInputValue(dateStr: string | null | undefined) {
 const EditarDadosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
   // Estados para os campos básicos
   const [cliente, setCliente] = useState(ocorrencia.cliente || '');
+  const [subCliente, setSubCliente] = useState(ocorrencia.sub_cliente || '');
   const [tipo, setTipo] = useState(ocorrencia.tipo || '');
   const [tipoVeiculo, setTipoVeiculo] = useState(ocorrencia.tipo_veiculo || '');
   const [placas, setPlacas] = useState([
@@ -107,11 +91,22 @@ const EditarDadosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) =>
   const [cidadeDestino, setCidadeDestino] = useState(ocorrencia.cidade_destino || '');
   const [kmAcl, setKmAcl] = useState(ocorrencia.km_acl || '');
   const [operador, setOperador] = useState(ocorrencia.operador || '');
+  
+  // Campos que estavam faltando
+  const [operacao, setOperacao] = useState(ocorrencia.operacao || '');
+  const [conta, setConta] = useState(ocorrencia.conta || '');
+  
+  // Campos para múltiplos modelos e cores não estão no schema atual
+  // const [modelo2, setModelo2] = useState('');
+  // const [modelo3, setModelo3] = useState('');
+  // const [cor2, setCor2] = useState('');
+  // const [cor3, setCor3] = useState('');
 
   // Efeito para recarregar os dados quando a ocorrência mudar
   useEffect(() => {
     console.log('Carregando dados da ocorrência:', ocorrencia);
     setCliente(ocorrencia.cliente || '');
+    setSubCliente(ocorrencia.sub_cliente || '');
     setTipo(ocorrencia.tipo || '');
     setTipoVeiculo(ocorrencia.tipo_veiculo || '');
     setPlacas([
@@ -145,6 +140,8 @@ const EditarDadosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) =>
     setCidadeDestino(ocorrencia.cidade_destino || '');
     setKmAcl(ocorrencia.km_acl || '');
     setOperador(ocorrencia.operador || '');
+    setOperacao(ocorrencia.operacao || '');
+    setConta(ocorrencia.conta || '');
   }, [ocorrencia]);
 
   const salvar = async () => {
@@ -160,6 +157,7 @@ const EditarDadosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) =>
         placa2: placas[1] || undefined,
         placa3: placas[2] || undefined,
         cliente: cliente || ocorrencia.cliente,
+        sub_cliente: subCliente || undefined,
         tipo: tipo || ocorrencia.tipo,
         tipo_veiculo: tipoVeiculo,
         modelo1,
@@ -182,7 +180,9 @@ const EditarDadosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) =>
         planta_origem: plantaOrigem,
         cidade_destino: cidadeDestino,
         km_acl: kmAcl,
-        operador: operador || undefined
+        operador: operador || undefined,
+        operacao: operacao || undefined,
+        conta: conta || undefined
       };
 
       console.log('Dados sendo enviados para atualização:', dados);
@@ -201,16 +201,8 @@ const EditarDadosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) =>
     onClose();
   };
 
-  // Determinar quais tipos de ocorrência mostrar baseado no cliente
-  const getTiposOcorrencia = () => {
-    if (isClienteMarfrig(cliente)) {
-      return tiposOcorrenciaMarfrig;
-    } else if (isClienteIturan(cliente)) {
-      return tiposOcorrenciaIturan;
-    } else {
-      return tiposOcorrenciaPadrao;
-    }
-  };
+  // Usar sempre tipos de ocorrência padrão
+  const tiposOcorrenciaAtivos = TIPOS_OCORRENCIA_PADRAO;
 
   return (
     <div className="space-y-6 max-h-[80vh] overflow-y-auto">
@@ -226,11 +218,20 @@ const EditarDadosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) =>
         </div>
 
         <div>
+          <Label>Sub cliente</Label>
+          <Input 
+            value={subCliente} 
+            onChange={e => setSubCliente(e.target.value)} 
+            placeholder="Digite o sub cliente (opcional)"
+          />
+        </div>
+
+        <div>
           <Label>Tipo</Label>
           <Select value={tipo} onValueChange={setTipo}>
             <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
             <SelectContent>
-              {getTiposOcorrencia().map(t => (
+              {tiposOcorrenciaAtivos.map(t => (
                 <SelectItem key={t} value={t}>{t}</SelectItem>
               ))}
             </SelectContent>
@@ -251,7 +252,7 @@ const EditarDadosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) =>
           <Select value={tipoVeiculo} onValueChange={setTipoVeiculo}>
             <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
             <SelectContent>
-              {tiposVeiculo.map(v => (
+              {TIPOS_VEICULO.map(v => (
                 <SelectItem key={v} value={v}>{v}</SelectItem>
               ))}
             </SelectContent>
@@ -329,49 +330,9 @@ const EditarDadosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) =>
           <Input value={estado} onChange={e => setEstado(e.target.value)} />
         </div>
 
-        {/* Campos extras para ITURAN */}
-        {isClienteIturan(cliente) && (
-          <div className="col-span-3 grid grid-cols-3 gap-4">
-            <div><Label>OS</Label><Input value={os} onChange={e => setOs(e.target.value)} /></div>
-            <div><Label>Bairro (Origem)</Label><Input value={origemBairro} onChange={e => setOrigemBairro(e.target.value)} /></div>
-            <div><Label>Cidade (Origem)</Label><Input value={origemCidade} onChange={e => setOrigemCidade(e.target.value)} /></div>
-            <div><Label>Estado (Origem)</Label><Input value={origemEstado} onChange={e => setOrigemEstado(e.target.value)} /></div>
-          </div>
-        )}
+        {/* Campos específicos do Ituran removidos - cliente não utilizado neste sistema */}
 
-        {/* Campos extras para MARFRIG */}
-        {isClienteMarfrig(cliente) && (
-          <div className="col-span-3 grid grid-cols-2 gap-4">
-            <div><Label>CPF do Condutor</Label><Input value={cpfCondutor} onChange={e => setCpfCondutor(e.target.value)} /></div>
-            <div><Label>Nome do Condutor</Label><Input value={nomeCondutor} onChange={e => setNomeCondutor(e.target.value)} /></div>
-            <div><Label>Transportadora</Label><Input value={transportadora} onChange={e => setTransportadora(e.target.value)} /></div>
-            <div>
-              <Label>Valor da Carga (R$)</Label>
-              <Input
-                type="text"
-                value={formatarMoedaBR(valorCarga)}
-                onChange={e => {
-                  // Permite apenas números
-                  const numeros = String(e.target.value ?? '').replace(/\D/g, '');
-                  console.log('[LOG] EditarDadosPopup - valor campo:', e.target.value, typeof e.target.value);
-                  setValorCarga(numeros);
-                }}
-                onBlur={() => {
-                  // Mantém o valor formatado ao sair do campo
-                  setValorCarga(v => v.replace(/^0+/, '') || '0');
-                }}
-                placeholder="R$ 0,00"
-                inputMode="numeric"
-              />
-            </div>
-            <div className="col-span-2"><Label>Notas Fiscais</Label><Input value={notasFiscais} onChange={e => setNotasFiscais(e.target.value)} placeholder="Separe por vírgulas" /></div>
-            <div><Label>Planta de origem</Label><Input value={plantaOrigem} onChange={e => setPlantaOrigem(e.target.value)} /></div>
-            <div><Label>Cidade de destino</Label><Input value={cidadeDestino} onChange={e => setCidadeDestino(e.target.value)} /></div>
-            {tipo === 'ACL' && (
-              <div className="col-span-2"><Label>KM ACL</Label><Input value={kmAcl} onChange={e => setKmAcl(e.target.value)} /></div>
-            )}
-          </div>
-        )}
+        {/* Campos específicos do Marfrig removidos - cliente não utilizado neste sistema */}
 
         <div>
           <Label>Operador</Label>
@@ -380,12 +341,44 @@ const EditarDadosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) =>
               <SelectValue placeholder="Selecione o operador" />
             </SelectTrigger>
             <SelectContent>
-              {operadores.map(op => (
+              {OPERADORES.map(op => (
                 <SelectItem key={op} value={op}>{op}</SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
+
+        {/* Campos específicos para cliente Opentech */}
+        {isClienteOpentech(cliente) && (
+          <div>
+            <Label>Operação <span className="text-red-500">*</span></Label>
+            <Select onValueChange={setOperacao} value={operacao}>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione a operação" />
+              </SelectTrigger>
+              <SelectContent>
+                {OPERACOES_OPENTECH.map(op => (
+                  <SelectItem key={op} value={op}>{op}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
+        {/* Campos específicos para cliente BRK */}
+        {isClienteBrk(cliente) && (
+          <div>
+            <Label>Conta <span className="text-red-500">*</span></Label>
+            <Input 
+              value={conta} 
+              onChange={e => setConta(e.target.value)} 
+              placeholder="Digite a conta"
+            />
+          </div>
+        )}
+
+        {/* Campos adicionais para múltiplos modelos e cores - não implementados no schema atual */}
+        {/* Futuro: adicionar modelo2, modelo3, cor2, cor3 ao schema se necessário */}
       </div>
 
       <div className="flex justify-end gap-2">

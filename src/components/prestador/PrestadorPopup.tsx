@@ -37,14 +37,14 @@ const PrestadorPopup: React.FC<Props> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden">
-        <DialogHeader>
-          <DialogTitle>
+      <DialogContent className="max-w-7xl w-[95vw] max-h-[95vh] overflow-hidden bg-gradient-to-br from-blue-50 via-white to-indigo-50 border-0 shadow-2xl">
+        <DialogHeader className="text-center py-6 bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-t-lg">
+          <DialogTitle className="text-2xl font-bold">
             {prestadorEdicao ? 'Editar Prestador' : 'Novo Prestador'}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="overflow-y-auto max-h-[calc(90vh-120px)] pr-2">
+        <div className="overflow-y-auto max-h-[calc(95vh-140px)] pr-2 pl-2">
           <PrestadorFormComponent
             prestador={prestadorTratado}
             onSubmit={handleSubmit}

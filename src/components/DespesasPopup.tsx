@@ -84,63 +84,67 @@ const DespesasPopup = ({ onSave, despesasExistentes = [] }: Props) => {
       <DialogTrigger asChild>
         <button className="text-xs text-blue-600 underline">Despesas</button>
       </DialogTrigger>
-      <DialogContent>
-        <DialogTitle>Adicionar Despesas</DialogTitle>
-        <DialogDescription>
+      <DialogContent className="max-w-2xl w-[90vw] max-h-[90vh] overflow-y-auto bg-gradient-to-br from-green-50 via-white to-blue-50 border-0 shadow-2xl">
+        <DialogTitle className="text-2xl font-bold text-center py-6 bg-gradient-to-r from-green-600 to-blue-700 text-white rounded-t-lg -mx-6 -mt-6 px-6">
+          Adicionar Despesas
+        </DialogTitle>
+        <DialogDescription className="text-center text-green-100 text-base mt-2 -mx-6 px-6 pb-4">
           Preencha os campos com os valores correspondentes.
         </DialogDescription>
 
-        {despesas.map((d, index) => (
-          <div key={index} className="flex gap-2 mb-2 items-center">
-            <select
-              value={d.tipo}
-              onChange={(e) => handleChange(index, "tipo", e.target.value)}
-              className="w-1/2 border p-2 rounded"
-            >
-              <option value="">Tipo</option>
-              <option value="Pedágio">Pedágio</option>
-              <option value="Alimentação">Alimentação</option>
-              <option value="Uber">Uber</option>
-              <option value="Outros">Outros</option>
-            </select>
-            <input
-              type="text"
-              placeholder="R$ 0,00"
-              value={d.valor}
-              onChange={(e) => handleChange(index, "valor", e.target.value)}
-              className="w-1/2 border p-2 rounded text-right"
-            />
-            {despesas.length > 1 && (
-              <button
-                onClick={() => handleRemove(index)}
-                className="text-red-600 font-bold"
+        <div className="px-6 pb-6">
+          {despesas.map((d, index) => (
+            <div key={index} className="flex gap-4 mb-4 items-center">
+              <select
+                value={d.tipo}
+                onChange={(e) => handleChange(index, "tipo", e.target.value)}
+                className="w-1/2 border-2 border-gray-200 p-3 rounded-lg text-base focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all duration-200"
               >
-                ×
-              </button>
-            )}
-          </div>
-        ))}
+                <option value="">Tipo</option>
+                <option value="Pedágio">Pedágio</option>
+                <option value="Alimentação">Alimentação</option>
+                <option value="Uber">Uber</option>
+                <option value="Outros">Outros</option>
+              </select>
+              <input
+                type="text"
+                placeholder="R$ 0,00"
+                value={d.valor}
+                onChange={(e) => handleChange(index, "valor", e.target.value)}
+                className="w-1/2 border-2 border-gray-200 p-3 rounded-lg text-right text-base focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all duration-200"
+              />
+              {despesas.length > 1 && (
+                <button
+                  onClick={() => handleRemove(index)}
+                  className="text-red-600 font-bold text-xl hover:text-red-700 hover:bg-red-50 p-2 rounded-full transition-all duration-200"
+                >
+                  ×
+                </button>
+              )}
+            </div>
+          ))}
 
-        <button
-          onClick={handleAdd}
-          className="text-blue-600 text-sm underline mb-4"
-        >
-          + Adicionar mais
-        </button>
-
-        <div className="flex justify-end gap-2">
-          <DialogClose asChild>
-            <button className="px-4 py-2 bg-gray-300 text-gray-800 rounded">
-              Cancelar
-            </button>
-          </DialogClose>
           <button
-            onClick={handleSave}
-            disabled={isInvalid()}
-            className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
+            onClick={handleAdd}
+            className="text-green-600 text-base underline mb-6 hover:text-green-700 transition-colors duration-200"
           >
-            Salvar
+            + Adicionar mais
           </button>
+
+          <div className="flex justify-end gap-4">
+            <DialogClose asChild>
+              <button className="px-6 py-3 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-colors duration-200 text-base font-medium">
+                Cancelar
+              </button>
+            </DialogClose>
+            <button
+              onClick={handleSave}
+              disabled={isInvalid()}
+              className="px-6 py-3 bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-lg disabled:opacity-50 hover:from-green-700 hover:to-blue-700 transition-all duration-200 text-base font-medium shadow-lg"
+            >
+              Salvar
+            </button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

@@ -19,7 +19,7 @@ const mockFechamentos = [
     termino: '2024-06-10T09:15:00',
     km_inicial: 10000,
     km_final: 10025,
-    resultado: 'Recuperado',
+    resultado: 'RECUPERADO',
   },
   {
     id: 102,
@@ -36,7 +36,7 @@ const mockFechamentos = [
     termino: '2024-06-11T12:00:00',
     km_inicial: 5000,
     km_final: 5000,
-    resultado: 'Não Recuperado',
+    resultado: 'NAO_RECUPERADO',
   },
   {
     id: 103,
@@ -53,7 +53,7 @@ const mockFechamentos = [
     termino: '2024-06-12T15:00:00',
     km_inicial: null,
     km_final: null,
-    resultado: 'Recuperado',
+    resultado: 'RECUPERADO',
   },
 ];
 

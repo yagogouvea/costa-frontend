@@ -38,14 +38,23 @@ const formatarDataHora = (iso?: string | null) => {
 };
 
 const converterParaRelatorioDados = (ocorrencia: Ocorrencia) => {
+  console.log('🔍 [DEBUG] Dados da ocorrência recebidos:', {
+    id: ocorrencia.id,
+    operador: ocorrencia.operador,
+    sub_cliente: ocorrencia.sub_cliente,
+    cliente: ocorrencia.cliente,
+    tipo: ocorrencia.tipo
+  });
+  
   const convertNullToUndefined = <T,>(value: T | null | undefined): T | undefined => 
     value === null ? undefined : value;
 
-  return {
+  const dadosConvertidos = {
     id: ocorrencia.id,
     cliente: convertNullToUndefined(ocorrencia.cliente),
-    cliente_logo: convertNullToUndefined(ocorrencia.cliente_logo), // ✅ INCLUIR LOGO DO CLIENTE
+    sub_cliente: convertNullToUndefined(ocorrencia.sub_cliente),
     tipo: convertNullToUndefined(ocorrencia.tipo),
+    operador: convertNullToUndefined(ocorrencia.operador),
     data_acionamento: convertNullToUndefined(ocorrencia.data_acionamento),
     placa1: convertNullToUndefined(ocorrencia.placa1),
     modelo1: convertNullToUndefined(ocorrencia.modelo1),
@@ -53,6 +62,7 @@ const converterParaRelatorioDados = (ocorrencia: Ocorrencia) => {
     placa2: convertNullToUndefined(ocorrencia.placa2),
     placa3: convertNullToUndefined(ocorrencia.placa3),
     endereco: convertNullToUndefined(ocorrencia.endereco),
+    bairro: convertNullToUndefined(ocorrencia.bairro),
     cidade: convertNullToUndefined(ocorrencia.cidade),
     estado: convertNullToUndefined(ocorrencia.estado),
     coordenadas: convertNullToUndefined(ocorrencia.coordenadas),
@@ -69,7 +79,8 @@ const converterParaRelatorioDados = (ocorrencia: Ocorrencia) => {
     origem_cidade: convertNullToUndefined(ocorrencia.origem_cidade),
     origem_estado: convertNullToUndefined(ocorrencia.origem_estado),
     condutor: convertNullToUndefined(ocorrencia.nome_condutor),
-    resultado: convertNullToUndefined(ocorrencia.resultado) as 'Recuperado' | 'Não Recuperado' | 'Cancelado' | undefined,
+    resultado: convertNullToUndefined(ocorrencia.resultado),
+    sub_resultado: convertNullToUndefined(ocorrencia.sub_resultado),
     cpf_condutor: convertNullToUndefined(ocorrencia.cpf_condutor),
     nome_condutor: convertNullToUndefined(ocorrencia.nome_condutor),
     transportadora: convertNullToUndefined(ocorrencia.transportadora),
@@ -78,8 +89,21 @@ const converterParaRelatorioDados = (ocorrencia: Ocorrencia) => {
     planta_origem: convertNullToUndefined(ocorrencia.planta_origem),
     cidade_destino: convertNullToUndefined(ocorrencia.cidade_destino),
     km_acl: convertNullToUndefined(ocorrencia.km_acl),
-    conta: convertNullToUndefined(ocorrencia.conta)
+    conta: convertNullToUndefined(ocorrencia.conta),
+    status: ocorrencia.status,
+    tipo_veiculo: convertNullToUndefined(ocorrencia.tipo_veiculo),
+    criado_em: convertNullToUndefined(ocorrencia.criado_em),
+    despesas: ocorrencia.despesas !== null && ocorrencia.despesas !== undefined ? Number(ocorrencia.despesas) : undefined,
+    despesas_detalhadas: ocorrencia.despesas_detalhadas,
+    checklist: ocorrencia.checklist
   };
+  
+  console.log('🔍 [DEBUG] Dados convertidos:', {
+    operador: dadosConvertidos.operador,
+    sub_cliente: dadosConvertidos.sub_cliente
+  });
+  
+  return dadosConvertidos;
 };
 
 export default function RelatoriosPage() {
@@ -261,20 +285,10 @@ export default function RelatoriosPage() {
         console.error('❌ Erro ao buscar fotos do backend para o relatório:', err);
       }
 
-      // ✅ USAR LOGO DO CLIENTE QUE JÁ VEM NA OCORRÊNCIA
-      let logoCliente = '';
-      if (ocorrencia.cliente_logo) {
-        logoCliente = ocorrencia.cliente_logo;
-        console.log('🏢 Logo do cliente encontrado na ocorrência:', logoCliente);
-      } else {
-        console.log('⚠️ Cliente sem logo na ocorrência');
-      }
-      
-      // Converter dados incluindo as fotos públicas e logo do cliente
+      // Converter dados incluindo as fotos públicas
       const dados = {
         ...converterParaRelatorioDados(ocorrencia),
-        fotos: fotosPublicas,
-        cliente_logo: logoCliente
+        fotos: fotosPublicas
       };
       
       console.log('📄 Dados para PDF:', dados);
@@ -468,16 +482,25 @@ export default function RelatoriosPage() {
                       <td className="p-2 md:p-3 text-slate-700 text-xs md:text-sm align-middle">{o.tipo}</td>
                       <td className="p-2 md:p-3 align-middle">
                         {o.resultado ? (
-                          <span className={`px-1 md:px-2 py-1 rounded text-xs font-medium inline-block ${
-                            o.resultado === 'RECUPERADO' ? 'bg-green-100 text-green-800' :
-                            o.resultado === 'NAO_RECUPERADO' ? 'bg-red-100 text-red-800' :
-                            o.resultado === 'CANCELADO' ? 'bg-gray-100 text-gray-800' :
-                            'bg-blue-100 text-blue-800'
-                          }`}>
-                            {o.resultado === 'RECUPERADO' ? 'Recuperado' :
-                             o.resultado === 'NAO_RECUPERADO' ? 'Não Recuperado' :
-                             o.resultado === 'CANCELADO' ? 'Cancelado' : o.resultado}
-                          </span>
+                          <div className="space-y-1">
+                            <span className={`px-1 md:px-2 py-1 rounded text-xs font-medium inline-block ${
+                              o.resultado === 'RECUPERADO' ? 'bg-green-100 text-green-800' :
+                              o.resultado === 'NAO_RECUPERADO' ? 'bg-red-100 text-red-800' :
+                              o.resultado === 'CANCELADO' ? 'bg-gray-100 text-gray-800' :
+                              o.resultado === 'LOCALIZADO' ? 'bg-blue-100 text-blue-800' :
+                              'bg-gray-100 text-gray-800'
+                            }`}>
+                              {o.resultado === 'RECUPERADO' ? 'Recuperado' :
+                               o.resultado === 'NAO_RECUPERADO' ? 'Não Recuperado' :
+                               o.resultado === 'CANCELADO' ? 'Cancelado' : 
+                               o.resultado === 'LOCALIZADO' ? 'Localizado' : o.resultado}
+                            </span>
+                            {o.sub_resultado && o.resultado === 'RECUPERADO' && (
+                              <div className="text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded">
+                                {o.sub_resultado.replace(/_/g, ' ').toLowerCase()}
+                              </div>
+                            )}
+                          </div>
                         ) : (
                           <span className="px-1 md:px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800 inline-block">
                             Em Andamento

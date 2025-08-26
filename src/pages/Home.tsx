@@ -67,7 +67,7 @@ const Home = () => {
         const dataCriacao = new Date(oc.criado_em);
         const status = (oc.status || '').toLowerCase();
         const resultado = (oc.resultado || '').toLowerCase();
-        return dataCriacao >= inicioMes && status !== 'cancelada' && resultado !== 'cancelado' && resultado !== 'cancelada';
+        return dataCriacao >= inicioMes && status !== 'cancelada' && resultado !== 'cancelado' && resultado !== 'cancelada' && resultado !== 'LOCALIZADO';
       }).length;
 
       // Ocorrências em andamento (apenas em_andamento)
@@ -80,7 +80,7 @@ const Home = () => {
       const ocorrenciasRecuperadas = ocorrencias.filter((oc: any) => {
         const dataCriacao = new Date(oc.criado_em);
         const resultado = (oc.resultado || '').toLowerCase();
-        return dataCriacao >= inicioMes && resultado === 'recuperado';
+        return dataCriacao >= inicioMes && (resultado === 'recuperado' || resultado === 'LOCALIZADO');
       }).length;
 
       // Calcular índice de recuperação
@@ -111,7 +111,7 @@ const Home = () => {
       ocorrencias.forEach((oc: any) => {
         // Excluir ocorrências canceladas
         const resultado = (oc.resultado || '').toLowerCase();
-        if (resultado === 'cancelado' || resultado === 'cancelada') {
+        if (resultado === 'cancelado' || resultado === 'cancelada' || resultado === 'LOCALIZADO') {
           return; // Pular esta ocorrência
         }
         
@@ -154,7 +154,7 @@ const Home = () => {
       const ocorrenciasCanceladas = ocorrencias.filter((oc: any) => {
         const resultado = (oc.resultado || '').toLowerCase();
         const dataCriacao = new Date(oc.criado_em);
-        return (resultado === 'cancelado' || resultado === 'cancelada') && dataCriacao >= inicioMes;
+        return (resultado === 'cancelado' || resultado === 'cancelada' || resultado === 'LOCALIZADO') && dataCriacao >= inicioMes;
       }).length;
       console.log('📊 Ocorrências canceladas excluídas:', ocorrenciasCanceladas);
 

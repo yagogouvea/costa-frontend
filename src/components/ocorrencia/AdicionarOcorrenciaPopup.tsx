@@ -13,41 +13,19 @@ import {
 import { Button } from '@/components/ui/button';
 import { DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { CreateOcorrenciaDTO, OcorrenciaStatus } from '@/types/ocorrencia';
+import { OPERADORES } from '@/constants/operadores';
+import { 
+  TIPOS_VEICULO, 
+  TIPOS_OCORRENCIA_PADRAO,
+  OPERACOES_OPENTECH,
+  isClienteOpentech,
+  getTiposOcorrenciaPorCliente
+} from '@/constants/ocorrencia';
 
-const tiposVeiculo = [
-  'Carro', 'Moto', 'Caminhão', 'Carreta'
-] as const;
-
-const tiposOcorrenciaPadrao = [
-  'Acidente', 'Furto', 'Perda de Sinal', 'Preservação', 'Suspeita', 'Roubo', 'Apropriação',
-  'Acompanhamento', 'Sindicância', 'Parada Indevida', 'Botão de Pânico', 'Verificação',
-  'Problema Mecânico', 'Iscagem', 'Blitz', 'Pernoite Seguro', 'Constatação',
-  'Violação Equipamento', 'Regulação'
-] as const;
-
-const tiposOcorrenciaIturan = [
-  'Roubo', 'Furto', 'Apropriação', 'Check de Segurança'
-] as const;
-
-const tiposOcorrenciaMarfrig = [
-  'Roubo', 'Furto', 'Suspeita', 'ACL', 'Investigação', 'Acidente', 'Preservação'
-];
-
-const operadores = [
-  'Marcio', 'Bia', 'Junior', 'Ozias', 'Yago', 'ADM'
-];
-
-const operacoesOpentech = [
-  'OPERAÇÃO PADRÃO',
-  'OPENTECH CONTRAVALE',
-  'OPENTECH LACTALIS',
-  'OPENTECH OP. MINERVA',
-  'OPENTECH AGV - RONDA',
-  'OPENTECH AGV - INVESTIGAÇÃO',
-  'OPENTECH AGV - ACOMPANHAMENTO',
-  'OPENTECH OP 4BIO',
-  'OPENTECH OP. ESPECIAIS PRO FARMA'
-];
+// Função auxiliar para identificar cliente BRK
+const isClienteBrk = (nomeCliente: string): boolean => {
+  return nomeCliente.toUpperCase().includes('BRK');
+};
 
 export interface ClienteResumo {
   id: string;
@@ -67,11 +45,7 @@ interface Props {
   clientes: ClienteResumo[];
 }
 
-// Função utilitária para normalizar nome do cliente
-function isClienteMarfrig(nome: string) {
-  if (!nome || typeof nome !== 'string') return false;
-  return nome.replace(/\s+/g, '').toUpperCase().includes('MARFRIG');
-}
+// Função removida - cliente Marfrig não é utilizado neste sistema
 
 // Função para formatar moeda brasileira
 function formatarMoedaBR(valor: string | number) {
@@ -112,6 +86,7 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
   const [conta, setConta] = useState('');
 
   const [clienteSelecionado, setClienteSelecionado] = useState('');
+  const [subCliente, setSubCliente] = useState('');
 
   // Removido debounce das placas - não é mais necessário
 
@@ -163,76 +138,25 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
       return;
     }
 
-    // Validações específicas para cliente Ituran
-            const clientesArray = Array.isArray(clientes) ? clientes : [];
-        const clienteObj: ClienteResumo | undefined = clientesArray.find(c => c.id === clienteSelecionado);
-        const nomeCliente: string = clienteObj?.nome || '';
-        const isClienteIturan = nomeCliente.toUpperCase().includes('ITURAN');
-        const isClienteOpentech = nomeCliente.toUpperCase().includes('OPENTECH');
-        const isClienteBrk = nomeCliente.toUpperCase().includes('BRK');
+    // Validações básicas
+    const clientesArray = Array.isArray(clientes) ? clientes : [];
+    const clienteObj: ClienteResumo | undefined = clientesArray.find(c => c.id === clienteSelecionado);
+    const nomeCliente: string = clienteObj?.nome || '';
+    const isClienteOpentech = nomeCliente.toUpperCase().includes('OPENTECH');
+    const isClienteBrk = nomeCliente.toUpperCase().includes('BRK');
 
-    if (isClienteIturan) {
-      if (!clienteSelecionado) {
-        alert('Selecione um cliente');
-        return;
-      }
-      if (!tipoOcorrencia) {
-        alert('Selecione o tipo de ocorrência');
-        return;
-      }
-      if (!tipoVeiculo) {
-        alert('Selecione o tipo de veículo');
-        return;
-      }
-      if (!operador) {
-        alert('Selecione o operador');
-        return;
-      }
-
-      if (!modelos[0]) {
-        alert('Preencha o modelo do veículo');
-        return;
-      }
-      if (!cores[0]) {
-        alert('Preencha a cor do veículo');
-        return;
-      }
-      if (!coordenadas) {
-        alert('Preencha as coordenadas');
-        return;
-      }
-      if (!enderecoInfo.endereco) {
-        alert('Preencha o endereço');
-        return;
-      }
-      if (!enderecoInfo.bairro) {
-        alert('Preencha o bairro');
-        return;
-      }
-      if (!enderecoInfo.cidade) {
-        alert('Preencha a cidade');
-        return;
-      }
-      if (!enderecoInfo.estado) {
-        alert('Preencha o estado');
-        return;
-      }
-      if (!os) {
-        alert('Preencha o número da OS, Projeto GM etc');
-        return;
-      }
-      if (!origemBairro) {
-        alert('Preencha o bairro de origem do prestador');
-        return;
-      }
-      if (!origemCidade) {
-        alert('Preencha a cidade de origem do prestador');
-        return;
-      }
-      if (!origemEstado) {
-        alert('Preencha o estado de origem do prestador');
-        return;
-      }
+    // Validações básicas para todos os clientes
+    if (!clienteSelecionado) {
+      alert('Selecione um cliente');
+      return;
+    }
+    if (!tipoOcorrencia) {
+      alert('Selecione o tipo de ocorrência');
+      return;
+    }
+    if (!placas[0]) {
+      alert('Preencha a placa principal');
+      return;
     }
 
     // Validações específicas para cliente Opentech
@@ -266,6 +190,7 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
         modelo1: modelos[0] || undefined,
         cor1: cores[0] || undefined,
         cliente: nomeCliente,
+        sub_cliente: subCliente || undefined,
         tipo: tipoOcorrencia,
         tipo_veiculo: tipoVeiculo || undefined,
         coordenadas: coordenadas || undefined,
@@ -319,16 +244,13 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
           const clientesArray = Array.isArray(clientes) ? clientes : [];
           const clienteObj: ClienteResumo | undefined = clientesArray.find(c => c.id === clienteSelecionado);
           const nomeCliente: string = clienteObj?.nome || '';
-          const isClienteIturan = nomeCliente.toUpperCase().includes('ITURAN');
           const isClienteOpentech = nomeCliente.toUpperCase().includes('OPENTECH') || nomeCliente.toUpperCase().includes('OPEN TECH');
           const isClienteBrk = nomeCliente.toUpperCase().includes('BRK');
           
           return (
             <>
               <div>
-                <Label className={isClienteIturan ? "text-red-500" : ""}>
-                  Cliente {isClienteIturan && <span className="text-red-500">*</span>}
-                </Label>
+                <Label>Cliente</Label>
                 <Select onValueChange={setClienteSelecionado} value={clienteSelecionado}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione um cliente" />
@@ -341,31 +263,25 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
                 </Select>
               </div>
 
-
+              <div>
+                <Label>Sub cliente</Label>
+                <Input 
+                  value={subCliente} 
+                  onChange={e => setSubCliente(e.target.value)} 
+                  placeholder="Digite o sub cliente (opcional)"
+                />
+              </div>
 
               <div>
-                <Label className={isClienteIturan ? "text-red-500" : ""}>
-                  Tipo de Ocorrência {isClienteIturan && <span className="text-red-500">*</span>}
+                <Label >
+                  Tipo de Ocorrência 
                 </Label>
                 <Select onValueChange={setTipoOcorrencia} value={tipoOcorrencia}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent>
-                                  {(clienteSelecionado && (() => {
-                const cliente = clientesArray.find(c => c.id === clienteSelecionado);
-                const nomeCliente = cliente?.nome || '';
-                return isClienteMarfrig(nomeCliente);
-              })()
-                ? tiposOcorrenciaMarfrig
-                : clienteSelecionado && (() => {
-                    const cliente = clientesArray.find(c => c.id === clienteSelecionado);
-                    const nomeCliente = cliente?.nome || '';
-                    return nomeCliente.toUpperCase().includes('ITURAN');
-                  })()
-                  ? tiposOcorrenciaIturan
-                  : tiposOcorrenciaPadrao
-              ).map((tipo: string) => (
+                    {TIPOS_OCORRENCIA_PADRAO.map((tipo: string) => (
                       <SelectItem key={tipo} value={tipo}>{tipo}</SelectItem>
                     ))}
                   </SelectContent>
@@ -373,22 +289,22 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
               </div>
 
               <div>
-                <Label className={isClienteIturan ? "text-red-500" : ""}>
-                  Data do Acionamento {isClienteIturan && <span className="text-red-500">*</span>}
+                <Label >
+                  Data do Acionamento 
                 </Label>
                 <Input type="date" value={dataAcionamento} onChange={e => setDataAcionamento(e.target.value)} />
               </div>
 
               <div>
-                <Label className={isClienteIturan ? "text-red-500" : ""}>
-                  Tipo de Veículo {isClienteIturan && <span className="text-red-500">*</span>}
+                <Label >
+                  Tipo de Veículo 
                 </Label>
                 <Select onValueChange={setTipoVeiculo}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent>
-                    {tiposVeiculo.map(tipo => (
+                    {TIPOS_VEICULO.map(tipo => (
                       <SelectItem key={tipo} value={tipo}>{tipo}</SelectItem>
                     ))}
                   </SelectContent>
@@ -396,15 +312,15 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
               </div>
 
               <div>
-                <Label className={isClienteIturan ? "text-red-500" : ""}>
-                  Operador {isClienteIturan && <span className="text-red-500">*</span>}
+                <Label >
+                  Operador 
                 </Label>
                 <Select onValueChange={setOperador} value={operador}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione o operador" />
                   </SelectTrigger>
                   <SelectContent>
-                    {operadores.map(op => (
+                    {OPERADORES.map(op => (
                       <SelectItem key={op} value={op}>{op}</SelectItem>
                     ))}
                   </SelectContent>
@@ -421,7 +337,7 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
                       <SelectValue placeholder="Selecione a operação" />
                     </SelectTrigger>
                     <SelectContent>
-                      {operacoesOpentech.map(operacao => (
+                      {OPERACOES_OPENTECH.map(operacao => (
                         <SelectItem key={operacao} value={operacao}>{operacao}</SelectItem>
                       ))}
                     </SelectContent>
@@ -443,8 +359,8 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
               )}
 
               <div>
-                <Label className={isClienteIturan ? "text-red-500" : ""}>
-                  Placa Principal {isClienteIturan && <span className="text-red-500">*</span>}
+                <Label >
+                  Placa Principal 
                 </Label>
                 <Input value={placas[0]} onChange={e => handlePlacaChange(e.target.value, 0)} />
               </div>
@@ -460,50 +376,50 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
               </div>
 
               <div>
-                <Label className={isClienteIturan ? "text-red-500" : ""}>
-                  Modelo {isClienteIturan && <span className="text-red-500">*</span>}
+                <Label >
+                  Modelo 
                 </Label>
                 <Input value={modelos[0]} onChange={e => setModelos([e.target.value, modelos[1], modelos[2]])} />
               </div>
 
               <div>
-                <Label className={isClienteIturan ? "text-red-500" : ""}>
-                  Cor {isClienteIturan && <span className="text-red-500">*</span>}
+                <Label >
+                  Cor 
                 </Label>
                 <Input value={cores[0]} onChange={e => setCores([e.target.value, cores[1], cores[2]])} />
               </div>
 
               <div className="col-span-3">
-                <Label className={isClienteIturan ? "text-red-500" : ""}>
-                  Coordenadas (latitude, longitude) {isClienteIturan && <span className="text-red-500">*</span>}
+                <Label >
+                  Local da abordagem (latitude, longitude) 
                 </Label>
                 <Input value={coordenadas} onChange={e => setCoordenadas(e.target.value)} placeholder="Ex: -23.550520, -46.633308" />
               </div>
 
               <div className="col-span-3">
-                <Label className={isClienteIturan ? "text-red-500" : ""}>
-                  Endereço {isClienteIturan && <span className="text-red-500">*</span>}
+                <Label >
+                  Endereço 
                 </Label>
                 <Input value={enderecoInfo.endereco} onChange={e => setEnderecoInfo({ ...enderecoInfo, endereco: e.target.value })} />
               </div>
 
               <div>
-                <Label className={isClienteIturan ? "text-red-500" : ""}>
-                  Bairro {isClienteIturan && <span className="text-red-500">*</span>}
+                <Label >
+                  Bairro 
                 </Label>
                 <Input value={enderecoInfo.bairro} onChange={e => setEnderecoInfo({ ...enderecoInfo, bairro: e.target.value })} />
               </div>
 
               <div>
-                <Label className={isClienteIturan ? "text-red-500" : ""}>
-                  Cidade {isClienteIturan && <span className="text-red-500">*</span>}
+                <Label >
+                  Cidade 
                 </Label>
                 <Input value={enderecoInfo.cidade} onChange={e => setEnderecoInfo({ ...enderecoInfo, cidade: e.target.value })} />
               </div>
 
               <div>
-                <Label className={isClienteIturan ? "text-red-500" : ""}>
-                  Estado {isClienteIturan && <span className="text-red-500">*</span>}
+                <Label >
+                  Estado 
                 </Label>
                 <Input value={enderecoInfo.estado} onChange={e => setEnderecoInfo({ ...enderecoInfo, estado: e.target.value })} />
               </div>
@@ -511,59 +427,9 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
           );
         })()}
 
-        {clienteSelecionado && (() => {
-          const clientesArray = Array.isArray(clientes) ? clientes : [];
-          const cliente = clientesArray.find(c => c.id === clienteSelecionado);
-          const nomeCliente = cliente?.nome || '';
-          return nomeCliente.toUpperCase().includes('ITURAN');
-        })() && (
-          <div className="grid grid-cols-3 gap-2 col-span-3">
-            <div>
-              <Label className="text-red-500">
-                OS <span className="text-red-500">*</span>
-              </Label>
-              <Input value={os} onChange={e => setOs(e.target.value)} placeholder="Número da OS, Projeto GM etc" />
-            </div>
-            <div>
-              <Label className="text-red-500">
-                Bairro (Origem do Prestador) <span className="text-red-500">*</span>
-              </Label>
-              <Input value={origemBairro} onChange={e => setOrigemBairro(e.target.value)} />
-            </div>
-            <div>
-              <Label className="text-red-500">
-                Cidade (Origem do Prestador) <span className="text-red-500">*</span>
-              </Label>
-              <Input value={origemCidade} onChange={e => setOrigemCidade(e.target.value)} />
-            </div>
-            <div>
-              <Label className="text-red-500">
-                Estado (Origem do Prestador) <span className="text-red-500">*</span>
-              </Label>
-              <Input value={origemEstado} onChange={e => setOrigemEstado(e.target.value)} />
-            </div>
-          </div>
-        )}
+        {/* Seção específica do Ituran removida - cliente não utilizado neste sistema */}
 
-        {clienteSelecionado && (() => {
-          const clientesArray = Array.isArray(clientes) ? clientes : [];
-          const cliente = clientesArray.find(c => c.id === clienteSelecionado);
-          const nomeCliente = cliente?.nome || '';
-          return isClienteMarfrig(nomeCliente);
-        })() && (
-          <div className="grid grid-cols-2 gap-2 col-span-3">
-            <div><Label>CPF do Condutor</Label><Input value={cpfCondutor} onChange={e => setCpfCondutor(e.target.value)} /></div>
-            <div><Label>Nome do Condutor</Label><Input value={nomeCondutor} onChange={e => setNomeCondutor(e.target.value)} /></div>
-            <div><Label>Transportadora</Label><Input value={transportadora} onChange={e => setTransportadora(e.target.value)} /></div>
-            <div><Label>Valor da Carga (R$)</Label><Input type="text" value={formatarMoedaBR(valorCarga)} onChange={e => setValorCarga(e.target.value)} placeholder="R$ 0,00" inputMode="numeric" /></div>
-            <div className="col-span-2"><Label>Notas Fiscais</Label><Input value={notasFiscais} onChange={e => setNotasFiscais(e.target.value)} placeholder="Separe por vírgulas" /></div>
-            <div><Label>Planta de origem</Label><Input value={plantaOrigem} onChange={e => setPlantaOrigem(e.target.value)} /></div>
-            <div><Label>Cidade de destino</Label><Input value={cidadeDestino} onChange={e => setCidadeDestino(e.target.value)} /></div>
-            {tipoOcorrencia === 'ACL' && (
-              <div className="col-span-2"><Label>KM ACL</Label><Input value={kmAcl} onChange={e => setKmAcl(e.target.value)} /></div>
-            )}
-          </div>
-        )}
+        {/* Seção específica do Marfrig removida - cliente não utilizado neste sistema */}
       </div>
 
       <div className="flex justify-end gap-2">

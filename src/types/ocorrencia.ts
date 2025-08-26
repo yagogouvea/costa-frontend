@@ -23,6 +23,7 @@ export interface CreateOcorrenciaDTO {
   placa2?: string | null;
   placa3?: string | null;
   cliente: string;
+  sub_cliente?: string | null;
   tipo: string;
   tipo_veiculo?: string | null;
   modelo1?: string | null;
@@ -43,8 +44,23 @@ export interface CreateOcorrenciaDTO {
   fotos?: Foto[];
   status: OcorrenciaStatus;
   resultado?: string;
+  sub_resultado?: string;
   observacoes?: string;
   operador?: string;
+
+  // Novos campos para horários
+  data_chamado?: string | null;
+  hora_chamado?: string | null;
+  data_recuperacao?: string | null;
+  chegada_qth?: string | null;
+  local_abordagem?: string | null;
+  destino?: string | null;
+  tipo_remocao?: string | null;
+  endereco_loja?: string | null;
+  nome_loja?: string | null;
+  nome_guincho?: string | null;
+  endereco_base?: string | null;
+  detalhes_local?: string | null;
 
   // Campos específicos ITURAN
   os?: string | null;
@@ -75,6 +91,7 @@ export interface Ocorrencia {
   placa2?: string | null;
   placa3?: string | null;
   cliente: string;
+  sub_cliente?: string | null;
   tipo: string;
   tipo_veiculo?: string | null;
   modelo1?: string | null;
@@ -97,6 +114,7 @@ export interface Ocorrencia {
   fotos?: Foto[];
   status: OcorrenciaStatus;
   resultado?: string;
+  sub_resultado?: string;
   observacoes?: string;
   descricao?: string | null;
   passagem_servico?: string | null;
@@ -104,6 +122,20 @@ export interface Ocorrencia {
   atualizado_em: string;
   encerrada_em?: string | null;
   tem_fotos?: boolean;
+  
+  // Novos campos para horários
+  data_chamado?: string | null;
+  hora_chamado?: string | null;
+  data_recuperacao?: string | null;
+  chegada_qth?: string | null;
+  local_abordagem?: string | null;
+  destino?: string | null;
+  tipo_remocao?: string | null;
+  endereco_loja?: string | null;
+  nome_loja?: string | null;
+  nome_guincho?: string | null;
+  endereco_base?: string | null;
+  detalhes_local?: string | null;
   
   // Campos específicos ITURAN
   os?: string | null;
@@ -137,8 +169,10 @@ export interface Ocorrencia {
   franquia_km?: number | null;
   
   // ✅ NOVOS CAMPOS DO CLIENTE
-  cliente_logo?: string | null;
   cliente_nome_fantasia?: string | null;
+  
+  // ✅ RELACIONAMENTOS
+  checklist?: any;
 }
 
 export interface OcorrenciaFormatada extends Omit<Ocorrencia, 'inicio' | 'chegada' | 'termino' | 'encerrada_em'> {

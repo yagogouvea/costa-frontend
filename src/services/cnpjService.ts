@@ -93,3 +93,5 @@ export function validarCNPJ(cnpj: string): boolean {
   resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
   return resultado === parseInt(digitos.charAt(1));
 }
+
+
