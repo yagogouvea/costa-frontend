@@ -146,10 +146,9 @@ const styles = StyleSheet.create({
   page: {
     flexDirection: 'column',
     backgroundColor: '#ffffff',
-    padding: 20,
+    padding: 30,
     fontFamily: 'Helvetica',
     textTransform: 'none'
-    // padding: 30 REDUZIDO para 20 - mais espaço para conteúdo
   },
   
   // Faixa superior do cabeçalho
@@ -322,12 +321,12 @@ const styles = StyleSheet.create({
   },
   fotoItem: {
     width: '42%',
-    marginBottom: 15,
+    marginBottom: 30,
     border: '3pt solid #2D3748',
     backgroundColor: '#ffffff',
     padding: 8,
-    borderRadius: 8
-    // minHeight: 320 REMOVIDO - permite altura natural e quebra de página
+    borderRadius: 8,
+    minHeight: 320
   },
   fotoItemLeft: {
     marginRight: 15
@@ -345,9 +344,8 @@ const styles = StyleSheet.create({
   },
   foto: {
     width: '100%',
-    height: 'auto',
+    height: 280,
     objectFit: 'contain'
-    // height: 280 REMOVIDO - permite altura natural e quebra de página
   },
   fotoLegenda: {
     fontSize: 8,
@@ -428,12 +426,6 @@ const RelatorioPDF = ({ dados }: { dados: RelatorioDados }) => {
     temChecklist: !!checklist,
     temDescricao: !!descricao
   });
-
-  // Calcular informações das páginas ANTES do return
-  const fotosPorPagina = 4; // 2 linhas de 2 fotos por página
-  const totalPaginasConteudo = (checklist || descricao) ? 2 : 1;
-  const primeiraPaginaFotos = totalPaginasConteudo + 1;
-  const totalPaginasFotos = fotos && fotos.length > 0 ? Math.ceil(fotos.length / fotosPorPagina) : 0;
 
   return (
     <Document>
@@ -547,30 +539,28 @@ const RelatorioPDF = ({ dados }: { dados: RelatorioDados }) => {
                         .join(' ');
                     }
                     
-                                         if (sub_resultado) {
-                       // Formatar sub_resultado: primeira letra maiúscula, resto minúsculo, remover underscores
-                       const subResultadoFormatado = sub_resultado
-                         .split('_')
-                         .map((palavra, index) => {
-                           if (index === 0) {
-                             // Primeira palavra: primeira letra maiúscula
-                             return palavra.charAt(0).toUpperCase() + palavra.slice(1).toLowerCase();
-                           } else {
-                             // Outras palavras: tudo minúsculo
-                             return palavra.toLowerCase();
-                           }
-                         })
-                         .join(' ');
-                      
-                       // Combinar resultado + sub_resultado (sem duplicar "com")
-                       if (resultadoCompleto) {
-                         // Se já tem resultado, adicionar sub_resultado
-                         resultadoCompleto += ' ' + subResultadoFormatado;
-                       } else {
-                         // Se não tem resultado, usar apenas sub_resultado
-                         resultadoCompleto = subResultadoFormatado;
-                       }
-                     }
+                    if (sub_resultado) {
+                      // Formatar sub_resultado: primeira letra maiúscula, resto minúsculo, remover underscores
+                      const subResultadoFormatado = sub_resultado
+                        .split('_')
+                        .map((palavra, index) => {
+                          if (index === 0) {
+                            // Primeira palavra: primeira letra maiúscula
+                            return palavra.charAt(0).toUpperCase() + palavra.slice(1).toLowerCase();
+                          } else {
+                            // Outras palavras: tudo minúsculo
+                            return palavra.toLowerCase();
+                          }
+                        })
+                        .join(' ');
+                     
+                      // Combinar resultado + sub_resultado
+                      if (resultadoCompleto) {
+                        resultadoCompleto += ' com ' + subResultadoFormatado;
+                      } else {
+                        resultadoCompleto = subResultadoFormatado;
+                      }
+                    }
                     
                     return resultadoCompleto || 'N/A';
                   })()}
@@ -833,211 +823,99 @@ const RelatorioPDF = ({ dados }: { dados: RelatorioDados }) => {
             </View>
           )}
 
-          {/* RODAPÉ REMOVIDO PARA TESTE */}
+          {/* Rodapé da segunda página - SEM informação de geração */}
+          <View style={styles.rodape}>
+            {/* Faixa degradê do rodapé */}
+            <View style={styles.faixaRodape} />
+          </View>
         </Page>
       )}
 
-      {/* === PÁGINAS DE FOTOS - SOLUÇÃO COMPLETAMENTE SEM IIFE === */}
-      
-      {/* Página 1 de fotos */}
-      {fotos && fotos.length > 0 && (
-        <Page size="A4" style={styles.page}>
-          {/* Faixa superior */}
-          <View style={styles.faixaTopo} />
+      {/* === PÁGINAS DE FOTOS - SOLUÇÃO SEM IIFE === */}
+      {fotos && fotos.length > 0 && (() => {
+        const fotosPorPagina = 4; // 2 linhas de 2 fotos por página
+        
+        // Calcular o número da primeira página de fotos dinamicamente
+        // Página 1: Informações básicas (sempre existe)
+        // Página 2: Checklist/Descrição (se existir)
+        // Página 3+: Fotos (começam na página seguinte à última página de conteúdo)
+        const totalPaginasConteudo = (checklist || descricao) ? 2 : 1;
+        const primeiraPaginaFotos = totalPaginasConteudo + 1;
+        
+        // Calcular o número total de páginas necessárias para todas as fotos
+        const totalPaginasFotos = Math.ceil(fotos.length / fotosPorPagina);
+        
+        // SOLUÇÃO DEFINITIVA: Criar páginas diretamente sem IIFE
+        const paginas = [];
+        
+        for (let paginaIndex = 0; paginaIndex < totalPaginasFotos; paginaIndex++) {
+          const inicioFotos = paginaIndex * fotosPorPagina;
+          const fotosDaPagina = fotos.slice(inicioFotos, inicioFotos + fotosPorPagina);
           
-          {/* Título das fotos */}
-          <Text style={styles.tituloFotos}>FOTOS DA OCORRÊNCIA</Text>
-          
-          {/* Grid de fotos - primeira página */}
-          <View style={styles.fotosGrid}>
-            {fotos.slice(0, 4).map((foto, index) => (
-              <View 
-                key={`foto-0-${index}`} 
-                style={[
-                  styles.fotoItem,
-                  index % 2 === 0 ? styles.fotoItemLeft : styles.fotoItemRight,
-                  index < 2 ? styles.fotoItemFirstRow : {}
-                ]}
-              >
-                {/* Container da imagem */}
-                <View style={styles.fotoContainer}>
-                  <Image
-                    style={styles.foto}
-                    src={tratarUrlImagem(foto.url || '')}
-                  />
+          // IMPORTANTE: Só criar página se houver fotos para exibir
+          if (fotosDaPagina.length > 0) {
+            paginas.push(
+              <Page key={`fotos-${paginaIndex}`} size="A4" style={styles.page}>
+                {/* Faixa superior */}
+                <View style={styles.faixaTopo} />
+                
+                {/* Título das fotos */}
+                <Text style={styles.tituloFotos}>
+                  {paginaIndex === 0 ? 'FOTOS DA OCORRÊNCIA' : 'FOTOS DA OCORRÊNCIA (CONTINUAÇÃO)'}
+                </Text>
+                
+                {/* Grid de fotos - cada página tem no máximo 4 fotos */}
+                <View style={styles.fotosGrid}>
+                  {fotosDaPagina.map((foto, index) => {
+                    const posicaoNaPagina = index;
+                    
+                    return (
+                      <View 
+                        key={`${paginaIndex}-${index}`} 
+                        style={[
+                          styles.fotoItem,
+                          posicaoNaPagina % 2 === 0 ? styles.fotoItemLeft : styles.fotoItemRight,
+                          posicaoNaPagina < 2 ? styles.fotoItemFirstRow : {}
+                        ]}
+                      >
+                        {/* Container da imagem */}
+                        <View style={styles.fotoContainer}>
+                          <Image
+                            style={styles.foto}
+                            src={tratarUrlImagem(foto.url || '')}
+                          />
+                        </View>
+                        
+                        {/* Legenda da foto */}
+                        <Text style={styles.fotoLegenda}>
+                          {foto.legenda || `Foto ${inicioFotos + index + 1}`}
+                          {foto.criado_em && (
+                            <Text style={styles.fotoData}>
+                              {' - '}{formatarDataHora(foto.criado_em)}
+                            </Text>
+                          )}
+                        </Text>
+                      </View>
+                    );
+                  })}
                 </View>
                 
-                {/* Legenda da foto */}
-                <Text style={styles.fotoLegenda}>
-                  {foto.legenda || `Foto ${index + 1}`}
-                  {foto.criado_em && (
-                    <Text style={styles.fotoData}>
-                      {' - '}{formatarDataHora(foto.criado_em)}
-                    </Text>
-                  )}
+                {/* Contador de fotos corrigido */}
+                <Text style={styles.fotosContador}>
+                  Página {primeiraPaginaFotos + paginaIndex} de {primeiraPaginaFotos + totalPaginasFotos - 1} - Total de {fotos.length} foto{fotos.length !== 1 ? 's' : ''} anexada{fotos.length !== 1 ? 's' : ''}
                 </Text>
-              </View>
-            ))}
-          </View>
-          
-          {/* Contador de fotos */}
-          <Text style={styles.fotosContador}>
-            Página {primeiraPaginaFotos} de {primeiraPaginaFotos + totalPaginasFotos - 1} - Total de {fotos.length} foto{fotos.length !== 1 ? 's' : ''} anexada{fotos.length !== 1 ? 's' : ''}
-          </Text>
-          
-          {/* RODAPÉ REMOVIDO PARA TESTE */}
-        </Page>
-      )}
-
-      {/* Página 2 de fotos */}
-      {fotos && fotos.length > 4 && (
-        <Page size="A4" style={styles.page}>
-          {/* Faixa superior */}
-          <View style={styles.faixaTopo} />
-          
-          {/* Título das fotos */}
-          <Text style={styles.tituloFotos}>FOTOS DA OCORRÊNCIA (CONTINUAÇÃO)</Text>
-          
-          {/* Grid de fotos - segunda página */}
-          <View style={styles.fotosGrid}>
-            {fotos.slice(4, 8).map((foto, index) => (
-              <View 
-                key={`foto-1-${index}`} 
-                style={[
-                  styles.fotoItem,
-                  index % 2 === 0 ? styles.fotoItemLeft : styles.fotoItemRight,
-                  index < 2 ? styles.fotoItemFirstRow : {}
-                ]}
-              >
-                {/* Container da imagem */}
-                <View style={styles.fotoContainer}>
-                  <Image
-                    style={styles.foto}
-                    src={tratarUrlImagem(foto.url || '')}
-                  />
-                </View>
                 
-                {/* Legenda da foto */}
-                <Text style={styles.fotoLegenda}>
-                  {foto.legenda || `Foto ${index + 5}`}
-                  {foto.criado_em && (
-                    <Text style={styles.fotoData}>
-                      {' - '}{formatarDataHora(foto.criado_em)}
-                    </Text>
-                  )}
-                </Text>
-              </View>
-            ))}
-          </View>
-          
-          {/* Contador de fotos */}
-          <Text style={styles.fotosContador}>
-            Página {primeiraPaginaFotos + 1} de {primeiraPaginaFotos + totalPaginasFotos - 1} - Total de {fotos.length} foto{fotos.length !== 1 ? 's' : ''} anexada{fotos.length !== 1 ? 's' : ''}
-          </Text>
-          
-          {/* RODAPÉ REMOVIDO PARA TESTE */}
-        </Page>
-      )}
-
-      {/* Página 3 de fotos */}
-      {fotos && fotos.length > 8 && (
-        <Page size="A4" style={styles.page}>
-          {/* Faixa superior */}
-          <View style={styles.faixaTopo} />
-          
-          {/* Título das fotos */}
-          <Text style={styles.tituloFotos}>FOTOS DA OCORRÊNCIA (CONTINUAÇÃO)</Text>
-          
-          {/* Grid de fotos - terceira página */}
-          <View style={styles.fotosGrid}>
-            {fotos.slice(8, 12).map((foto, index) => (
-              <View 
-                key={`foto-2-${index}`} 
-                style={[
-                  styles.fotoItem,
-                  index % 2 === 0 ? styles.fotoItemLeft : styles.fotoItemRight,
-                  index < 2 ? styles.fotoItemFirstRow : {}
-                ]}
-              >
-                {/* Container da imagem */}
-                <View style={styles.fotoContainer}>
-                  <Image
-                    style={styles.foto}
-                    src={tratarUrlImagem(foto.url || '')}
-                  />
+                {/* Rodapé da página - SEM informação de geração */}
+                <View style={styles.rodape}>
+                  <View style={styles.faixaRodape} />
                 </View>
-                
-                {/* Legenda da foto */}
-                <Text style={styles.fotoLegenda}>
-                  {foto.legenda || `Foto ${index + 9}`}
-                  {foto.criado_em && (
-                    <Text style={styles.fotoData}>
-                      {' - '}{formatarDataHora(foto.criado_em)}
-                    </Text>
-                  )}
-                </Text>
-              </View>
-            ))}
-          </View>
-          
-          {/* Contador de fotos */}
-          <Text style={styles.fotosContador}>
-            Página {primeiraPaginaFotos + 2} de {primeiraPaginaFotos + totalPaginasFotos - 1} - Total de {fotos.length} foto{fotos.length !== 1 ? 's' : ''} anexada{fotos.length !== 1 ? 's' : ''}
-          </Text>
-          
-          {/* RODAPÉ REMOVIDO PARA TESTE */}
-        </Page>
-      )}
-
-      {/* Página 4 de fotos */}
-      {fotos && fotos.length > 12 && (
-        <Page size="A4" style={styles.page}>
-          {/* Faixa superior */}
-          <View style={styles.faixaTopo} />
-          
-          {/* Título das fotos */}
-          <Text style={styles.tituloFotos}>FOTOS DA OCORRÊNCIA (CONTINUAÇÃO)</Text>
-          
-          {/* Grid de fotos - quarta página */}
-          <View style={styles.fotosGrid}>
-            {fotos.slice(12, 16).map((foto, index) => (
-              <View 
-                key={`foto-3-${index}`} 
-                style={[
-                  styles.fotoItem,
-                  index % 2 === 0 ? styles.fotoItemLeft : styles.fotoItemRight,
-                  index < 2 ? styles.fotoItemFirstRow : {}
-                ]}
-              >
-                {/* Container da imagem */}
-                <View style={styles.fotoContainer}>
-                  <Image
-                    style={styles.foto}
-                    src={tratarUrlImagem(foto.url || '')}
-                  />
-                </View>
-                
-                {/* Legenda da foto */}
-                <Text style={styles.fotoLegenda}>
-                  {foto.legenda || `Foto ${index + 13}`}
-                  {foto.criado_em && (
-                    <Text style={styles.fotoData}>
-                      {' - '}{formatarDataHora(foto.criado_em)}
-                    </Text>
-                  )}
-                </Text>
-              </View>
-            ))}
-          </View>
-          
-          {/* Contador de fotos */}
-          <Text style={styles.fotosContador}>
-            Página {primeiraPaginaFotos + 3} de {primeiraPaginaFotos + totalPaginasFotos - 1} - Total de {fotos.length} foto{fotos.length !== 1 ? 's' : ''} anexada{fotos.length !== 1 ? 's' : ''}
-          </Text>
-          
-          {/* RODAPÉ REMOVIDO PARA TESTE */}
-        </Page>
-      )}
+              </Page>
+            );
+          }
+        }
+        
+        return paginas;
+      })()}
     </Document>
   );
 };

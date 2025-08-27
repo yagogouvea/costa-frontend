@@ -146,10 +146,9 @@ const styles = StyleSheet.create({
   page: {
     flexDirection: 'column',
     backgroundColor: '#ffffff',
-    padding: 20,
+    padding: 30,
     fontFamily: 'Helvetica',
     textTransform: 'none'
-    // padding: 30 REDUZIDO para 20 - mais espaço para conteúdo
   },
   
   // Faixa superior do cabeçalho
@@ -322,12 +321,12 @@ const styles = StyleSheet.create({
   },
   fotoItem: {
     width: '42%',
-    marginBottom: 15,
+    marginBottom: 30,
     border: '3pt solid #2D3748',
     backgroundColor: '#ffffff',
     padding: 8,
-    borderRadius: 8
-    // minHeight: 320 REMOVIDO - permite altura natural e quebra de página
+    borderRadius: 8,
+    minHeight: 320
   },
   fotoItemLeft: {
     marginRight: 15
@@ -345,9 +344,8 @@ const styles = StyleSheet.create({
   },
   foto: {
     width: '100%',
-    height: 'auto',
+    height: 280,
     objectFit: 'contain'
-    // height: 280 REMOVIDO - permite altura natural e quebra de página
   },
   fotoLegenda: {
     fontSize: 8,
@@ -547,30 +545,28 @@ const RelatorioPDF = ({ dados }: { dados: RelatorioDados }) => {
                         .join(' ');
                     }
                     
-                                         if (sub_resultado) {
-                       // Formatar sub_resultado: primeira letra maiúscula, resto minúsculo, remover underscores
-                       const subResultadoFormatado = sub_resultado
-                         .split('_')
-                         .map((palavra, index) => {
-                           if (index === 0) {
-                             // Primeira palavra: primeira letra maiúscula
-                             return palavra.charAt(0).toUpperCase() + palavra.slice(1).toLowerCase();
-                           } else {
-                             // Outras palavras: tudo minúsculo
-                             return palavra.toLowerCase();
-                           }
-                         })
-                         .join(' ');
-                      
-                       // Combinar resultado + sub_resultado (sem duplicar "com")
-                       if (resultadoCompleto) {
-                         // Se já tem resultado, adicionar sub_resultado
-                         resultadoCompleto += ' ' + subResultadoFormatado;
-                       } else {
-                         // Se não tem resultado, usar apenas sub_resultado
-                         resultadoCompleto = subResultadoFormatado;
-                       }
-                     }
+                    if (sub_resultado) {
+                      // Formatar sub_resultado: primeira letra maiúscula, resto minúsculo, remover underscores
+                      const subResultadoFormatado = sub_resultado
+                        .split('_')
+                        .map((palavra, index) => {
+                          if (index === 0) {
+                            // Primeira palavra: primeira letra maiúscula
+                            return palavra.charAt(0).toUpperCase() + palavra.slice(1).toLowerCase();
+                          } else {
+                            // Outras palavras: tudo minúsculo
+                            return palavra.toLowerCase();
+                          }
+                        })
+                        .join(' ');
+                     
+                      // Combinar resultado + sub_resultado
+                      if (resultadoCompleto) {
+                        resultadoCompleto += ' com ' + subResultadoFormatado;
+                      } else {
+                        resultadoCompleto = subResultadoFormatado;
+                      }
+                    }
                     
                     return resultadoCompleto || 'N/A';
                   })()}

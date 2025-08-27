@@ -146,22 +146,26 @@ const styles = StyleSheet.create({
   page: {
     flexDirection: 'column',
     backgroundColor: '#ffffff',
-    padding: 20,
+    padding: 30,
     fontFamily: 'Helvetica',
     textTransform: 'none'
-    // padding: 30 REDUZIDO para 20 - mais espaço para conteúdo
   },
   
   // Faixa superior do cabeçalho
   faixaTopo: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
     height: 12,
-    padding: 2,
+    padding: '2pt 0',
     backgroundColor: '#1E3A8A',
     borderBottom: '0.5pt solid #1E40AF'
   },
   
   // Logo Costa centralizado
   headerLogo: {
+    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
@@ -207,6 +211,7 @@ const styles = StyleSheet.create({
   // Quadrante individual - não pode ser dividido entre páginas
   quadrante: {
     border: '2pt solid #0B2149',
+    borderRadius: 8,
     padding: 12,
     backgroundColor: '#f9fafc',
     marginBottom: 20
@@ -215,6 +220,7 @@ const styles = StyleSheet.create({
   // Quadrante do checklist - deve iniciar na segunda página
   quadranteChecklist: {
     border: '2pt solid #0B2149',
+    borderRadius: 8,
     padding: 12,
     backgroundColor: '#f9fafc',
     marginBottom: 20
@@ -245,7 +251,8 @@ const styles = StyleSheet.create({
   // Linha de quadrante (label + valor)
   linhaQuadrante: {
     flexDirection: 'row',
-    marginBottom: 6
+    marginBottom: 6,
+    alignItems: 'flex-start'
   },
   
   // Rotulo do campo
@@ -253,8 +260,7 @@ const styles = StyleSheet.create({
     fontSize: 9,
     fontWeight: 'bold',
     color: '#0B2149',
-    width: '35%',
-    marginRight: 10,
+    width: '40%',
     textTransform: 'uppercase'
   },
   
@@ -262,7 +268,7 @@ const styles = StyleSheet.create({
   valor: {
     fontSize: 9,
     color: '#333',
-    width: '65%',
+    width: '60%',
     textAlign: 'left'
   },
   
@@ -270,8 +276,7 @@ const styles = StyleSheet.create({
   linhaDivisoria: {
     height: 1,
     backgroundColor: '#e2e8f0',
-    marginTop: 8,
-    marginBottom: 8
+    marginVertical: 8
   },
   
   // Seção condicional (aparece apenas quando selecionada)
@@ -284,6 +289,7 @@ const styles = StyleSheet.create({
     marginTop: 25,
     padding: 15,
     border: '2pt solid #0B2149',
+    borderRadius: 8,
     backgroundColor: '#f9fafc'
   },
   tituloDescricao: {
@@ -299,14 +305,14 @@ const styles = StyleSheet.create({
   descricaoTexto: {
     fontSize: 10,
     color: '#333',
-    textAlign: 'justify'
+    textAlign: 'justify',
+    lineHeight: 1.4
   },
   
   // === FOTOS ===
   fotosContainer: {
     marginTop: 25,
-    marginBottom: 20,
-    flex: 1
+    marginBottom: 20
   },
   tituloFotos: {
     fontSize: 12,
@@ -316,100 +322,105 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase'
   },
   fotosGrid: {
+    display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between'
   },
   fotoItem: {
-    width: '42%',
+    width: '48%',
     marginBottom: 15,
-    border: '3pt solid #2D3748',
-    backgroundColor: '#ffffff',
-    padding: 8,
-    borderRadius: 8
-    // minHeight: 320 REMOVIDO - permite altura natural e quebra de página
+    border: '1pt solid #e2e8f0',
+    borderRadius: 6,
+    overflow: 'hidden',
+    backgroundColor: '#ffffff'
   },
   fotoItemLeft: {
-    marginRight: 15
+    marginRight: 'auto'
   },
   fotoItemRight: {
-    marginLeft: 15
+    marginLeft: 'auto'
   },
   fotoItemFirstRow: {
     marginTop: 0
   },
   fotoContainer: {
-    margin: 0,
-    padding: 0,
-    backgroundColor: 'transparent'
+    position: 'relative',
+    overflow: 'hidden'
   },
   foto: {
     width: '100%',
-    height: 'auto',
-    objectFit: 'contain'
-    // height: 280 REMOVIDO - permite altura natural e quebra de página
+    height: 80,
+    objectFit: 'cover',
+    display: 'block'
   },
   fotoLegenda: {
     fontSize: 8,
     color: '#333',
     textAlign: 'center',
     padding: 6,
-    backgroundColor: '#E2E8F0',
-    marginTop: 2,
-    borderTop: '1pt solid #CBD5E0',
-    borderRadius: 4
+    backgroundColor: '#f8fafc',
+    fontWeight: '500',
+    lineHeight: 1.2
   },
   fotoData: {
     fontSize: 7,
-    color: '#666'
+    color: '#666',
+    fontStyle: 'italic'
   },
   fotoInfoTecnica: {
     fontSize: 6,
     color: '#888',
     textAlign: 'center',
-    padding: 4,
+    padding: '2px 4px',
     backgroundColor: '#f1f5f9',
-    marginTop: 2
+    fontFamily: 'monospace'
   },
   fotosContador: {
     fontSize: 9,
     color: '#666',
     textAlign: 'center',
     marginTop: 15,
-    padding: 8,
-    borderTop: '3pt solid #2D3748',
-    backgroundColor: '#EDF2F7',
-    borderRadius: 4
+    padding: '8px 0',
+    borderTop: '1pt solid #e2e8f0',
+    backgroundColor: '#f8fafc',
+    fontStyle: 'italic'
   },
   
   // Rodapé
   rodape: {
-    marginTop: 10,
-    padding: 8,
+    marginTop: 20,
+    padding: 10,
     borderTop: '1pt solid #e2e8f0',
-    textAlign: 'center'
+    textAlign: 'center',
+    position: 'relative'
   },
   
   // Faixa degradê do rodapé
   faixaRodape: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
     height: 12,
-    padding: 2,
+    padding: '2pt 0',
     backgroundColor: '#DBEAFE',
     borderTop: '0.5pt solid #1E40AF'
   },
   rodapeTexto: {
     fontSize: 8,
-    color: '#666'
+    color: '#666',
+    fontStyle: 'italic'
   },
   linkMaps: {
     color: '#007bff',
-    fontSize: 9,
-    fontFamily: 'Helvetica'
+    textDecoration: 'underline'
   },
   
   // Estilos para campos vazios
   campoVazio: {
-    color: '#999'
+    color: '#999',
+    fontStyle: 'italic'
   }
 });
 
@@ -417,23 +428,8 @@ const RelatorioPDF = ({ dados }: { dados: RelatorioDados }) => {
   const {
     id, cliente, tipo, data_acionamento, placa1, modelo1, cor1, endereco, cidade, estado, coordenadas, inicio, chegada,
     termino, km_inicial, km_final, km, descricao, fotos = [], resultado, sub_resultado,
-    checklist, status, operador, criado_em, despesas, despesas_detalhadas, bairro, sub_cliente, tipo_veiculo
+    checklist, status, operador, criado_em, despesas, despesas_detalhadas, bairro, sub_cliente
   } = dados;
-  
-  // Debug: verificar dados recebidos
-  console.log('Debug RelatorioPDF - dados recebidos:', {
-    temFotos: !!fotos,
-    totalFotos: fotos?.length || 0,
-    fotos: fotos?.slice(0, 3) || [], // Primeiras 3 fotos para debug
-    temChecklist: !!checklist,
-    temDescricao: !!descricao
-  });
-
-  // Calcular informações das páginas ANTES do return
-  const fotosPorPagina = 4; // 2 linhas de 2 fotos por página
-  const totalPaginasConteudo = (checklist || descricao) ? 2 : 1;
-  const primeiraPaginaFotos = totalPaginasConteudo + 1;
-  const totalPaginasFotos = fotos && fotos.length > 0 ? Math.ceil(fotos.length / fotosPorPagina) : 0;
 
   return (
     <Document>
@@ -446,7 +442,7 @@ const RelatorioPDF = ({ dados }: { dados: RelatorioDados }) => {
         <View style={styles.headerLogo}>
           <Image
             style={styles.logoCosta}
-            src="/assets/LOGOCOSTA.png"
+            src="/logo-costa.png"
           />
         </View>
         
@@ -455,130 +451,111 @@ const RelatorioPDF = ({ dados }: { dados: RelatorioDados }) => {
           RELATÓRIO DE OCORRÊNCIA
         </Text>
         
+        {/* Subtítulo com informações básicas */}
+        <Text style={styles.subtitulo}>
+          {cliente || 'Cliente não informado'} - {tipo || 'Tipo não informado'}
+        </Text>
+        
         {/* === QUADRANTES DO CABEÇALHO === */}
         <View style={styles.quadrantesContainer}>
           <View style={styles.quadrantesWrapper}>
             {/* Quadrante 1: Informações da Ocorrência */}
             <View style={styles.quadrante}>
-              <Text style={styles.tituloQuadrante}>INFORMAÇÕES BÁSICAS</Text>
+              <Text style={styles.tituloQuadrante}>INFORMAÇÕES DA OCORRÊNCIA</Text>
               
               <View style={styles.linhaQuadrante}>
-                <Text style={styles.rotulo}>Data:</Text>
-                <Text style={styles.valor}>{formatarData(data_acionamento)}</Text>
-              </View>
-              
-              <View style={styles.linhaQuadrante}>
-                <Text style={styles.rotulo}>ID da Ocorrência:</Text>
+                <Text style={styles.rotulo}>ID:</Text>
                 <Text style={styles.valor}>{id || 'N/A'}</Text>
               </View>
               
               <View style={styles.linhaQuadrante}>
-                <Text style={styles.rotulo}>Cliente:</Text>
-                <Text style={styles.valor}>{cliente || 'N/A'}</Text>
+                <Text style={styles.rotulo}>Data do Acionamento:</Text>
+                <Text style={styles.valor}>{formatarData(data_acionamento)}</Text>
               </View>
               
               <View style={styles.linhaQuadrante}>
-                <Text style={styles.rotulo}>Sub Cliente:</Text>
-                <Text style={styles.valor}>{sub_cliente || 'N/A'}</Text>
+                <Text style={styles.rotulo}>Status:</Text>
+                <Text style={styles.valor}>{status || 'N/A'}</Text>
               </View>
               
               <View style={styles.linhaQuadrante}>
                 <Text style={styles.rotulo}>Operador:</Text>
                 <Text style={styles.valor}>{operador || 'N/A'}</Text>
               </View>
+              
+              <View style={styles.linhaQuadrante}>
+                <Text style={styles.rotulo}>Resultado:</Text>
+                <Text style={styles.valor}>{resultado || 'N/A'}</Text>
+              </View>
+              
+              {sub_resultado && (
+                <View style={styles.linhaQuadrante}>
+                  <Text style={styles.rotulo}>Sub-resultado:</Text>
+                  <Text style={styles.valor}>{sub_resultado}</Text>
+                </View>
+              )}
             </View>
             
-            {/* Quadrante 2: Veículo e Localização */}
+            {/* Quadrante 2: Informações do Veículo */}
             <View style={styles.quadrante}>
-              <Text style={styles.tituloQuadrante}>VEÍCULO E LOCALIZAÇÃO</Text>
+              <Text style={styles.tituloQuadrante}>INFORMAÇÕES DO VEÍCULO</Text>
               
               <View style={styles.linhaQuadrante}>
-                <Text style={styles.rotulo}>Tipo de Ocorrência:</Text>
-                <Text style={styles.valor}>{tipo || 'N/A'}</Text>
+                <Text style={styles.rotulo}>Placa Principal:</Text>
+                <Text style={styles.valor}>{placa1 || 'N/A'}</Text>
               </View>
               
               <View style={styles.linhaQuadrante}>
-                <Text style={styles.rotulo}>Placa:</Text>
-                <Text style={styles.valor}>
-                  {placa1 || 'N/A'}
-                  {modelo1 && ` - ${modelo1}`}
-                  {cor1 && ` - ${cor1}`}
-                </Text>
+                <Text style={styles.rotulo}>Modelo:</Text>
+                <Text style={styles.valor}>{modelo1 || 'N/A'}</Text>
               </View>
               
               <View style={styles.linhaQuadrante}>
-                <Text style={styles.rotulo}>Endereço da Abordagem:</Text>
-                <Text style={styles.valor}>
-                  {endereco || 'N/A'}
-                  {bairro && `, ${bairro}`}
-                  {cidade && `, ${cidade}`}
-                  {estado && `, ${estado}`}
-                </Text>
+                <Text style={styles.rotulo}>Cor:</Text>
+                <Text style={styles.valor}>{cor1 || 'N/A'}</Text>
+              </View>
+              
+              <View style={styles.linhaQuadrante}>
+                <Text style={styles.rotulo}>Tipo de Veículo:</Text>
+                <Text style={styles.valor}>{tipo_veiculo || 'N/A'}</Text>
+              </View>
+            </View>
+            
+            {/* Quadrante 3: Localização */}
+            <View style={styles.quadrante}>
+              <Text style={styles.tituloQuadrante}>LOCALIZAÇÃO</Text>
+              
+              <View style={styles.linhaQuadrante}>
+                <Text style={styles.rotulo}>Endereço:</Text>
+                <Text style={styles.valor}>{endereco || 'N/A'}</Text>
+              </View>
+              
+              <View style={styles.linhaQuadrante}>
+                <Text style={styles.rotulo}>Bairro:</Text>
+                <Text style={styles.valor}>{bairro || 'N/A'}</Text>
+              </View>
+              
+              <View style={styles.linhaQuadrante}>
+                <Text style={styles.rotulo}>Cidade:</Text>
+                <Text style={styles.valor}>{cidade || 'N/A'}</Text>
+              </View>
+              
+              <View style={styles.linhaQuadrante}>
+                <Text style={styles.rotulo}>Estado:</Text>
+                <Text style={styles.valor}>{estado || 'N/A'}</Text>
               </View>
               
               {coordenadas && (
                 <View style={styles.linhaQuadrante}>
-                  <Text style={styles.rotulo}>Link Google Maps:</Text>
+                  <Text style={styles.rotulo}>Coordenadas:</Text>
                   <Link src={gerarLinkGoogleMaps(coordenadas)} style={styles.linkMaps}>
-                    Ver no Google Maps
+                    {coordenadas}
                   </Link>
                 </View>
               )}
-              
-              <View style={styles.linhaQuadrante}>
-                <Text style={styles.rotulo}>Resultado:</Text>
-                <Text style={styles.valor}>
-                  {(() => {
-                    let resultadoCompleto = '';
-                    
-                    if (resultado) {
-                      // Formatar resultado: primeira letra maiúscula, resto minúsculo, remover underscores
-                      resultadoCompleto = resultado
-                        .split('_')
-                        .map((palavra, index) => {
-                          if (index === 0) {
-                            // Primeira palavra: primeira letra maiúscula
-                            return palavra.charAt(0).toUpperCase() + palavra.slice(1).toLowerCase();
-                          } else {
-                            // Outras palavras: tudo minúsculo
-                            return palavra.toLowerCase();
-                          }
-                        })
-                        .join(' ');
-                    }
-                    
-                                         if (sub_resultado) {
-                       // Formatar sub_resultado: primeira letra maiúscula, resto minúsculo, remover underscores
-                       const subResultadoFormatado = sub_resultado
-                         .split('_')
-                         .map((palavra, index) => {
-                           if (index === 0) {
-                             // Primeira palavra: primeira letra maiúscula
-                             return palavra.charAt(0).toUpperCase() + palavra.slice(1).toLowerCase();
-                           } else {
-                             // Outras palavras: tudo minúsculo
-                             return palavra.toLowerCase();
-                           }
-                         })
-                         .join(' ');
-                      
-                       // Combinar resultado + sub_resultado (sem duplicar "com")
-                       if (resultadoCompleto) {
-                         // Se já tem resultado, adicionar sub_resultado
-                         resultadoCompleto += ' ' + subResultadoFormatado;
-                       } else {
-                         // Se não tem resultado, usar apenas sub_resultado
-                         resultadoCompleto = subResultadoFormatado;
-                       }
-                     }
-                    
-                    return resultadoCompleto || 'N/A';
-                  })()}
-                </Text>
-              </View>
             </View>
             
-            {/* Quadrante 3: Horários e Quilometragem */}
+            {/* Quadrante 4: Horários e Quilometragem */}
             <View style={styles.quadrante}>
               <Text style={styles.tituloQuadrante}>HORÁRIOS E QUILOMETRAGEM</Text>
               
@@ -613,7 +590,7 @@ const RelatorioPDF = ({ dados }: { dados: RelatorioDados }) => {
               </View>
             </View>
             
-            {/* Quadrante 4: Despesas */}
+            {/* Quadrante 5: Despesas */}
             {despesas && despesas > 0 && (
               <View style={styles.quadrante}>
                 <Text style={styles.tituloQuadrante}>DESPESAS</Text>
@@ -639,11 +616,19 @@ const RelatorioPDF = ({ dados }: { dados: RelatorioDados }) => {
         </View>
       </Page>
 
-      {/* === SEGUNDA PÁGINA - APENAS QUANDO HÁ CONTEÚDO === */}
-      {(checklist || descricao) && (
+      {/* === SEGUNDA PÁGINA === */}
+      {(checklist || descricao || (fotos && fotos.length > 0)) && (
         <Page size="A4" style={styles.page}>
           {/* Faixa superior */}
           <View style={styles.faixaTopo} />
+          
+          {/* Logo Costa */}
+          <View style={styles.headerLogo}>
+            <Image
+              style={styles.logoCosta}
+              src="/logo-costa.png"
+            />
+          </View>
           
           {/* === CHECKLIST NA SEGUNDA PÁGINA === */}
           {checklist && (
@@ -833,209 +818,84 @@ const RelatorioPDF = ({ dados }: { dados: RelatorioDados }) => {
             </View>
           )}
 
-          {/* RODAPÉ REMOVIDO PARA TESTE */}
-        </Page>
-      )}
-
-      {/* === PÁGINAS DE FOTOS - SOLUÇÃO COMPLETAMENTE SEM IIFE === */}
-      
-      {/* Página 1 de fotos */}
-      {fotos && fotos.length > 0 && (
-        <Page size="A4" style={styles.page}>
-          {/* Faixa superior */}
-          <View style={styles.faixaTopo} />
-          
-          {/* Título das fotos */}
-          <Text style={styles.tituloFotos}>FOTOS DA OCORRÊNCIA</Text>
-          
-          {/* Grid de fotos - primeira página */}
-          <View style={styles.fotosGrid}>
-            {fotos.slice(0, 4).map((foto, index) => (
-              <View 
-                key={`foto-0-${index}`} 
-                style={[
-                  styles.fotoItem,
-                  index % 2 === 0 ? styles.fotoItemLeft : styles.fotoItemRight,
-                  index < 2 ? styles.fotoItemFirstRow : {}
-                ]}
-              >
-                {/* Container da imagem */}
-                <View style={styles.fotoContainer}>
-                  <Image
-                    style={styles.foto}
-                    src={tratarUrlImagem(foto.url || '')}
-                  />
-                </View>
-                
-                {/* Legenda da foto */}
-                <Text style={styles.fotoLegenda}>
-                  {foto.legenda || `Foto ${index + 1}`}
-                  {foto.criado_em && (
-                    <Text style={styles.fotoData}>
-                      {' - '}{formatarDataHora(foto.criado_em)}
-                    </Text>
-                  )}
-                </Text>
+          {/* === FOTOS NA SEGUNDA PÁGINA === */}
+          {fotos && fotos.length > 0 && (
+            <View style={styles.fotosContainer}>
+              <Text style={styles.tituloFotos}>FOTOS DA OCORRÊNCIA</Text>
+              
+              {/* Grid de fotos organizado em duplas */}
+              <View style={styles.fotosGrid}>
+                {fotos.map((foto, index) => {
+                  // Calcular posição na grade (2 fotos por linha)
+                  const rowIndex = Math.floor(index / 2);
+                  const colIndex = index % 2;
+                  
+                  return (
+                    <View 
+                      key={index} 
+                      style={[
+                        styles.fotoItem,
+                        colIndex === 0 ? styles.fotoItemLeft : styles.fotoItemRight,
+                        rowIndex === 0 ? styles.fotoItemFirstRow : null
+                      ]}
+                    >
+                      {/* Container da imagem com crop/zoom aplicado */}
+                      <View style={styles.fotoContainer}>
+                        <Image
+                          style={[
+                            styles.foto,
+                            // Aplicar crop se disponível
+                            foto.cropX !== undefined && foto.cropY !== undefined && foto.cropArea
+                              ? {
+                                  objectFit: 'cover',
+                                  objectPosition: `${foto.cropX}px ${foto.cropY}px`,
+                                  transform: `scale(${foto.zoom || 1})`
+                                }
+                              : {}
+                          ]}
+                          src={tratarUrlImagem(foto.url || '')}
+                        />
+                      </View>
+                      
+                      {/* Legenda da foto */}
+                      <Text style={styles.fotoLegenda}>
+                        {foto.legenda || `Foto ${index + 1}`}
+                        {foto.criado_em && (
+                          <Text style={styles.fotoData}>
+                            {' - '}{formatarDataHora(foto.criado_em)}
+                          </Text>
+                        )}
+                      </Text>
+                      
+                      {/* Informações técnicas de crop/zoom se disponíveis */}
+                      {(foto.cropX !== undefined || foto.cropY !== undefined || foto.zoom !== undefined) && (
+                        <Text style={styles.fotoInfoTecnica}>
+                          {foto.cropX !== undefined && `X:${foto.cropX.toFixed(1)} `}
+                          {foto.cropY !== undefined && `Y:${foto.cropY.toFixed(1)} `}
+                          {foto.zoom !== undefined && foto.zoom !== 1 && `Zoom:${foto.zoom.toFixed(2)}x`}
+                        </Text>
+                      )}
+                    </View>
+                  );
+                })}
               </View>
-            ))}
-          </View>
-          
-          {/* Contador de fotos */}
-          <Text style={styles.fotosContador}>
-            Página {primeiraPaginaFotos} de {primeiraPaginaFotos + totalPaginasFotos - 1} - Total de {fotos.length} foto{fotos.length !== 1 ? 's' : ''} anexada{fotos.length !== 1 ? 's' : ''}
-          </Text>
-          
-          {/* RODAPÉ REMOVIDO PARA TESTE */}
-        </Page>
-      )}
+              
+              {/* Contador de fotos */}
+              <Text style={styles.fotosContador}>
+                Total de {fotos.length} foto{fotos.length !== 1 ? 's' : ''} anexada{fotos.length !== 1 ? 's' : ''}
+              </Text>
+            </View>
+          )}
 
-      {/* Página 2 de fotos */}
-      {fotos && fotos.length > 4 && (
-        <Page size="A4" style={styles.page}>
-          {/* Faixa superior */}
-          <View style={styles.faixaTopo} />
-          
-          {/* Título das fotos */}
-          <Text style={styles.tituloFotos}>FOTOS DA OCORRÊNCIA (CONTINUAÇÃO)</Text>
-          
-          {/* Grid de fotos - segunda página */}
-          <View style={styles.fotosGrid}>
-            {fotos.slice(4, 8).map((foto, index) => (
-              <View 
-                key={`foto-1-${index}`} 
-                style={[
-                  styles.fotoItem,
-                  index % 2 === 0 ? styles.fotoItemLeft : styles.fotoItemRight,
-                  index < 2 ? styles.fotoItemFirstRow : {}
-                ]}
-              >
-                {/* Container da imagem */}
-                <View style={styles.fotoContainer}>
-                  <Image
-                    style={styles.foto}
-                    src={tratarUrlImagem(foto.url || '')}
-                  />
-                </View>
-                
-                {/* Legenda da foto */}
-                <Text style={styles.fotoLegenda}>
-                  {foto.legenda || `Foto ${index + 5}`}
-                  {foto.criado_em && (
-                    <Text style={styles.fotoData}>
-                      {' - '}{formatarDataHora(foto.criado_em)}
-                    </Text>
-                  )}
-                </Text>
-              </View>
-            ))}
+          {/* === RODAPÉ DA SEGUNDA PÁGINA === */}
+          <View style={styles.rodape}>
+            {/* Faixa degradê do rodapé */}
+            <View style={styles.faixaRodape} />
+            
+            <Text style={styles.rodapeTexto}>
+              Relatório gerado em {formatarDataHora(new Date().toISOString())}
+            </Text>
           </View>
-          
-          {/* Contador de fotos */}
-          <Text style={styles.fotosContador}>
-            Página {primeiraPaginaFotos + 1} de {primeiraPaginaFotos + totalPaginasFotos - 1} - Total de {fotos.length} foto{fotos.length !== 1 ? 's' : ''} anexada{fotos.length !== 1 ? 's' : ''}
-          </Text>
-          
-          {/* RODAPÉ REMOVIDO PARA TESTE */}
-        </Page>
-      )}
-
-      {/* Página 3 de fotos */}
-      {fotos && fotos.length > 8 && (
-        <Page size="A4" style={styles.page}>
-          {/* Faixa superior */}
-          <View style={styles.faixaTopo} />
-          
-          {/* Título das fotos */}
-          <Text style={styles.tituloFotos}>FOTOS DA OCORRÊNCIA (CONTINUAÇÃO)</Text>
-          
-          {/* Grid de fotos - terceira página */}
-          <View style={styles.fotosGrid}>
-            {fotos.slice(8, 12).map((foto, index) => (
-              <View 
-                key={`foto-2-${index}`} 
-                style={[
-                  styles.fotoItem,
-                  index % 2 === 0 ? styles.fotoItemLeft : styles.fotoItemRight,
-                  index < 2 ? styles.fotoItemFirstRow : {}
-                ]}
-              >
-                {/* Container da imagem */}
-                <View style={styles.fotoContainer}>
-                  <Image
-                    style={styles.foto}
-                    src={tratarUrlImagem(foto.url || '')}
-                  />
-                </View>
-                
-                {/* Legenda da foto */}
-                <Text style={styles.fotoLegenda}>
-                  {foto.legenda || `Foto ${index + 9}`}
-                  {foto.criado_em && (
-                    <Text style={styles.fotoData}>
-                      {' - '}{formatarDataHora(foto.criado_em)}
-                    </Text>
-                  )}
-                </Text>
-              </View>
-            ))}
-          </View>
-          
-          {/* Contador de fotos */}
-          <Text style={styles.fotosContador}>
-            Página {primeiraPaginaFotos + 2} de {primeiraPaginaFotos + totalPaginasFotos - 1} - Total de {fotos.length} foto{fotos.length !== 1 ? 's' : ''} anexada{fotos.length !== 1 ? 's' : ''}
-          </Text>
-          
-          {/* RODAPÉ REMOVIDO PARA TESTE */}
-        </Page>
-      )}
-
-      {/* Página 4 de fotos */}
-      {fotos && fotos.length > 12 && (
-        <Page size="A4" style={styles.page}>
-          {/* Faixa superior */}
-          <View style={styles.faixaTopo} />
-          
-          {/* Título das fotos */}
-          <Text style={styles.tituloFotos}>FOTOS DA OCORRÊNCIA (CONTINUAÇÃO)</Text>
-          
-          {/* Grid de fotos - quarta página */}
-          <View style={styles.fotosGrid}>
-            {fotos.slice(12, 16).map((foto, index) => (
-              <View 
-                key={`foto-3-${index}`} 
-                style={[
-                  styles.fotoItem,
-                  index % 2 === 0 ? styles.fotoItemLeft : styles.fotoItemRight,
-                  index < 2 ? styles.fotoItemFirstRow : {}
-                ]}
-              >
-                {/* Container da imagem */}
-                <View style={styles.fotoContainer}>
-                  <Image
-                    style={styles.foto}
-                    src={tratarUrlImagem(foto.url || '')}
-                  />
-                </View>
-                
-                {/* Legenda da foto */}
-                <Text style={styles.fotoLegenda}>
-                  {foto.legenda || `Foto ${index + 13}`}
-                  {foto.criado_em && (
-                    <Text style={styles.fotoData}>
-                      {' - '}{formatarDataHora(foto.criado_em)}
-                    </Text>
-                  )}
-                </Text>
-              </View>
-            ))}
-          </View>
-          
-          {/* Contador de fotos */}
-          <Text style={styles.fotosContador}>
-            Página {primeiraPaginaFotos + 3} de {primeiraPaginaFotos + totalPaginasFotos - 1} - Total de {fotos.length} foto{fotos.length !== 1 ? 's' : ''} anexada{fotos.length !== 1 ? 's' : ''}
-          </Text>
-          
-          {/* RODAPÉ REMOVIDO PARA TESTE */}
         </Page>
       )}
     </Document>

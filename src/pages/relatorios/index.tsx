@@ -276,7 +276,7 @@ export default function RelatoriosPage() {
       // Buscar fotos diretamente do backend para garantir URLs públicas
       let fotosPublicas: any[] = [];
       try {
-        const resFotos = await api.get(`/api/fotos/por-ocorrencia/${ocorrencia.id}`);
+        const resFotos = await api.get(`/api/v1/fotos/por-ocorrencia/${ocorrencia.id}`);
         fotosPublicas = (resFotos.data || []).filter(
           (f: any) => f.url && (f.url.startsWith('http') || f.url.startsWith('/api/'))
         );
