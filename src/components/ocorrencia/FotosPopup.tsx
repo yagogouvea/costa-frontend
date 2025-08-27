@@ -138,7 +138,7 @@ export default function FotosPopup({ ocorrencia, onClose, onUpdate }: FotosPopup
       try {
         setLoading(true);
         console.log('📷 Carregando fotos para ocorrência:', ocorrencia.id);
-        const res = await api.get<FotoResponse[]>(`/api/fotos/por-ocorrencia/${ocorrencia.id}`);
+        const res = await api.get<FotoResponse[]>(`/api/v1/fotos/por-ocorrencia/${ocorrencia.id}`);
         console.log('📷 Fotos recebidas da API:', res.data);
         
         const carregadas = await Promise.all(res.data.map(async (f) => {
@@ -288,7 +288,7 @@ export default function FotosPopup({ ocorrencia, onClose, onUpdate }: FotosPopup
     const foto = fotos[index];
     if (foto.id) {
       try {
-        await api.delete(`/api/fotos/${foto.id}`);
+        await api.delete(`/api/v1/fotos/${foto.id}`);
       } catch (error) {
         console.error('Erro ao deletar foto:', error);
       }
@@ -536,7 +536,7 @@ export default function FotosPopup({ ocorrencia, onClose, onUpdate }: FotosPopup
             isSupabase
           });
           
-          const fotoSalva = await api.post('/api/fotos', {
+          const fotoSalva = await api.post('/api/v1/fotos/create', {
             url: urlToSave,
             legenda: legendaFinal,
             ocorrenciaId: ocorrencia.id
@@ -571,7 +571,7 @@ export default function FotosPopup({ ocorrencia, onClose, onUpdate }: FotosPopup
             updateData
           });
           
-          await api.put(`/api/fotos/${foto.id}`, updateData);
+          await api.put(`/api/v1/fotos/${foto.id}`, updateData);
         }
       }
       if (onUpdate) {
