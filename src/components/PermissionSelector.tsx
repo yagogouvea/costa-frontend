@@ -21,68 +21,106 @@ export default function PermissionSelector({
   // Alterna permissão principal
   const toggleMain = (key: string) => {
     if (disabled) return;
+    
+    const permission = availablePermissions.find(p => p.key === key);
+    if (!permission) return;
+    
     if (selected.includes(key)) {
-      // Ao desmarcar principal, remove também todas as sub-permissões
-      const toRemove = [key, ...(
-        availablePermissions.find(p => p.key === key)?.children?.map(c => c.key) || []
-      )];
-      onChange(filterValidPermissions(selected.filter(p => !toRemove.includes(p))));
+      // Ao desmarcar principal, remove apenas a principal
+      // As sub-permissões permanecem se foram marcadas individualmente
+      onChange(filterValidPermissions(selected.filter(p => p !== key)));
     } else {
-      onChange(filterValidPermissions([...selected, key]));
+      // Ao marcar principal, adiciona a principal e todas as sub-permissões
+      // Evita duplicações verificando se já existem
+      const toAdd = [key];
+      if (permission.children) {
+        permission.children.forEach(child => {
+          if (!selected.includes(child.key)) {
+            toAdd.push(child.key);
+          }
+        });
+      }
+      onChange(filterValidPermissions([...selected, ...toAdd]));
     }
   };
 
   // Alterna sub-permissão
   const toggleSub = (mainKey: string, subKey: string) => {
     if (disabled) return;
-    if (!selected.includes(mainKey)) return; // Não permite marcar sub se principal não está marcada
+    
+    const mainPermission = availablePermissions.find(p => p.key === mainKey);
+    if (!mainPermission || !mainPermission.children) return;
+    
     if (selected.includes(subKey)) {
+      // Remove apenas a sub-permissão
       onChange(filterValidPermissions(selected.filter(p => p !== subKey)));
     } else {
+      // Adiciona apenas a sub-permissão
       onChange(filterValidPermissions([...selected, subKey]));
     }
+  };
+
+  // Verifica se todas as sub-permissões de uma permissão principal estão marcadas
+  const areAllSubPermissionsSelected = (permission: Permission): boolean => {
+    if (!permission.children || permission.children.length === 0) return true;
+    return permission.children.every(child => selected.includes(child.key));
+  };
+
+  // Verifica se algumas sub-permissões estão marcadas (para estado indeterminado)
+  const areSomeSubPermissionsSelected = (permission: Permission): boolean => {
+    if (!permission.children || permission.children.length === 0) return false;
+    const selectedSubs = permission.children.filter(child => selected.includes(child.key));
+    return selectedSubs.length > 0 && selectedSubs.length < permission.children.length;
   };
 
   return (
     <div>
       <label className="block text-sm font-semibold mb-2">Permissões:</label>
       <div className="space-y-2">
-        {availablePermissions.map((perm) => (
-          <div key={perm.key} className="">
-            <label className={`flex items-center gap-2 text-base font-medium ${disabled ? 'opacity-60' : ''}`}>
-              <input
-                type="checkbox"
-                checked={selected.includes(perm.key)}
-                onChange={() => toggleMain(perm.key)}
-                disabled={disabled}
-                className={disabled ? 'cursor-not-allowed' : 'cursor-pointer'}
-              />
-              {perm.description}
-            </label>
-            {perm.children && (
-              <div className="pl-6 mt-1 space-y-1">
-                {perm.children.map((child) => {
-                  const isMainChecked = selected.includes(perm.key);
-                  return (
+        {availablePermissions.map((perm) => {
+          const isMainChecked = selected.includes(perm.key);
+          const allSubsSelected = areAllSubPermissionsSelected(perm);
+          const someSubsSelected = areSomeSubPermissionsSelected(perm);
+          
+          return (
+            <div key={perm.key} className="">
+              <label className={`flex items-center gap-2 text-base font-medium ${disabled ? 'opacity-60' : ''}`}>
+                <input
+                  type="checkbox"
+                  checked={isMainChecked}
+                  ref={(input) => {
+                    if (input) {
+                      input.indeterminate = someSubsSelected && !isMainChecked;
+                    }
+                  }}
+                  onChange={() => toggleMain(perm.key)}
+                  disabled={disabled}
+                  className={disabled ? 'cursor-not-allowed' : 'cursor-pointer'}
+                />
+                {perm.description}
+              </label>
+              {perm.children && (
+                <div className="pl-6 mt-1 space-y-1">
+                  {perm.children.map((child) => (
                     <label
                       key={child.key}
-                      className={`flex items-center gap-2 text-sm ${!isMainChecked ? 'opacity-50' : ''}`}
+                      className={`flex items-center gap-2 text-sm`}
                     >
                       <input
                         type="checkbox"
                         checked={selected.includes(child.key)}
                         onChange={() => toggleSub(perm.key, child.key)}
-                        disabled={disabled || !isMainChecked}
-                        className={(!isMainChecked || disabled) ? 'cursor-not-allowed' : 'cursor-pointer'}
+                        disabled={disabled}
+                        className={disabled ? 'cursor-not-allowed' : 'cursor-pointer'}
                       />
                       {child.description}
                     </label>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        ))}
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
