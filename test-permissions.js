@@ -1,87 +1,91 @@
-// Teste da lógica de permissões CORRIGIDA
+// Teste da nova estrutura de permissões
 const PERMISSIONS = [
   {
-    key: 'read:dashboard',
-    description: 'Acessar Dashboard'
+    key: 'access:dashboard',
+    description: 'Dashboard',
+    category: 'page'
   },
   {
-    key: 'read:user',
-    description: 'Acessar Gerenciamento de Usuários',
+    key: 'access:prestadores',
+    description: 'Prestadores',
+    category: 'page',
     children: [
-      { key: 'create:user', description: 'Adicionar Usuário' },
-      { key: 'update:user', description: 'Editar Usuário' },
-      { key: 'delete:user', description: 'Excluir Usuário' }
+      { key: 'prestadores:export', description: 'Exportar Prestadores', category: 'feature' },
+      { key: 'prestadores:create', description: 'Novo Prestador', category: 'feature' },
+      { key: 'prestadores:edit', description: 'Editar Prestador', category: 'feature' },
+      { key: 'prestadores:delete', description: 'Excluir Prestador', category: 'feature' }
     ]
   }
 ];
 
-// Simulação da função toggleMain CORRIGIDA
-function toggleMain(selected, key) {
+// Simulação da função togglePageAccess
+function togglePageAccess(selected, key) {
   const permission = PERMISSIONS.find(p => p.key === key);
   if (!permission) return selected;
   
   if (selected.includes(key)) {
-    // Ao desmarcar principal, remove apenas a principal
-    return selected.filter(p => p !== key);
-  } else {
-    // Ao marcar principal, adiciona a principal e todas as sub-permissões
-    // Evita duplicações verificando se já existem
-    const toAdd = [key];
+    // Ao desmarcar página, remove a página e todas as suas funcionalidades
+    const toRemove = [key];
     if (permission.children) {
-      permission.children.forEach(child => {
-        if (!selected.includes(child.key)) {
-          toAdd.push(child.key);
-        }
-      });
+      toRemove.push(...permission.children.map(c => c.key));
     }
-    return [...selected, ...toAdd];
+    return selected.filter(p => !toRemove.includes(p));
+  } else {
+    // Ao marcar página, adiciona apenas a página (sem funcionalidades)
+    return [...selected, key];
   }
 }
 
-// Simulação da função toggleSub
-function toggleSub(selected, mainKey, subKey) {
-  if (selected.includes(subKey)) {
-    // Remove apenas a sub-permissão
-    return selected.filter(p => p !== subKey);
+// Simulação da função toggleFeature
+function toggleFeature(selected, mainKey, featureKey) {
+  // Só permite marcar funcionalidades se a página estiver marcada
+  if (!selected.includes(mainKey)) return selected;
+  
+  if (selected.includes(featureKey)) {
+    // Remove apenas a funcionalidade
+    return selected.filter(p => p !== featureKey);
   } else {
-    // Adiciona apenas a sub-permissão
-    return [...selected, subKey];
+    // Adiciona apenas a funcionalidade
+    return [...selected, featureKey];
   }
 }
 
 // Testes
-console.log('=== TESTE DE PERMISSÕES CORRIGIDAS ===');
+console.log('=== TESTE DAS NOVAS PERMISSÕES ===');
 
 let selected = [];
 
 console.log('1. Estado inicial:', selected);
 
-// Teste 1: Marcar permissão principal
-selected = toggleMain(selected, 'read:user');
-console.log('2. Após marcar read:user:', selected);
+// Teste 1: Marcar acesso à página
+selected = togglePageAccess(selected, 'access:prestadores');
+console.log('2. Após marcar acesso a prestadores:', selected);
 
-// Teste 2: Desmarcar permissão principal
-selected = toggleMain(selected, 'read:user');
-console.log('3. Após desmarcar read:user:', selected);
+// Teste 2: Marcar funcionalidade específica
+selected = toggleFeature(selected, 'access:prestadores', 'prestadores:export');
+console.log('3. Após marcar exportar prestadores:', selected);
 
-// Teste 3: Marcar permissão principal novamente
-selected = toggleMain(selected, 'read:user');
-console.log('4. Após marcar read:user novamente:', selected);
+// Teste 3: Marcar outra funcionalidade
+selected = toggleFeature(selected, 'access:prestadores', 'prestadores:create');
+console.log('4. Após marcar novo prestador:', selected);
 
-// Teste 4: Desmarcar sub-permissão
-selected = toggleSub(selected, 'read:user', 'create:user');
-console.log('5. Após desmarcar create:user:', selected);
+// Teste 4: Desmarcar página (deve remover todas as funcionalidades)
+selected = togglePageAccess(selected, 'access:prestadores');
+console.log('5. Após desmarcar acesso a prestadores:', selected);
 
-// Teste 5: Marcar sub-permissão
-selected = toggleSub(selected, 'read:user', 'create:user');
-console.log('6. Após marcar create:user:', selected);
+// Teste 5: Tentar marcar funcionalidade sem acesso à página (não deve funcionar)
+selected = toggleFeature(selected, 'access:prestadores', 'prestadores:export');
+console.log('6. Tentativa de marcar funcionalidade sem acesso à página:', selected);
 
-// Teste 6: Desmarcar permissão principal (deve manter sub-permissões)
-selected = toggleMain(selected, 'read:user');
-console.log('7. Após desmarcar read:user (deve manter sub-permissões):', selected);
+// Teste 6: Marcar página novamente
+selected = togglePageAccess(selected, 'access:prestadores');
+console.log('7. Após marcar acesso a prestadores novamente:', selected);
 
-// Teste 7: Marcar permissão principal novamente (não deve duplicar)
-selected = toggleMain(selected, 'read:user');
-console.log('8. Após marcar read:user novamente (sem duplicação):', selected);
+// Teste 7: Marcar todas as funcionalidades
+selected = toggleFeature(selected, 'access:prestadores', 'prestadores:export');
+selected = toggleFeature(selected, 'access:prestadores', 'prestadores:create');
+selected = toggleFeature(selected, 'access:prestadores', 'prestadores:edit');
+selected = toggleFeature(selected, 'access:prestadores', 'prestadores:delete');
+console.log('8. Após marcar todas as funcionalidades:', selected);
 
 console.log('=== FIM DOS TESTES ===');

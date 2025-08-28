@@ -15,8 +15,6 @@ interface FormData extends Partial<User> {
   permissions: string[];
 }
 
-
-
 export default function UserForm({ user, onClose, onSave }: UserFormProps) {
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -133,40 +131,44 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         <h2 className="text-2xl font-bold mb-6">
           {user ? "Editar Usuário" : "Novo Usuário"}
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Nome completo
-            </label>
-            <input
-              type="text"
-              name="name"
-              required
-              className="w-full border p-2 rounded"
-              value={formData.name || ""}
-              onChange={handleChange}
-            />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* INFORMAÇÕES BÁSICAS */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Nome completo
+              </label>
+              <input
+                type="text"
+                name="name"
+                required
+                className="w-full border p-2 rounded"
+                value={formData.name || ""}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Email
+              </label>
+              <input
+                type="email"
+                name="email"
+                required
+                className="w-full border p-2 rounded"
+                value={formData.email || ""}
+                onChange={handleChange}
+              />
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
-            <input
-              type="email"
-              name="email"
-              required
-              className="w-full border p-2 rounded"
-              value={formData.email || ""}
-              onChange={handleChange}
-            />
-          </div>
-
+          {/* SENHA */}
           {user ? (
             <div className="space-y-2">
               <button
@@ -178,7 +180,7 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
               </button>
 
               {showPasswordChange && (
-                <div className="space-y-4 pt-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
                       Nova senha
@@ -222,6 +224,7 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
             </div>
           )}
 
+          {/* CARGO */}
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Cargo</label>
             <select
@@ -230,27 +233,29 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
               value={formData.role || ""}
               onChange={handleChange}
             >
-              <option value="admin">Administrador</option>
-              <option value="manager">Supervisor</option>
               <option value="operator">Operador</option>
+              <option value="supervisor">Supervisor</option>
+              <option value="admin">Administrador</option>
             </select>
             <p className="text-sm text-gray-500">{ROLE_DESCRIPTIONS[formData.role || "operator"]}</p>
           </div>
 
-          <div className="border-t pt-4 mt-4">
+          {/* PERMISSÕES */}
+          <div className="border-t pt-6">
             <PermissionSelector
               selected={formData.permissions}
               onChange={handlePermissionsChange}
               availablePermissions={PERMISSIONS}
               disabled={false}
             />
-            <p className="text-sm text-gray-500 mt-2">
+            <p className="text-sm text-gray-500 mt-4">
               {formData.role === 'admin' 
                 ? "Administradores têm acesso total ao sistema automaticamente."
                 : "Você pode personalizar as permissões independentemente do cargo selecionado."}
             </p>
           </div>
 
+          {/* STATUS */}
           <div className="space-y-2">
             <label className="flex items-center gap-2">
               <input
@@ -263,7 +268,8 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
             </label>
           </div>
 
-          <div className="flex justify-end gap-4 pt-4 border-t">
+          {/* BOTÕES */}
+          <div className="flex justify-end gap-4 pt-6 border-t">
             <button 
               type="button" 
               onClick={onClose} 

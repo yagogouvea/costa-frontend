@@ -3,158 +3,116 @@ export interface Permission {
   key: string;
   description: string;
   children?: Permission[];
+  category: 'page' | 'feature';
 }
 
 export const PERMISSIONS: Permission[] = [
+  // PERMISSÕES DE ACESSO ÀS PÁGINAS
   {
-    key: 'read:dashboard',
-    description: 'Acessar Dashboard'
+    key: 'access:dashboard',
+    description: 'Dashboard',
+    category: 'page'
   },
   {
-    key: 'read:prestador',
-    description: 'Acessar Prestadores',
+    key: 'access:ocorrencias',
+    description: 'Ocorrências',
+    category: 'page'
+  },
+  {
+    key: 'access:prestadores',
+    description: 'Prestadores',
+    category: 'page',
     children: [
-      { key: 'create:prestador', description: 'Adicionar Prestador' },
-      { key: 'update:prestador', description: 'Editar Prestador' },
-      { key: 'delete:prestador', description: 'Excluir Prestador' }
+      { key: 'prestadores:export', description: 'Exportar Prestadores', category: 'feature' },
+      { key: 'prestadores:create', description: 'Novo Prestador', category: 'feature' },
+      { key: 'prestadores:edit', description: 'Editar Prestador', category: 'feature' },
+      { key: 'prestadores:delete', description: 'Excluir Prestador', category: 'feature' }
     ]
   },
   {
-    key: 'read:cliente',
-    description: 'Acessar Clientes',
-    children: [
-      { key: 'create:cliente', description: 'Adicionar Cliente' },
-      { key: 'update:cliente', description: 'Editar Cliente' },
-      { key: 'delete:cliente', description: 'Excluir Cliente' }
-    ]
+    key: 'access:financeiro',
+    description: 'Financeiro',
+    category: 'page'
   },
   {
-    key: 'read:ocorrencia',
-    description: 'Acessar Ocorrências',
-    children: [
-      { key: 'create:ocorrencia', description: 'Criar Ocorrência' },
-      { key: 'update:ocorrencia', description: 'Editar Ocorrência' },
-      { key: 'delete:ocorrencia', description: 'Excluir Ocorrência' }
-    ]
+    key: 'access:clientes',
+    description: 'Clientes',
+    category: 'page'
   },
   {
-    key: 'read:relatorio',
-    description: 'Acessar Relatórios',
-    children: [
-      { key: 'create:relatorio', description: 'Criar Relatório' },
-      { key: 'update:relatorio', description: 'Editar Relatório' },
-      { key: 'delete:relatorio', description: 'Excluir Relatório' }
-    ]
+    key: 'access:relatorios',
+    description: 'Relatórios',
+    category: 'page'
   },
   {
-    key: 'read:user',
-    description: 'Acessar Gerenciamento de Usuários',
-    children: [
-      { key: 'create:user', description: 'Adicionar Usuário' },
-      { key: 'update:user', description: 'Editar Usuário' },
-      { key: 'delete:user', description: 'Excluir Usuário' }
-    ]
-  },
-  {
-    key: 'read:contrato',
-    description: 'Acessar Contratos',
-    children: [
-      { key: 'create:contrato', description: 'Criar Contrato' },
-      { key: 'update:contrato', description: 'Editar Contrato' },
-      { key: 'delete:contrato', description: 'Excluir Contrato' }
-    ]
-  },
-  {
-    key: 'read:foto',
-    description: 'Acessar Fotos',
-    children: [
-      { key: 'upload:foto', description: 'Fazer Upload de Fotos' },
-      { key: 'create:foto', description: 'Criar Foto' },
-      { key: 'update:foto', description: 'Editar Foto' },
-      { key: 'delete:foto', description: 'Excluir Foto' }
-    ]
-  },
-  {
-    key: 'read:veiculo',
-    description: 'Acessar Veículos',
-    children: [
-      { key: 'create:veiculo', description: 'Adicionar Veículo' },
-      { key: 'update:veiculo', description: 'Editar Veículo' },
-      { key: 'delete:veiculo', description: 'Excluir Veículo' }
-    ]
-  },
-  {
-    key: 'read:financeiro',
-    description: 'Acessar Financeiro',
-    children: [
-      { key: 'update:financeiro', description: 'Editar Financeiro' }
-    ]
-  },
-  {
-    key: 'read:config',
-    description: 'Acessar Configurações',
-    children: [
-      { key: 'update:config', description: 'Editar Configurações' }
-    ]
+    key: 'access:usuarios',
+    description: 'Usuários',
+    category: 'page'
   }
 ];
 
-// Permissões por cargo (exemplo, pode ser ajustado)
+// Permissões padrão para operador (todas as páginas, sem funcionalidades específicas)
+export const DEFAULT_OPERATOR_PERMISSIONS: string[] = [
+  'access:dashboard',
+  'access:ocorrencias',
+  'access:prestadores',
+  'access:financeiro',
+  'access:clientes',
+  'access:relatorios',
+  'access:usuarios'
+];
+
+// Permissões para supervisor (todas as páginas + funcionalidades de prestadores)
+export const SUPERVISOR_PERMISSIONS: string[] = [
+  'access:dashboard',
+  'access:ocorrencias',
+  'access:prestadores',
+  'prestadores:export',
+  'prestadores:create',
+  'prestadores:edit',
+  'prestadores:delete',
+  'access:financeiro',
+  'access:clientes',
+  'access:relatorios',
+  'access:usuarios'
+];
+
+// Permissões para administrador (acesso total)
+export const ADMIN_PERMISSIONS: string[] = PERMISSIONS.map(p => {
+  const perms = [p.key];
+  if (p.children) {
+    perms.push(...p.children.map(c => c.key));
+  }
+  return perms;
+}).flat();
+
+// Mapeamento de permissões por cargo
 export const ROLE_PERMISSIONS: Record<string, string[]> = {
-  operator: [
-    'read:dashboard',
-    'read:prestador',
-    'read:cliente',
-    'read:ocorrencia',
-    'read:relatorio'
-  ],
-  manager: [
-    'read:dashboard',
-    'read:prestador', 'create:prestador', 'update:prestador',
-    'read:cliente', 'create:cliente', 'update:cliente',
-    'read:ocorrencia', 'create:ocorrencia', 'update:ocorrencia',
-    'read:relatorio', 'create:relatorio', 'update:relatorio',
-    'read:contrato', 'create:contrato', 'update:contrato',
-    'read:foto', 'upload:foto', 'create:foto', 'update:foto'
-  ],
-  admin: [
-    // Dashboard
-    'read:dashboard',
-    
-    // Usuários
-    'read:user', 'create:user', 'update:user', 'delete:user',
-    
-    // Prestadores
-    'read:prestador', 'create:prestador', 'update:prestador', 'delete:prestador',
-    
-    // Clientes
-    'read:cliente', 'create:cliente', 'update:cliente', 'delete:cliente',
-    
-    // Ocorrências
-    'read:ocorrencia', 'create:ocorrencia', 'update:ocorrencia', 'delete:ocorrencia',
-    
-    // Relatórios
-    'read:relatorio', 'create:relatorio', 'update:relatorio', 'delete:relatorio',
-    
-    // Contratos
-    'read:contrato', 'create:contrato', 'update:contrato', 'delete:contrato',
-    
-    // Fotos
-    'read:foto', 'upload:foto', 'create:foto', 'update:foto', 'delete:foto',
-    
-    // Veículos
-    'read:veiculo', 'create:veiculo', 'update:veiculo', 'delete:veiculo',
-    
-    // Financeiro
-    'read:financeiro', 'update:financeiro',
-    
-    // Configurações
-    'read:config', 'update:config'
-  ]
+  operator: DEFAULT_OPERATOR_PERMISSIONS,
+  supervisor: SUPERVISOR_PERMISSIONS,
+  admin: ADMIN_PERMISSIONS
 };
 
 export const ROLE_DESCRIPTIONS: Record<string, string> = {
-  admin: "Administrador - Acesso total ao sistema",
-  manager: "Supervisor - Gerenciamento de prestadores e clientes",
-  operator: "Operador - Acesso básico"
+  operator: "Operador - Acesso às páginas do sistema",
+  supervisor: "Supervisor - Acesso às páginas + funcionalidades de prestadores",
+  admin: "Administrador - Acesso total ao sistema"
 };
+
+// Função para verificar se usuário tem acesso a uma página
+export function hasPageAccess(userPermissions: string[], pageKey: string): boolean {
+  return userPermissions.includes(pageKey);
+}
+
+// Função para verificar se usuário tem uma funcionalidade específica
+export function hasFeatureAccess(userPermissions: string[], featureKey: string): boolean {
+  return userPermissions.includes(featureKey);
+}
+
+// Função para obter todas as permissões de uma página específica
+export function getPagePermissions(pageKey: string): string[] {
+  const page = PERMISSIONS.find(p => p.key === pageKey);
+  if (!page || !page.children) return [pageKey];
+  
+  return [pageKey, ...page.children.map(c => c.key)];
+}
