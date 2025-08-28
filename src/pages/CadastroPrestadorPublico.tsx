@@ -62,7 +62,7 @@ const CadastroPrestadorPublico: React.FC = () => {
       await api.post('/api/prestadores-publico', payload);
       dispararAtualizacaoMapa('criado');
       setCadastroSucesso(true);
-      toast.success('Cadastro realizado com sucesso! Aguarde nossa análise.');
+      toast.success('Cadastro realizado com sucesso na Costa & Camargo! Aguarde nossa análise.');
     } catch (erro: any) {
       console.error('❌ Erro ao cadastrar prestador:', erro);
       console.error('❌ Detalhes do erro:', {

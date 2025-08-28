@@ -1,77 +1,83 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { CheckCircle } from 'lucide-react';
-import logoSegtrack from '/assets/LOGOCOSTA.png';
+import logoCosta from '/assets/LOGOCOSTA.png';
 
 interface Props {
   onNovoNadastro: () => void;
 }
 
 const CadastroSucessoPublico: React.FC<Props> = ({ onNovoNadastro }) => {
-  // Configurações do logo - edite aqui para ajustar o tamanho
-  const logoConfig = {
-    height: '250px',        // Altura do logo (pode usar: 32px, 40px, 48px, etc.)
-    marginBottom: '16px'   // Espaçamento inferior (pode usar: 12px, 16px, 20px, etc.)
-  };
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 py-8 px-4">
-      <div className="max-w-2xl mx-auto">
-        {/* Card de sucesso */}
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-          <div className="bg-gradient-to-r from-green-600 to-emerald-600 px-6 py-8 text-center">
-            <img 
-              src={logoSegtrack} 
-              alt="SEGTRACK Logo" 
-              className="mx-auto w-auto brightness-0 invert"
-              style={{
-                height: logoConfig.height,
-                marginBottom: logoConfig.marginBottom
-              }}
-              onError={(e) => {
-                console.error('Erro ao carregar logo:', e);
-                e.currentTarget.style.display = 'none';
-              }}
-            />
-            <CheckCircle className="w-16 h-16 text-white mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-white mb-2">Cadastro Realizado com Sucesso!</h1>
-            <p className="text-green-100">Seu cadastro foi enviado e está sendo analisado</p>
-          </div>
-          
-                    <div className="p-8">
-            <div className="text-center mb-12">
-              <p className="text-gray-600 leading-relaxed text-lg">
-                Sua solicitação foi recebida e está em análise.<br/>
-                Em breve, um operador entrará em contato com você.<br/>
-                Obrigado por se cadastrar na <strong>SEGTRACK</strong>.
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+      {/* Conteúdo principal */}
+      <div className="max-w-4xl mx-auto px-4 py-16">
+        {/* Card de sucesso principal */}
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          {/* Banner superior com gradiente azul */}
+          <div className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 px-8 py-20 text-center relative overflow-hidden">
+            {/* Elementos decorativos */}
+            <div className="absolute top-0 left-0 w-full h-full opacity-10">
+              <div className="absolute top-4 left-4 w-20 h-20 bg-white rounded-full"></div>
+              <div className="absolute top-16 right-8 w-16 h-16 bg-white rounded-full"></div>
+              <div className="absolute bottom-8 left-16 w-12 h-12 bg-white rounded-full"></div>
+            </div>
+            
+            {/* Logo da Costa & Camargo dentro do banner */}
+            <div className="relative z-10 mb-10">
+              <img 
+                src={logoCosta} 
+                alt="COSTA & CAMARGO Logo" 
+                className="h-40 w-auto mx-auto brightness-0 invert"
+              />
+            </div>
+            
+            {/* Título principal */}
+            <div className="relative z-10">
+              <h1 className="text-7xl font-bold text-white mb-8">
+                Cadastro Realizado!
+              </h1>
+              
+              <p className="text-3xl text-blue-50 max-w-3xl mx-auto leading-relaxed">
+                Seu cadastro foi enviado com sucesso e está sendo analisado
               </p>
             </div>
+          </div>
 
-            {/* Botões de ação */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          {/* Conteúdo simplificado */}
+          <div className="p-16">
+            {/* Mensagem principal simplificada */}
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-semibold text-gray-800 mb-8">
+                Obrigado por escolher a Costa & Camargo!
+              </h2>
+            </div>
+
+            {/* Botão único centralizado */}
+            <div className="flex justify-center">
               <Button 
                 onClick={onNovoNadastro}
                 variant="ghost"
-                className="w-full sm:w-auto"
+                className="w-full sm:w-auto px-12 py-6 text-2xl font-medium border-2 border-blue-500 text-blue-600 hover:bg-blue-50 hover:border-blue-600 transition-all duration-200"
               >
                 Fazer Novo Cadastro
-              </Button>
-              <Button 
-                onClick={() => window.location.href = '/'}
-                className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700"
-              >
-                Voltar ao Início
               </Button>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Informações de contato */}
-        <div className="mt-8 text-center">
-          <p className="text-gray-600 text-sm">
-            Dúvidas? Entre em contato conosco através do e-mail:{' '}
-            <a href="mailto:contato@segtrack.com.br" className="text-blue-600 hover:underline">
-              contato@segtrack.com.br
-            </a>
+      {/* Footer */}
+      <div className="bg-gray-900 text-white py-8 mt-16">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <div className="flex items-center justify-center mb-4">
+            <img 
+              src={logoCosta} 
+              alt="COSTA & CAMARGO Logo" 
+              className="h-16 w-auto brightness-0 invert opacity-80"
+            />
+          </div>
+          <p className="text-gray-400 text-sm">
+            © 2024 Costa & Camargo. Todos os direitos reservados.
           </p>
         </div>
       </div>

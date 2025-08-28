@@ -57,15 +57,15 @@ export const PrestadoresProvider: React.FC<PrestadoresProviderProps> = ({
     try {
       setErro(null);
       console.log('🔄 [PrestadoresContext] Iniciando atualização dos prestadores...');
-      // Lista de endpoints para tentar em ordem
+      // Lista de endpoints para tentar em ordem (CLIENTE COSTA)
       const endpoints = [
-        '/api/v1/prestadores/public/mapa', // Novo endpoint público para mapa
-        '/api/v1/prestadores/mapa',
-        '/api/v1/prestadores/public',
+        '/api/prestadores-publico/mapa', // ✅ Endpoint específico para mapa (apenas aprovados com coordenadas)
+        '/api/prestadores-publico', // ✅ Endpoint público de cadastro (todos os aprovados)
+        '/api/v1/prestadores/mapa', // Fallback para rotas v1
+        '/api/v1/prestadores/public', // Fallback para rotas v1
         '/api/v1/prestadores', // Endpoint protegido como último recurso
         '/prestadores/mapa', // Fallback para rotas legadas
         '/prestadores/public', // Fallback para rotas legadas
-        '/prestadores-publico', // Endpoint público de cadastro
         '/prestadores' // Fallback para rotas legadas
       ];
 

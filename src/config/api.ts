@@ -17,22 +17,27 @@ const getApiUrl = (): string => {
     return 'https://api.costaecamargo.seg.br';
   }
 
-  // 3. Ambiente Railway (mantém URL antiga por compatibilidade)
+  // 3. NOVO: Domínio específico para cadastro de prestadores externos
+  if (hostname === 'prestador.costaecamargo.com.br') {
+    return 'https://api.costaecamargo.seg.br';
+  }
+
+  // 4. Ambiente Railway (mantém URL antiga por compatibilidade)
   if (hostname.includes('.up.railway.app')) {
     return 'https://web-production-19090.up.railway.app';
   }
 
-  // 4. Domínios Segtrack
+  // 5. Domínios Segtrack
   if (hostname === 'app.painelsegtrack.com.br' || hostname === 'cliente.painelsegtrack.com.br') {
     return 'https://api.costaecamargo.seg.br';
   }
 
-  // 5. Fallback seguro para outros ambientes - usar HTTPS em produção
+  // 6. Fallback seguro para outros ambientes - usar HTTPS em produção
   if (protocol === 'https:') {
     return 'https://api.costaecamargo.seg.br';
   }
   
-  // 6. Fallback para desenvolvimento
+  // 7. Fallback para desenvolvimento
   return 'http://localhost:3001';
 };
 

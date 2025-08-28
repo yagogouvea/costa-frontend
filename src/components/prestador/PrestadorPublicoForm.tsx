@@ -11,7 +11,7 @@ import {
 import { formatTelefoneBR } from '@/utils/prestadorUtils';
 import { cepApi, geocodingApi } from '@/services/api';
 import { useDebounce } from '@/hooks/useDebounce';
-import logoSegtrack from '/assets/LOGOCOSTA.png';
+import logoCosta from '/assets/LOGOCOSTA.png';
 
 interface Props {
   onSubmit: (prestador: PrestadorPublicoForm) => void;
@@ -365,8 +365,8 @@ const PrestadorPublicoForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
         {/* Header */}
         <div className="text-center mb-8">
           <img 
-            src={logoSegtrack} 
-            alt="SEGTRACK Logo" 
+            src={logoCosta} 
+            alt="COSTA & CAMARGO Logo" 
             className="mx-auto w-auto"
             style={{
               height: logoConfig.height,
