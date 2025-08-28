@@ -33,10 +33,16 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
 
   useEffect(() => {
     if (user) {
+      console.log('🔄 USERFORM - Usuário recebido:', user);
+      console.log('🔄 USERFORM - Permissões do usuário:', user.permissions);
+      console.log('🔄 USERFORM - Tipo das permissões:', typeof user.permissions);
+      
       // Se for admin, define todas as permissões
       const permissions = user.role === 'admin' 
         ? PERMISSIONS.map(p => p.key) 
         : (Array.isArray(user.permissions) ? user.permissions : ROLE_PERMISSIONS[user.role as keyof typeof ROLE_PERMISSIONS] || ROLE_PERMISSIONS.operator);
+      
+      console.log('🔄 USERFORM - Permissões processadas:', permissions);
       
       setFormData({
         name: user.name || "",
@@ -94,10 +100,15 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
       // Sempre envia exatamente as permissões selecionadas, independente do cargo
       const permissions = formData.permissions;
 
+      console.log('🔄 USERFORM - Permissões antes de enviar:', permissions);
+      console.log('🔄 USERFORM - FormData completo:', formData);
+
       const dataToSend: any = {
         ...formData,
         permissions
       };
+
+      console.log('🔄 USERFORM - DataToSend:', dataToSend);
 
       // No update, nunca envie password (exceto se for alteração de senha)
       if (user?.id) {
@@ -234,7 +245,7 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
               onChange={handleChange}
             >
               <option value="operator">Operador</option>
-              <option value="supervisor">Supervisor</option>
+              <option value="manager">Supervisor</option>
               <option value="admin">Administrador</option>
             </select>
             <p className="text-sm text-gray-500">{ROLE_DESCRIPTIONS[formData.role || "operator"]}</p>

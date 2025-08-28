@@ -89,13 +89,13 @@ export const ADMIN_PERMISSIONS: string[] = PERMISSIONS.map(p => {
 // Mapeamento de permissões por cargo
 export const ROLE_PERMISSIONS: Record<string, string[]> = {
   operator: DEFAULT_OPERATOR_PERMISSIONS,
-  supervisor: SUPERVISOR_PERMISSIONS,
+  manager: SUPERVISOR_PERMISSIONS, // Mudou de 'supervisor' para 'manager'
   admin: ADMIN_PERMISSIONS
 };
 
 export const ROLE_DESCRIPTIONS: Record<string, string> = {
   operator: "Operador - Acesso às páginas do sistema",
-  supervisor: "Supervisor - Acesso às páginas + funcionalidades de prestadores",
+  manager: "Supervisor - Acesso às páginas + funcionalidades de prestadores", // Mudou de 'supervisor' para 'manager'
   admin: "Administrador - Acesso total ao sistema"
 };
 

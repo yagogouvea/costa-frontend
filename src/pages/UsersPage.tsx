@@ -7,7 +7,8 @@ import { toast } from "react-toastify";
 import { Loader2, UserPlus } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { usePermissions } from "../utils/permissions";
+import PageAccessControl from "../components/PageAccessControl";
+import { usePermissions } from "../hooks/usePermissions";
 
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
@@ -18,23 +19,22 @@ export default function UsersPage() {
   const { token, logout, user } = useAuth();
   const navigate = useNavigate();
 
-  // Converte e obtém as permissões estruturadas
-  const permissions = usePermissions(user?.permissions as string[] | undefined, user?.role);
+  // Hook para verificar permissões
+  const { hasPageAccess, hasFeatureAccess } = usePermissions();
   
   // Função auxiliar para verificar permissões específicas de usuários
-  const hasUserPermission = useCallback((action: 'read' | 'create' | 'delete' | 'update') => {
-    return permissions.users[action] === true;
-  }, [permissions]);
+  const hasUserPermission = useCallback((_action: 'read' | 'create' | 'delete' | 'update') => {
+    // Para o novo sistema, verificamos se tem acesso à página de usuários
+    return hasPageAccess('access:usuarios');
+  }, [hasPageAccess]);
 
   // Logs de debug
   console.log('🔍 UsersPage Debug:');
   console.log('Token:', token ? 'PRESENTE' : 'AUSENTE');
   console.log('User:', user);
   console.log('User permissions:', user?.permissions);
-  console.log('Permissions object:', permissions);
-  console.log('Has read permission:', hasUserPermission('read'));
-  console.log('Permissions.users:', permissions.users);
-  console.log('Permissions.users.read:', permissions.users.read);
+  console.log('Has page access:', hasPageAccess('access:usuarios'));
+  console.log('Has feature access:', hasFeatureAccess('prestadores:export'));
 
   // Salvar logs no localStorage para debug
   const debugInfo = {
@@ -42,9 +42,8 @@ export default function UsersPage() {
     token: token ? 'PRESENTE' : 'AUSENTE',
     user: user ? 'PRESENTE' : 'AUSENTE',
     userPermissions: user?.permissions,
-    permissionsObject: permissions,
-    hasReadPermission: hasUserPermission('read'),
-    permissionsUsers: permissions.users
+    hasPageAccess: hasPageAccess('access:usuarios'),
+    hasFeatureAccess: hasFeatureAccess('prestadores:export')
   };
   localStorage.setItem('debug_users_page', JSON.stringify(debugInfo));
 
@@ -151,71 +150,74 @@ export default function UsersPage() {
   }
 
   return (
-    <div className="p-4 space-y-4">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            Gerenciamento de Usuários
-          </h1>
-          <p className="text-gray-500 mt-2">Gerencie os usuários do sistema</p>
+    <PageAccessControl pageKey="access:usuarios">
+      <div className="p-4 space-y-4">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold flex items-center gap-2">
+              Gerenciamento de Usuários
+            </h1>
+            <p className="text-gray-500 mt-2">Gerencie os usuários do sistema</p>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => {
+                const debugInfo = localStorage.getItem('debug_users_page');
+                const apiRequest = localStorage.getItem('debug_api_request');
+                const apiError = localStorage.getItem('debug_api_error');
+                        console.log('=== DEBUG INFO ===');
+        console.log('Users Page Debug:', debugInfo ? JSON.parse(debugInfo) : 'N/A');
+        console.log('API Request Debug:', apiRequest ? JSON.parse(apiRequest) : 'N/A');
+        console.log('API Error Debug:', apiError ? JSON.parse(apiError) : 'N/A');
+        console.log('Current Permissions:', { hasPageAccess: hasPageAccess('access:usuarios'), hasFeatureAccess: hasFeatureAccess('prestadores:export') });
+        alert('Debug info logged to console. Check DevTools > Console');
+              }}
+              className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded-lg text-sm"
+            >
+              Debug Info
+            </button>
+            <PermissionButton
+              requiredPermission="create:user"
+              onClick={() => {
+                setSelectedUser(null);
+                setShowForm(true);
+              }}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors duration-200"
+              message="Você não tem permissão para criar novos usuários."
+            >
+              <UserPlus size={20} />
+              Novo Usuário
+            </PermissionButton>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <button
-            onClick={() => {
-              const debugInfo = localStorage.getItem('debug_users_page');
-              const apiRequest = localStorage.getItem('debug_api_request');
-              const apiError = localStorage.getItem('debug_api_error');
-              console.log('=== DEBUG INFO ===');
-              console.log('Users Page Debug:', debugInfo ? JSON.parse(debugInfo) : 'N/A');
-              console.log('API Request Debug:', apiRequest ? JSON.parse(apiRequest) : 'N/A');
-              console.log('API Error Debug:', apiError ? JSON.parse(apiError) : 'N/A');
-              alert('Debug info logged to console. Check DevTools > Console');
+
+        {loading ? (
+          <div className="flex items-center justify-center h-64">
+            <Loader2 className="w-8 h-8 animate-spin text-gray-500" />
+          </div>
+        ) : error ? (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
+            {error}
+          </div>
+        ) : (
+          <UserList
+            users={users}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        )}
+
+        {showForm && (
+          <UserForm
+            user={selectedUser}
+            onClose={() => setShowForm(false)}
+            onSave={() => {
+              window.location.reload();
+              setShowForm(false);
             }}
-            className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded-lg text-sm"
-          >
-            Debug Info
-          </button>
-          <PermissionButton
-            requiredPermission="create:user"
-            onClick={() => {
-              setSelectedUser(null);
-              setShowForm(true);
-            }}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors duration-200"
-            message="Você não tem permissão para criar novos usuários."
-          >
-            <UserPlus size={20} />
-            Novo Usuário
-          </PermissionButton>
-        </div>
+          />
+        )}
       </div>
-
-      {loading ? (
-        <div className="flex items-center justify-center h-64">
-          <Loader2 className="w-8 h-8 animate-spin text-gray-500" />
-        </div>
-      ) : error ? (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
-          {error}
-        </div>
-      ) : (
-        <UserList
-          users={users}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
-      )}
-
-      {showForm && (
-        <UserForm
-          user={selectedUser}
-          onClose={() => setShowForm(false)}
-          onSave={() => {
-            window.location.reload();
-            setShowForm(false);
-          }}
-        />
-      )}
-    </div>
+    </PageAccessControl>
   );
 }

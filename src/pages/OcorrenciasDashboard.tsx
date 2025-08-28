@@ -36,6 +36,7 @@ import {
 import { Ocorrencia } from '@/types/ocorrencia';
 // import { abreviarNomeCliente } from '@/utils/format';
 import AdicionarOcorrenciaPopup from '@/components/ocorrencia/AdicionarOcorrenciaPopup';
+import PageAccessControl from '@/components/PageAccessControl';
 import HorariosPopup from '@/components/ocorrencia/HorariosPopup';
 import KMPopup from '@/components/ocorrencia/KMPopup';
 import PrestadorPopup from '@/components/ocorrencia/PrestadorPopup';
@@ -874,7 +875,8 @@ const OcorrenciasDashboard: React.FC = () => {
 
   try {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 p-4 lg:p-8 relative">
+      <PageAccessControl pageKey="access:ocorrencias">
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 p-4 lg:p-8 relative">
         {/* Background decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-600/10 to-indigo-600/10 rounded-full blur-3xl"></div>
@@ -1526,6 +1528,7 @@ const OcorrenciasDashboard: React.FC = () => {
         )}
         </div>
       </div>
+        </PageAccessControl>
     );
   } catch (error) {
     console.error('Erro crítico no componente OcorrenciasDashboard:', error);

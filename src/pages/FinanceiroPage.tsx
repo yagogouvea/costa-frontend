@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { FileText, Users, Table, BarChart2 } from 'lucide-react';
+import PageAccessControl from '@/components/PageAccessControl';
 
 // Mock de ocorrências finalizadas (Recuperado e Não Recuperado)
 const mockFechamentos = [
@@ -84,7 +85,8 @@ const FinanceiroPage: React.FC = () => {
   const [aba, setAba] = useState<'dashboard' | 'fechamentos' | 'prestadores'>('dashboard');
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 to-blue-50 p-4 lg:p-8">
+    <PageAccessControl pageKey="access:financeiro">
+      <div className="min-h-screen bg-gradient-to-br from-slate-100 to-blue-50 p-4 lg:p-8">
       <div className="max-w-6xl mx-auto">
         {/* Cabeçalho e Abas */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
@@ -176,6 +178,7 @@ const FinanceiroPage: React.FC = () => {
         )}
       </div>
     </div>
+      </PageAccessControl>
   );
 };
 

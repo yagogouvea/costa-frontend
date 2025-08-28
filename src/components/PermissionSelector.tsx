@@ -72,7 +72,7 @@ export default function PermissionSelector({
 
   // Separa permissões por categoria
   const pagePermissions = availablePermissions.filter(p => p.category === 'page');
-  const featurePermissions = availablePermissions.filter(p => p.category === 'feature');
+  // const featurePermissions = availablePermissions.filter(p => p.category === 'feature');
 
   return (
     <div className="space-y-6">

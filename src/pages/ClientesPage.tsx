@@ -9,6 +9,8 @@ import { useToast } from '@/components/ui/use-toast';
 import ClienteForm from '@/components/cliente/ClienteForm';
 import { Cliente } from '@/types/cliente';
 import api from "@/services/api";
+import PageAccessControl from '@/components/PageAccessControl';
+import { useAuth } from '@/contexts/AuthContext';
 
 const ClientesPage: React.FC = () => {
   const [clientes, setClientes] = useState<Cliente[]>([]);
@@ -18,6 +20,12 @@ const ClientesPage: React.FC = () => {
   const [dialogoAberto, setDialogoAberto] = useState(false);
   const [clienteEmEdicao, setClienteEmEdicao] = useState<Cliente | undefined>();
   const { toast } = useToast();
+
+  // Debug: verificar permissões
+  console.log('🔍 ClientesPage - Debug de permissões:');
+  console.log('🔍 ClientesPage - Usuário atual:', useAuth().user);
+  console.log('🔍 ClientesPage - Permissões do usuário:', useAuth().user?.permissions);
+  console.log('🔍 ClientesPage - Role do usuário:', useAuth().user?.role);
 
   const buscarClientes = async () => {
     setLoading(true);
@@ -116,7 +124,8 @@ const ClientesPage: React.FC = () => {
   };
 
   return (
-    <div className="p-2 sm:p-4 md:p-6 space-y-4 sm:space-y-6">
+    <PageAccessControl pageKey="access:clientes">
+      <div className="p-2 sm:p-4 md:p-6 space-y-4 sm:space-y-6">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2 sm:gap-4">
         <h1 className="text-xl sm:text-2xl font-bold">Cadastro de Clientes</h1>
         <Dialog open={dialogoAberto} onOpenChange={setDialogoAberto}>
@@ -228,6 +237,7 @@ const ClientesPage: React.FC = () => {
         </div>
       )}
     </div>
+      </PageAccessControl>
   );
 };
 

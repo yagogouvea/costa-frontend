@@ -15,6 +15,7 @@ import {
   User,
 } from "lucide-react";
 import api from "@/services/api";
+import PageAccessControl from "../components/PageAccessControl";
 
 interface DashboardMetrics {
   ocorrenciasMes: number;
@@ -325,27 +326,28 @@ const Home = () => {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600">Visão geral dos atendimentos</p>
-        </div>
-        <div className="flex items-center gap-3 text-sm text-gray-500">
-          <div className="flex items-center gap-1">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span className="text-xs text-green-600 font-medium">Atualização automática</span>
+    <PageAccessControl pageKey="access:dashboard">
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+            <p className="text-gray-600">Visão geral dos atendimentos</p>
           </div>
-          <div className="w-px h-4 bg-gray-300"></div>
-          <div className="flex items-center gap-2">
-            <Activity size={16} />
-            <span>
-              Última atualização: {lastUpdate ? formatLastUpdate(lastUpdate) : '--:--'}
-            </span>
+          <div className="flex items-center gap-3 text-sm text-gray-500">
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="text-xs text-green-600 font-medium">Atualização automática</span>
+            </div>
+            <div className="w-px h-4 bg-gray-300"></div>
+            <div className="flex items-center gap-2">
+              <Activity size={16} />
+              <span>
+                Última atualização: {lastUpdate ? formatLastUpdate(lastUpdate) : '--:--'}
+              </span>
+            </div>
           </div>
         </div>
-      </div>
 
       {/* Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
@@ -443,6 +445,7 @@ const Home = () => {
         </div>
       </div>
     </div>
+    </PageAccessControl>
   );
 };
 

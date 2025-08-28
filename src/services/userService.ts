@@ -1,21 +1,39 @@
 import api from './api';
 
-interface PermissionsObject {
-  users: { read: boolean; create: boolean; update: boolean; delete: boolean };
-  ocorrencias: { read: boolean; create: boolean; update: boolean; delete: boolean };
-  dashboard: { read: boolean };
-  prestadores: { read: boolean; create: boolean; update: boolean; delete: boolean };
-  relatorios: { read: boolean; create: boolean; update: boolean; delete: boolean };
-  clientes: { read: boolean; create: boolean; update: boolean; delete: boolean };
-  financeiro: { read: boolean };
+// Função para parsear permissões corretamente
+function parseUserPermissions(permissions: any): string[] {
+  if (Array.isArray(permissions)) {
+    return permissions;
+  }
+  
+  if (typeof permissions === 'string') {
+    try {
+      return JSON.parse(permissions);
+    } catch (error) {
+      console.error('Erro ao parsear permissões:', error);
+      return [];
+    }
+  }
+  
+  return [];
 }
+
+// interface PermissionsObject {
+//   users: { read: boolean; create: boolean; update: boolean; delete: boolean };
+//   ocorrencias: { read: boolean; create: boolean; update: boolean; delete: boolean };
+//   dashboard: { read: boolean };
+//   prestadores: { read: boolean; create: boolean; update: boolean; delete: boolean };
+//   relatorios: { read: boolean; create: boolean; update: boolean; delete: boolean };
+//   clientes: { read: boolean; create: boolean; update: boolean; delete: boolean };
+//   financeiro: { read: boolean };
+// }
 
 export interface User {
   id: string;
   name: string;
   email: string;
   role: string;
-  permissions: string[] | PermissionsObject;
+  permissions: string[];
   active?: boolean;
   created_at?: string;
   updated_at?: string;
@@ -26,7 +44,18 @@ export async function getUsers(): Promise<User[]> {
   console.log('Buscando usuários...');
   try {
     const response = await api.get('/api/users');
-    return response.data;
+    console.log('✅ GETUSERS - Response data:', response.data);
+    console.log('✅ GETUSERS - Permissions do primeiro usuário:', response.data[0]?.permissions);
+    console.log('✅ GETUSERS - Tipo das permissions:', typeof response.data[0]?.permissions);
+    
+    // Parsear permissões para cada usuário
+    const usersWithParsedPermissions = response.data.map((user: any) => ({
+      ...user,
+      permissions: parseUserPermissions(user.permissions)
+    }));
+    
+    console.log('✅ GETUSERS - Usuários com permissões parseadas:', usersWithParsedPermissions);
+    return usersWithParsedPermissions;
   } catch (error) {
     console.error('Erro ao listar usuários:', error);
     throw error;
@@ -37,7 +66,17 @@ export async function getUsers(): Promise<User[]> {
 export async function getUser(id: string): Promise<User> {
   try {
     const response = await api.get(`/api/users/${id}`);
-    return response.data;
+    console.log('✅ GETUSER - Response data:', response.data);
+    console.log('✅ GETUSER - Permissions:', response.data.permissions);
+    
+    // Parsear permissões
+    const userWithParsedPermissions = {
+      ...response.data,
+      permissions: parseUserPermissions(response.data.permissions)
+    };
+    
+    console.log('✅ GETUSER - Usuário com permissões parseadas:', userWithParsedPermissions);
+    return userWithParsedPermissions;
   } catch (error) {
     console.error('Erro ao buscar usuário:', error);
     throw error;
@@ -80,7 +119,16 @@ export async function deleteUser(id: string): Promise<void> {
 export async function getCurrentUser(): Promise<User> {
   try {
     const response = await api.get('/api/users/me');
-    return response.data;
+    console.log('✅ GETCURRENTUSER - Response data:', response.data);
+    
+    // Parsear permissões
+    const userWithParsedPermissions = {
+      ...response.data,
+      permissions: parseUserPermissions(response.data.permissions)
+    };
+    
+    console.log('✅ GETCURRENTUSER - Usuário com permissões parseadas:', userWithParsedPermissions);
+    return userWithParsedPermissions;
   } catch (error) {
     console.error('Erro ao buscar usuário atual:', error);
     throw error;

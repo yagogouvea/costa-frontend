@@ -17,6 +17,7 @@ import EditarDadosPopup from '@/components/ocorrencia/EditarDadosPopup';
 import StatusRecuperacaoPopup from '@/components/ocorrencia/StatusRecuperacaoPopup';
 import PassagemServicoPopup from '@/components/ocorrencia/PassagemServicoPopup';
 import PermissionButton from '@/components/PermissionButton';
+import PageAccessControl from '@/components/PageAccessControl';
 
 // Interface para gerenciar popups de forma unificada
 interface PopupData {
@@ -313,7 +314,8 @@ export default function RelatoriosPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 p-4 lg:p-8 relative">
+    <PageAccessControl pageKey="access:relatorios">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 p-4 lg:p-8 relative">
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-600/10 to-indigo-600/10 rounded-full blur-3xl"></div>
@@ -737,5 +739,6 @@ export default function RelatoriosPage() {
         )}
       </div>
     </div>
+      </PageAccessControl>
   );
 } 
