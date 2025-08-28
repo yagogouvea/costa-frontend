@@ -107,3 +107,4 @@ console.log('1. Testar o relatório no frontend');
 console.log('2. Verificar se as páginas em branco foram eliminadas');
 console.log('3. Confirmar se a numeração está correta');
 console.log('4. Validar se o layout está consistente');
+

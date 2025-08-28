@@ -56,11 +56,7 @@ interface RelatorioDados {
   sub_cliente?: string;
 }
 
-// Função auxiliar para tratar valores nulos/undefined
-const safeString = (value: any): string => {
-  if (value === null || value === undefined) return '';
-  return String(value);
-};
+// Função auxiliar para tratar valores nulos/undefined - REMOVIDA (não utilizada)
 
 // Função para formatar data (YYYY-MM-DD para DD/MM/YYYY)
 const formatarData = (data: string | undefined): string => {
@@ -415,7 +411,7 @@ const RelatorioPDF = ({ dados }: { dados: RelatorioDados }) => {
   const {
     id, cliente, tipo, data_acionamento, placa1, modelo1, cor1, endereco, cidade, estado, coordenadas, inicio, chegada,
     termino, km_inicial, km_final, km, descricao, fotos = [], resultado, sub_resultado,
-    checklist, status, operador, criado_em, despesas, despesas_detalhadas, bairro, sub_cliente, tipo_veiculo
+    checklist, operador, despesas, despesas_detalhadas, bairro, sub_cliente
   } = dados;
   
   // Debug: verificar dados recebidos

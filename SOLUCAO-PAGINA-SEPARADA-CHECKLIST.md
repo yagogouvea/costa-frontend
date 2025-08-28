@@ -232,3 +232,4 @@ const PAGINAS_CONFIG = {
 A solução com **páginas separadas** resolve definitivamente o problema da quebra de página do checklist. Em vez de depender de propriedades CSS que podem não ser suportadas pelo React PDF, criamos uma estrutura JSX robusta que garante o comportamento desejado em todos os cenários.
 
 **Resultado:** Checklist **GARANTIDO** para sempre iniciar na segunda página! 🎯
+

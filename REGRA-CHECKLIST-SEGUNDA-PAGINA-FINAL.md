@@ -195,3 +195,4 @@ const QUEBRA_PAGINA = {
 2. Verifique se o checklist sempre inicia na segunda página
 3. Confirme que não há cortes no conteúdo do checklist
 4. Valide o comportamento em diferentes dispositivos
+

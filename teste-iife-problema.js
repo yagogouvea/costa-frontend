@@ -101,3 +101,4 @@ console.log('   • A lógica matemática é idêntica em ambos os casos');
 console.log('   • O problema pode estar na interpretação do React-PDF da IIFE');
 console.log('   • A IIFE pode estar criando um contexto extra que o React-PDF interpreta como conteúdo');
 console.log('   • A solução é remover a IIFE e usar renderização direta');
+

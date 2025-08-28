@@ -46,21 +46,13 @@ interface RelatorioDados {
   cpf_condutor?: string;
   conta?: string;
   checklist?: any;
-  status?: string;
   operador?: string;
-  tipo_veiculo?: string;
   criado_em?: string;
   despesas?: number;
   despesas_detalhadas?: Array<{ tipo: string; valor: number }>;
   bairro?: string;
   sub_cliente?: string;
 }
-
-// Função auxiliar para tratar valores nulos/undefined
-const safeString = (value: any): string => {
-  if (value === null || value === undefined) return '';
-  return String(value);
-};
 
 // Função para formatar data (YYYY-MM-DD para DD/MM/YYYY)
 const formatarData = (data: string | undefined): string => {
@@ -113,18 +105,26 @@ const gerarLinkGoogleMaps = (coordenadas: string): string => {
 const tratarUrlImagem = (url: string): string => {
   if (!url) return '';
   
+  // Log para debug
+  console.log('🔍 Tratando URL da imagem:', url);
+  
   // Se já é uma URL completa, retornar como está
   if (url.startsWith('http://') || url.startsWith('https://')) {
+    console.log('✅ URL completa detectada:', url);
     return url;
   }
   
   // Se é uma URL relativa, concatenar com a API base
   if (url.startsWith('/')) {
-    return `${API_URL}${url}`;
+    const urlCompleta = `${API_URL}${url}`;
+    console.log('🔗 URL relativa convertida:', urlCompleta);
+    return urlCompleta;
   }
   
   // Se não tem barra, adicionar
-  return `${API_URL}/${url}`;
+  const urlCompleta = `${API_URL}/${url}`;
+    console.log('🔗 URL sem barra convertida:', urlCompleta);
+  return urlCompleta;
 };
 
 // Função para capitalizar texto
@@ -417,17 +417,32 @@ const RelatorioPDF = ({ dados }: { dados: RelatorioDados }) => {
   const {
     id, cliente, tipo, data_acionamento, placa1, modelo1, cor1, endereco, cidade, estado, coordenadas, inicio, chegada,
     termino, km_inicial, km_final, km, descricao, fotos = [], resultado, sub_resultado,
-    checklist, status, operador, criado_em, despesas, despesas_detalhadas, bairro, sub_cliente, tipo_veiculo
+    checklist, operador, despesas, despesas_detalhadas, bairro, sub_cliente
   } = dados;
   
   // Debug: verificar dados recebidos
-  console.log('Debug RelatorioPDF - dados recebidos:', {
+  console.log('🔍 Debug RelatorioPDF - dados recebidos:', {
     temFotos: !!fotos,
     totalFotos: fotos?.length || 0,
     fotos: fotos?.slice(0, 3) || [], // Primeiras 3 fotos para debug
     temChecklist: !!checklist,
     temDescricao: !!descricao
   });
+
+  // Debug detalhado das fotos
+  if (fotos && fotos.length > 0) {
+    console.log('📸 Fotos recebidas no RelatorioPDF:');
+    fotos.forEach((foto, index) => {
+      console.log(`  Foto ${index + 1}:`, {
+        id: foto.id,
+        url: foto.url,
+        legenda: foto.legenda,
+        urlTratada: tratarUrlImagem(foto.url || '')
+      });
+    });
+  } else {
+    console.log('❌ Nenhuma foto recebida no RelatorioPDF');
+  }
 
   // Calcular informações das páginas ANTES do return
   const fotosPorPagina = 4; // 2 linhas de 2 fotos por página

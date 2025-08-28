@@ -37,3 +37,4 @@ const estruturaTeste = `
 // )}
 
 console.log('Estrutura de teste criada para análise');
+

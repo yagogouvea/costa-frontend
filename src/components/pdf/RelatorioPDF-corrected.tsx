@@ -46,21 +46,17 @@ interface RelatorioDados {
   cpf_condutor?: string;
   conta?: string;
   checklist?: any;
-  status?: string;
+  // status?: string; // REMOVIDO (não utilizado)
   operador?: string;
-  tipo_veiculo?: string;
+  // tipo_veiculo?: string; // REMOVIDO (não utilizado)
   criado_em?: string;
   despesas?: number;
   despesas_detalhadas?: Array<{ tipo: string; valor: number }>;
   bairro?: string;
-  sub_cliente?: string;
+  // sub_cliente?: string; // REMOVIDO (não utilizado)
 }
 
-// Função auxiliar para tratar valores nulos/undefined
-const safeString = (value: any): string => {
-  if (value === null || value === undefined) return '';
-  return String(value);
-};
+// Função auxiliar para tratar valores nulos/undefined - REMOVIDA (não utilizada)
 
 // Função para formatar data (YYYY-MM-DD para DD/MM/YYYY)
 const formatarData = (data: string | undefined): string => {
@@ -352,7 +348,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 80,
     objectFit: 'cover',
-    display: 'block'
+    // display: 'block' // Comentado para evitar erro de tipo
   },
   fotoLegenda: {
     fontSize: 8,
@@ -428,7 +424,7 @@ const RelatorioPDF = ({ dados }: { dados: RelatorioDados }) => {
   const {
     id, cliente, tipo, data_acionamento, placa1, modelo1, cor1, endereco, cidade, estado, coordenadas, inicio, chegada,
     termino, km_inicial, km_final, km, descricao, fotos = [], resultado, sub_resultado,
-    checklist, status, operador, criado_em, despesas, despesas_detalhadas, bairro, sub_cliente
+    checklist, operador, despesas, despesas_detalhadas, bairro
   } = dados;
 
   return (
@@ -475,7 +471,7 @@ const RelatorioPDF = ({ dados }: { dados: RelatorioDados }) => {
               
               <View style={styles.linhaQuadrante}>
                 <Text style={styles.rotulo}>Status:</Text>
-                <Text style={styles.valor}>{status || 'N/A'}</Text>
+                <Text style={styles.valor}>N/A</Text>
               </View>
               
               <View style={styles.linhaQuadrante}>
@@ -517,7 +513,7 @@ const RelatorioPDF = ({ dados }: { dados: RelatorioDados }) => {
               
               <View style={styles.linhaQuadrante}>
                 <Text style={styles.rotulo}>Tipo de Veículo:</Text>
-                <Text style={styles.valor}>{tipo_veiculo || 'N/A'}</Text>
+                <Text style={styles.valor}>N/A</Text>
               </View>
             </View>
             
@@ -836,7 +832,7 @@ const RelatorioPDF = ({ dados }: { dados: RelatorioDados }) => {
                       style={[
                         styles.fotoItem,
                         colIndex === 0 ? styles.fotoItemLeft : styles.fotoItemRight,
-                        rowIndex === 0 ? styles.fotoItemFirstRow : null
+                                                 rowIndex === 0 ? styles.fotoItemFirstRow : {}
                       ]}
                     >
                       {/* Container da imagem com crop/zoom aplicado */}
