@@ -37,7 +37,12 @@ export const PERMISSIONS: Permission[] = [
   {
     key: 'access:clientes',
     description: 'Clientes',
-    category: 'page'
+    category: 'page',
+    children: [
+      { key: 'clientes:create', description: 'Novo Cliente', category: 'feature' },
+      { key: 'clientes:edit', description: 'Editar Cliente', category: 'feature' },
+      { key: 'clientes:delete', description: 'Excluir Cliente', category: 'feature' }
+    ]
   },
   {
     key: 'access:relatorios',
@@ -62,7 +67,7 @@ export const DEFAULT_OPERATOR_PERMISSIONS: string[] = [
   'access:usuarios'
 ];
 
-// Permissões para supervisor (todas as páginas + funcionalidades de prestadores)
+// Permissões para supervisor (todas as páginas + funcionalidades de prestadores + funcionalidades de clientes)
 export const SUPERVISOR_PERMISSIONS: string[] = [
   'access:dashboard',
   'access:ocorrencias',
@@ -73,6 +78,9 @@ export const SUPERVISOR_PERMISSIONS: string[] = [
   'prestadores:delete',
   'access:financeiro',
   'access:clientes',
+  'clientes:create',
+  'clientes:edit',
+  'clientes:delete',
   'access:relatorios',
   'access:usuarios'
 ];
@@ -95,7 +103,7 @@ export const ROLE_PERMISSIONS: Record<string, string[]> = {
 
 export const ROLE_DESCRIPTIONS: Record<string, string> = {
   operator: "Operador - Acesso às páginas do sistema",
-  manager: "Supervisor - Acesso às páginas + funcionalidades de prestadores", // Mudou de 'supervisor' para 'manager'
+  manager: "Supervisor - Acesso às páginas + funcionalidades de prestadores e clientes", // Mudou de 'supervisor' para 'manager'
   admin: "Administrador - Acesso total ao sistema"
 };
 

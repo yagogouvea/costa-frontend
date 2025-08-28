@@ -14,15 +14,10 @@ export default function PageAccessControl({
 }: PageAccessControlProps) {
   const { hasPageAccess } = usePermissions();
 
-  console.log(`🔍 PageAccessControl - Verificando acesso para: ${pageKey}`);
-  console.log(`🔍 PageAccessControl - hasPageAccess(${pageKey}):`, hasPageAccess(pageKey));
-
   if (!hasPageAccess(pageKey)) {
-    console.log(`🔍 PageAccessControl - Acesso negado para: ${pageKey}`);
     return fallback || <AccessDenied pageKey={pageKey} />;
   }
 
-  console.log(`🔍 PageAccessControl - Acesso permitido para: ${pageKey}`);
   return <>{children}</>;
 }
 

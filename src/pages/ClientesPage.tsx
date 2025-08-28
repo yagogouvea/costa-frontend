@@ -10,7 +10,7 @@ import ClienteForm from '@/components/cliente/ClienteForm';
 import { Cliente } from '@/types/cliente';
 import api from "@/services/api";
 import PageAccessControl from '@/components/PageAccessControl';
-import { useAuth } from '@/contexts/AuthContext';
+import FeatureAccessControl from '@/components/FeatureAccessControl';
 
 const ClientesPage: React.FC = () => {
   const [clientes, setClientes] = useState<Cliente[]>([]);
@@ -21,11 +21,7 @@ const ClientesPage: React.FC = () => {
   const [clienteEmEdicao, setClienteEmEdicao] = useState<Cliente | undefined>();
   const { toast } = useToast();
 
-  // Debug: verificar permissões
-  console.log('🔍 ClientesPage - Debug de permissões:');
-  console.log('🔍 ClientesPage - Usuário atual:', useAuth().user);
-  console.log('🔍 ClientesPage - Permissões do usuário:', useAuth().user?.permissions);
-  console.log('🔍 ClientesPage - Role do usuário:', useAuth().user?.role);
+
 
   const buscarClientes = async () => {
     setLoading(true);
@@ -128,21 +124,23 @@ const ClientesPage: React.FC = () => {
       <div className="p-2 sm:p-4 md:p-6 space-y-4 sm:space-y-6">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2 sm:gap-4">
         <h1 className="text-xl sm:text-2xl font-bold">Cadastro de Clientes</h1>
-        <Dialog open={dialogoAberto} onOpenChange={setDialogoAberto}>
-          <DialogTrigger asChild>
-            <Button className="w-full sm:w-auto" onClick={() => setClienteEmEdicao(undefined)}>
-              <Plus className="w-4 h-4 mr-2" />
-              Novo Cliente
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-full sm:max-w-2xl md:max-w-4xl max-h-[90vh] overflow-y-auto">
-            <ClienteForm
-              cliente={clienteEmEdicao}
-              onSubmit={handleSalvarCliente}
-              onCancel={() => setDialogoAberto(false)}
-            />
-          </DialogContent>
-        </Dialog>
+        <FeatureAccessControl featureKey="clientes:create" hideIfNoAccess>
+          <Dialog open={dialogoAberto} onOpenChange={setDialogoAberto}>
+            <DialogTrigger asChild>
+              <Button className="w-full sm:w-auto" onClick={() => setClienteEmEdicao(undefined)}>
+                <Plus className="w-4 h-4 mr-2" />
+                Novo Cliente
+              </Button>
+            </DialogTrigger>
+                      <DialogContent className="max-w-full sm:max-w-2xl md:max-w-4xl max-h-[90vh] overflow-y-auto">
+              <ClienteForm
+                cliente={clienteEmEdicao}
+                onSubmit={handleSalvarCliente}
+                onCancel={() => setDialogoAberto(false)}
+              />
+            </DialogContent>
+          </Dialog>
+        </FeatureAccessControl>
       </div>
 
       {/* Filtros de busca */}
@@ -188,24 +186,28 @@ const ClientesPage: React.FC = () => {
                     <p className="text-xs sm:text-sm text-gray-500">CNPJ: {cliente.cnpj}</p>
                   </div>
                   <div className="flex gap-2 mt-2 sm:mt-0">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setClienteEmEdicao(cliente);
-                        setDialogoAberto(true);
-                      }}
-                    >
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-red-600 hover:text-red-700"
-                      onClick={() => cliente.id && handleExcluirCliente(cliente.id)}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    <FeatureAccessControl featureKey="clientes:edit" hideIfNoAccess>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setClienteEmEdicao(cliente);
+                          setDialogoAberto(true);
+                        }}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                    </FeatureAccessControl>
+                    <FeatureAccessControl featureKey="clientes:delete" hideIfNoAccess>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-600 hover:text-red-700"
+                        onClick={() => cliente.id && handleExcluirCliente(cliente.id)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </FeatureAccessControl>
                   </div>
                 </div>
 
