@@ -36,7 +36,6 @@ import {
 import { Ocorrencia } from '@/types/ocorrencia';
 // import { abreviarNomeCliente } from '@/utils/format';
 import AdicionarOcorrenciaPopup from '@/components/ocorrencia/AdicionarOcorrenciaPopup';
-import PageAccessControl from '@/components/PageAccessControl';
 import HorariosPopup from '@/components/ocorrencia/HorariosPopup';
 import KMPopup from '@/components/ocorrencia/KMPopup';
 import PrestadorPopup from '@/components/ocorrencia/PrestadorPopup';
@@ -342,8 +341,9 @@ const OcorrenciasDashboard: React.FC = () => {
       setLoading(true);
       setError(null);
       
+      // ✅ OTIMIZAÇÃO: Usar nova rota otimizada que retorna status dos popups
       const [response, clientesResponse] = await Promise.all([
-        api.get('/api/ocorrencias'),
+        api.get('/api/v1/ocorrencias/dashboard'), // ✅ NOVA ROTA OTIMIZADA
         getClientes()
       ]);
       
@@ -362,9 +362,6 @@ const OcorrenciasDashboard: React.FC = () => {
       setOcorrenciasFinalizadas(finalizadas);
       setOcorrenciasOriginaisEmAndamento(emAndamento);
       setOcorrenciasOriginaisFinalizadas(finalizadas);
-      
-      // ✅ CARREGAR STATUS DOS POPUPS: Verificar checklist e segundo apoio para todas as ocorrências
-      await carregarStatusPopups([...emAndamento, ...finalizadas]);
       
       // Extrair operadores únicos
       const operadores = [...new Set(ocorrencias.map((o: Ocorrencia) => o.operador).filter(Boolean))] as string[];
@@ -875,8 +872,7 @@ const OcorrenciasDashboard: React.FC = () => {
 
   try {
     return (
-      <PageAccessControl pageKey="access:ocorrencias">
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 p-4 lg:p-8 relative">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 p-4 lg:p-8 relative">
         {/* Background decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-600/10 to-indigo-600/10 rounded-full blur-3xl"></div>
@@ -1528,7 +1524,6 @@ const OcorrenciasDashboard: React.FC = () => {
         )}
         </div>
       </div>
-        </PageAccessControl>
     );
   } catch (error) {
     console.error('Erro crítico no componente OcorrenciasDashboard:', error);
