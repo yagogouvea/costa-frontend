@@ -686,8 +686,8 @@ const RelatorioPDF = ({ dados }: { dados: RelatorioDados }) => {
                 </View>
               )}
 
-              {/* Observação da Posse */}
-              {checklist.observacao_posse && (
+              {/* ✅ NOVA LÓGICA: Observação da Posse - Apenas quando "Terceiros" for selecionado */}
+              {checklist.posse_veiculo === 'terceiros' && checklist.observacao_posse && (
                 <View style={styles.linhaQuadrante}>
                   <Text style={styles.rotulo}>Observação da posse:</Text>
                   <Text style={styles.valor}>{renderizarValor(checklist.observacao_posse)}</Text>

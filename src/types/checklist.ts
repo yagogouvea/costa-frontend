@@ -45,6 +45,9 @@ export interface CheckList {
   // Observação geral
   observacao_ocorrencia?: string | null;
   
+  // Controle de tratamento
+  dispensado_checklist?: boolean | null;
+  
   criado_em: string;
   atualizado_em: string;
 }
@@ -92,4 +95,7 @@ export interface CreateCheckListDTO {
   
   // Observação geral
   observacao_ocorrencia?: string;
+  
+  // Controle de tratamento
+  dispensado_checklist?: boolean;
 }

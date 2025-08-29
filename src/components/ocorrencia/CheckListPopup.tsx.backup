@@ -61,8 +61,8 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
   // Observação geral
   const [observacaoOcorrencia, setObservacaoOcorrencia] = useState('');
 
-  // ✅ NOVO: Controle de tratamento - dispensado o checklist
-  const [dispensadoChecklist, setDispensadoChecklist] = useState(false);
+  // ✅ NOVO CAMPO: Dispensar checklist
+  const [dispensarChecklist, setDispensarChecklist] = useState(false);
 
   // ✅ VALIDAÇÕES: Estados para controlar erros de campos obrigatórios
   const [erros, setErros] = useState<Record<string, string>>({});
@@ -101,9 +101,6 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
         
         // Carregar dados existentes
         // Removido: setDestinoVeiculo - agora é título
-        
-        // ✅ NOVO: Carregar controle de dispensado checklist
-        setDispensadoChecklist(checklist.dispensado_checklist || false);
         
         // Determinar tipo de destino baseado nos dados existentes
         console.log('🎯 Determinando tipo de destino:', {
@@ -158,6 +155,9 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
         setFotosRealizadas(checklist.fotos_realizadas || '');
         setJustificativaFotos(checklist.justificativa_fotos || '');
         setObservacaoOcorrencia(checklist.observacao_ocorrencia || '');
+        
+        // ✅ NOVO CAMPO: Dispensar checklist
+        setDispensarChecklist(checklist.dispensar_checklist || false);
       }
     } catch (error) {
       console.log('❌ Erro ao carregar checklist:', error);
@@ -169,9 +169,9 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
   const validarFormulario = (): boolean => {
     const novosErros: Record<string, string> = {};
     
-    // ✅ NOVA LÓGICA: Se o checklist for dispensado, não validar campos obrigatórios
-    if (dispensadoChecklist) {
-      console.log('✅ Checklist dispensado - pulando validações obrigatórias');
+    // ✅ NOVA LÓGICA: Se checklist for dispensado, não validar outros campos
+    if (dispensarChecklist) {
+      setErros({});
       return true;
     }
     
@@ -227,8 +227,9 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
       novosErros.justificativaFotos = 'Justificativa é obrigatória quando fotos não foram realizadas';
     }
     
+    // ✅ NOVA LÓGICA: Observação da abordagem só é obrigatória quando "Terceiros" é selecionado
     if (posseVeiculo === 'terceiros' && !observacaoPosse.trim()) {
-      novosErros.observacaoPosse = 'Observação da abordagem é obrigatória quando posse é de terceiros';
+      novosErros.observacaoPosse = 'Observação da abordagem é obrigatória quando Terceiros é selecionado';
     }
     
     // Atualizar estado de erros
@@ -290,14 +291,15 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
         // Outros campos
         recuperado_com_chave: recuperadoComChave || undefined,
         posse_veiculo: posseVeiculo || undefined,
-        // ✅ NOVA LÓGICA: Observação da posse só é salva quando "Terceiros" é selecionado
-        observacao_posse: (posseVeiculo === 'terceiros') ? observacaoPosse || undefined : undefined,
+        observacao_posse: observacaoPosse || undefined,
         avarias: avarias || undefined,
         detalhes_avarias: (avarias === 'sim') ? detalhesAvarias || undefined : undefined,
         fotos_realizadas: fotosRealizadas || undefined,
         justificativa_fotos: (fotosRealizadas === 'nao') ? justificativaFotos || undefined : undefined,
         observacao_ocorrencia: observacaoOcorrencia || undefined,
-        dispensado_checklist: dispensadoChecklist || undefined
+        
+        // ✅ NOVO CAMPO: Dispensar checklist
+        dispensar_checklist: dispensarChecklist
       };
 
       console.log('🔍 Payload checklist:', payload);
@@ -316,11 +318,12 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
       // Atualizar o estado local para refletir que agora existe um checklist
       setChecklistExistente(response.data);
       
-      // ✅ CORREÇÃO: Chamar onUpdate para notificar o dashboard sobre a mudança
-      // Passar um objeto indicando que o checklist foi modificado
+      // ✅ CORREÇÃO: Não passar os dados do checklist para onUpdate
+      // pois isso estava sobrescrevendo o ID da ocorrência
+      // Se necessário, passar apenas dados relevantes da ocorrência
       if (onUpdate) {
-        onUpdate({ checklist: response.data });
-        console.log('🔧 Checklist salvo - notificando dashboard sobre a mudança');
+        // onUpdate(response.data); // ❌ Removido - causava confusão de IDs
+        console.log('🔧 Checklist salvo - não atualizando dados da ocorrência para evitar confusão de IDs');
       }
       
       onClose();
@@ -341,16 +344,9 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
   };
 
   return (
-    <div className={`p-6 rounded-lg shadow-lg w-full max-w-4xl mx-auto my-auto border max-h-[90vh] overflow-y-auto transition-all duration-300 ${
-      dispensadoChecklist 
-        ? 'bg-green-50 border-green-300' 
-        : 'bg-white border-gray-200'
-    }`}>
-      <DialogTitle className={`text-lg font-bold text-center ${
-        dispensadoChecklist ? 'text-green-700' : 'text-blue-700'
-      }`}>
+    <div className="p-6 rounded-lg bg-white shadow-lg w-full max-w-4xl mx-auto my-auto border border-gray-200 max-h-[90vh] overflow-y-auto">
+      <DialogTitle className="text-lg font-bold text-blue-700 text-center">
         Check-list - ID: {ocorrenciaFixa.id} | Placa: {ocorrenciaFixa.placa1}
-        {dispensadoChecklist && ' ✅ DISPENSADO'}
       </DialogTitle>
       <DialogDescription className="sr-only">
         Preencha o checklist com as informações da ocorrência.
@@ -415,88 +411,108 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
           )}
         </div>
 
-        {/* Seções Condicionais */}
-        <div className="space-y-6">
-          {/* Loja */}
-          {tipoDestino === 'loja' && (
-            <div className="border p-4 rounded-lg bg-blue-50">
-              <h3 className="text-md font-semibold text-gray-800 mb-4">Informações da Loja</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label>
-                    Nome da loja <span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    type="text"
-                    placeholder="Digite o nome da loja"
-                    value={nomeLoja}
-                    onChange={(e) => {
-                      setNomeLoja(e.target.value);
-                      limparErro('nomeLoja');
-                    }}
-                    className={erros.nomeLoja ? 'border-red-500' : ''}
-                  />
-                  {erros.nomeLoja && (
-                    <p className="text-red-500 text-sm mt-1">{erros.nomeLoja}</p>
-                  )}
-                </div>
-                <div>
-                  <Label>
-                    Endereço da loja <span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    type="text"
-                    placeholder="Digite o endereço da loja"
-                    value={enderecoLoja}
-                    onChange={(e) => {
-                      setEnderecoLoja(e.target.value);
-                      limparErro('enderecoLoja');
-                    }}
-                    className={erros.enderecoLoja ? 'border-red-500' : ''}
-                  />
-                  {erros.enderecoLoja && (
-                    <p className="text-red-500 text-sm mt-1">{erros.enderecoLoja}</p>
-                  )}
-                </div>
-                <div>
-                  <Label>
-                    Nome do atendente/Colaborador <span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    type="text"
-                    placeholder="Digite o nome do atendente"
-                    value={nomeAtendente}
-                    onChange={(e) => {
-                      setNomeAtendente(e.target.value);
-                      limparErro('nomeAtendente');
-                    }}
-                    className={erros.nomeAtendente ? 'border-red-500' : ''}
-                  />
-                  {erros.nomeAtendente && (
-                    <p className="text-red-500 text-sm mt-1">{erros.nomeAtendente}</p>
-                  )}
-                </div>
-                <div>
-                  <Label>
-                    Matrícula do atendente/Colaborador <span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    type="text"
-                    placeholder="Digite a matrícula"
-                    value={matriculaAtendente}
-                    onChange={(e) => {
-                      setMatriculaAtendente(e.target.value);
-                      limparErro('matriculaAtendente');
-                    }}
-                    className={erros.matriculaAtendente ? 'border-red-500' : ''}
-                  />
-                  {erros.matriculaAtendente && (
-                    <p className="text-red-500 text-sm mt-1">{erros.matriculaAtendente}</p>
-                  )}
+        {/* ✅ NOVO CAMPO: Dispensar Checklist */}
+        <div className="border-b pb-4">
+          <div className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id="dispensar_checklist"
+              checked={dispensarChecklist}
+              onChange={(e) => setDispensarChecklist(e.target.checked)}
+              className="text-blue-600"
+            />
+            <Label htmlFor="dispensar_checklist" className="font-semibold text-gray-800">
+              Dispensar Checklist
+            </Label>
+          </div>
+          <p className="text-sm text-gray-600 mt-1">
+            Marque esta opção quando não for necessário preencher o checklist completo
+          </p>
+        </div>
+
+        {/* ✅ NOVA LÓGICA: Todo o conteúdo do formulário só aparece quando checklist NÃO for dispensado */}
+        {!dispensarChecklist && (
+          <>
+            {/* Loja */}
+            {tipoDestino === 'loja' && (
+              <div className="border p-4 rounded-lg bg-blue-50">
+                <h3 className="text-md font-semibold text-gray-800 mb-4">Informações da Loja</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label>
+                      Nome da loja <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      type="text"
+                      placeholder="Digite o nome da loja"
+                      value={nomeLoja}
+                      onChange={(e) => {
+                        setNomeLoja(e.target.value);
+                        limparErro('nomeLoja');
+                      }}
+                      className={erros.nomeLoja ? 'border-red-500' : ''}
+                    />
+                    {erros.nomeLoja && (
+                      <p className="text-red-500 text-sm mt-1">{erros.nomeLoja}</p>
+                    )}
+                  </div>
+                  <div>
+                    <Label>
+                      Endereço da loja <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      type="text"
+                      placeholder="Digite o endereço da loja"
+                      value={enderecoLoja}
+                      onChange={(e) => {
+                        setEnderecoLoja(e.target.value);
+                        limparErro('enderecoLoja');
+                      }}
+                      className={erros.enderecoLoja ? 'border-red-500' : ''}
+                    />
+                    {erros.enderecoLoja && (
+                      <p className="text-red-500 text-sm mt-1">{erros.enderecoLoja}</p>
+                    )}
+                  </div>
+                  <div>
+                    <Label>
+                      Nome do atendente/Colaborador <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      type="text"
+                      placeholder="Digite o nome do atendente"
+                      value={nomeAtendente}
+                      onChange={(e) => {
+                        setNomeAtendente(e.target.value);
+                        limparErro('nomeAtendente');
+                      }}
+                      className={erros.nomeAtendente ? 'border-red-500' : ''}
+                    />
+                    {erros.nomeAtendente && (
+                      <p className="text-red-500 text-sm mt-1">{erros.nomeAtendente}</p>
+                    )}
+                  </div>
+                  <div>
+                    <Label>
+                      Matrícula do atendente/Colaborador <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      type="text"
+                      placeholder="Digite a matrícula"
+                      value={matriculaAtendente}
+                      onChange={(e) => {
+                        setMatriculaAtendente(e.target.value);
+                        limparErro('matriculaAtendente');
+                      }}
+                      className={erros.matriculaAtendente ? 'border-red-500' : ''}
+                    />
+                    {erros.matriculaAtendente && (
+                      <p className="text-red-500 text-sm mt-1">{erros.matriculaAtendente}</p>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
           {/* Guincho */}
           {tipoDestino === 'guincho' && (
@@ -747,10 +763,8 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
               </div>
             </div>
           )}
-        </div>
-
-        {/* Seção: Informações Gerais */}
-        <div className="space-y-4 border-t pt-4">
+          {/* Seção: Informações Gerais */}
+          <div className="space-y-4 border-t pt-4">
           <h3 className="text-md font-semibold text-gray-800">Informações Gerais</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -983,55 +997,18 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
               rows={4}
             />
           </div>
+          </> {/* ✅ Fechamento do React Fragment */}
+        )} {/* ✅ Fechamento da condição !dispensarChecklist */}
 
-          {/* ✅ NOVO: Botão de controle de tratamento - dispensado o checklist */}
-          <div className={`border-t pt-4 ${dispensadoChecklist ? 'bg-green-100 p-3 rounded-lg border-green-200' : ''}`}>
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="dispensado_checklist"
-                checked={dispensadoChecklist}
-                onChange={(e) => setDispensadoChecklist(e.target.checked)}
-                className={`w-5 h-5 rounded focus:ring-2 focus:ring-offset-2 transition-all duration-200 ${
-                  dispensadoChecklist 
-                    ? 'text-green-600 bg-green-100 border-green-500 focus:ring-green-500' 
-                    : 'text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500'
-                }`}
-              />
-              <Label htmlFor="dispensado_checklist" className={`text-sm font-medium transition-colors duration-200 ${
-                dispensadoChecklist ? 'text-green-700' : 'text-gray-700'
-              }`}>
-                {dispensadoChecklist ? '✅ Checklist Dispensado' : 'Dispensado o checklist'}
-              </Label>
-            </div>
-            <p className={`text-xs mt-1 transition-colors duration-200 ${
-              dispensadoChecklist ? 'text-green-600' : 'text-gray-500'
-            }`}>
-              {dispensadoChecklist 
-                ? 'Checklist foi dispensado para esta ocorrência - não é necessário preencher campos obrigatórios'
-                : 'Marque esta opção quando o checklist não for necessário para esta ocorrência'
-              }
-            </p>
-          </div>
+        <div className="mt-6 flex justify-end gap-2">
+          <Button variant="destructive" onClick={onClose} disabled={loading}>
+            Cancelar
+          </Button>
+          <Button onClick={salvar} disabled={loading}>
+            {loading ? 'Salvando...' : 'Salvar'}
+          </Button>
         </div>
-      </div>
-
-      <div className="mt-6 flex justify-end gap-2">
-        <Button variant="destructive" onClick={onClose} disabled={loading}>
-          Cancelar
-        </Button>
-        <Button 
-          onClick={salvar} 
-          disabled={loading}
-          className={`transition-all duration-200 ${
-            dispensadoChecklist 
-              ? 'bg-green-600 hover:bg-green-700 text-white' 
-              : ''
-          }`}
-        >
-          {loading ? 'Salvando...' : dispensadoChecklist ? '✅ Salvar Checklist Dispensado' : 'Salvar'}
-        </Button>
-      </div>
+      
     </div>
   );
 };

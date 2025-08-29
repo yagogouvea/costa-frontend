@@ -217,7 +217,8 @@ const gerarTextoPassagem = async (o: Ocorrencia): Promise<string> => {
         };
         infoGerais.push(`• *POSSE DO VEÍCULO:* ${posseMap[checklist.posse_veiculo] || checklist.posse_veiculo.toUpperCase()}`);
       }
-      if (checklist.observacao_posse) {
+      // ✅ NOVA LÓGICA: Observação da posse só aparece quando "Terceiros" é selecionado
+      if (checklist.posse_veiculo === 'terceiros' && checklist.observacao_posse) {
         infoGerais.push(`• *OBSERVAÇÃO POSSE:* ${checklist.observacao_posse.toUpperCase()}`);
       }
       if (checklist.avarias) {
@@ -240,6 +241,11 @@ const gerarTextoPassagem = async (o: Ocorrencia): Promise<string> => {
         checklistSections.push(`📋 *INFORMAÇÕES GERAIS*\n${infoGerais.join('\n')}`);
       }
 
+      // ✅ NOVA LÓGICA: Adicionar informação sobre checklist dispensado
+      if (checklist.dispensado_checklist) {
+        checklistSections.push('📋 *CHECKLIST DISPENSADO*\n• *STATUS:* Checklist foi dispensado para esta ocorrência');
+      }
+      
       if (checklistSections.length > 0) {
         checklistInfo = '\n\n' + checklistSections.join('\n\n');
       }

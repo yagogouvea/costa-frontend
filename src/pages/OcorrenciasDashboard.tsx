@@ -62,8 +62,14 @@ const verificarChecklistCompleto = async (ocorrenciaId: number): Promise<boolean
     const response = await api.get(`/api/v1/checklist/ocorrencia/${ocorrenciaId}`);
     const checklist = response.data;
     
-    // Verificar se o checklist existe e tem pelo menos uma seção preenchida
+    // Verificar se o checklist existe
     if (!checklist) return false;
+    
+    // ✅ NOVA LÓGICA: Se o checklist foi dispensado, considerar como completo
+    if (checklist.dispensado_checklist) {
+      console.log(`✅ Checklist dispensado para ocorrência ${ocorrenciaId} - considerando como completo`);
+      return true;
+    }
     
     // Verificar se pelo menos uma das seções principais está preenchida
     const temLoja = checklist.loja_selecionada && (
@@ -93,7 +99,19 @@ const verificarChecklistCompleto = async (ocorrenciaId: number): Promise<boolean
                           checklist.fotos_realizadas || 
                           checklist.observacao_ocorrencia;
     
-    return temLoja || temGuincho || temApreensao || temInfoGerais;
+    const temDados = temLoja || temGuincho || temApreensao || temInfoGerais;
+    
+    console.log(`🔍 Checklist ocorrência ${ocorrenciaId}:`, {
+      dispensado: checklist.dispensado_checklist,
+      temLoja,
+      temGuincho,
+      temApreensao,
+      temInfoGerais,
+      temDados,
+      completo: temDados
+    });
+    
+    return temDados;
   } catch (error) {
     console.debug('Erro ao verificar checklist:', error);
     return false;
@@ -164,7 +182,7 @@ const OcorrenciasDashboard: React.FC = () => {
   const [ocorrenciasOriginaisFinalizadas, setOcorrenciasOriginaisFinalizadas] = useState<Ocorrencia[]>([]);
 
   // Status considerados como encerrados
-  const STATUS_ENCERRADOS = ['concluida', 'finalizada', 'encerrada', 'finalizado', 'encerrado', 'recuperada', 'recuperado', 'cancelado', 'cancelada'];
+  const STATUS_ENCERRADOS = ['concluida', 'finalizada', 'encerrada', 'finalizado', 'encerrado', 'recuperada', 'recuperado', 'nao_recuperado', 'cancelado', 'cancelada'];
 
   useEffect(() => {
     loadOcorrencias();
@@ -572,6 +590,11 @@ const OcorrenciasDashboard: React.FC = () => {
     // Validar Despesas
     if (ocorrencia.despesas == null && (!ocorrencia.despesas_detalhadas || !Array.isArray(ocorrencia.despesas_detalhadas) || ocorrencia.despesas_detalhadas.length === 0)) {
       erros.push('• Despesas (preencher ou marcar "Sem despesas")');
+    }
+
+    // ✅ NOVA VALIDAÇÃO: Checklist (preencher ou marcar "dispensado")
+    if (!checklistStatus[ocorrencia.id]) {
+      erros.push('• Checklist (preencher ou marcar "Dispensado o checklist")');
     }
 
     // Validar Prestador

@@ -720,8 +720,8 @@ const RelatorioPDF = ({ dados }: { dados: RelatorioDados }) => {
                 </View>
               )}
 
-              {/* Observação da Posse */}
-              {checklist.observacao_posse && (
+              {/* ✅ NOVA LÓGICA: Observação da Posse - Apenas quando "Terceiros" for selecionado */}
+              {checklist.posse_veiculo === 'terceiros' && checklist.observacao_posse && (
                 <View style={styles.linhaQuadrante}>
                   <Text style={styles.rotulo}>Observação da posse:</Text>
                   <Text style={styles.valor}>{renderizarValor(checklist.observacao_posse)}</Text>
@@ -733,6 +733,14 @@ const RelatorioPDF = ({ dados }: { dados: RelatorioDados }) => {
                 <View style={styles.linhaQuadrante}>
                   <Text style={styles.rotulo}>Observação da ocorrência:</Text>
                   <Text style={styles.valor}>{renderizarValor(checklist.observacao_ocorrencia)}</Text>
+                </View>
+              )}
+
+              {/* ✅ NOVA LÓGICA: Checklist dispensado - aparece quando marcado */}
+              {checklist.dispensado_checklist && (
+                <View style={styles.linhaQuadrante}>
+                  <Text style={styles.rotulo}>Status do Checklist:</Text>
+                  <Text style={styles.valor}>DISPENSADO</Text>
                 </View>
               )}
 
