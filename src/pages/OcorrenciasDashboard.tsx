@@ -363,6 +363,19 @@ const OcorrenciasDashboard: React.FC = () => {
       setOcorrenciasOriginaisEmAndamento(emAndamento);
       setOcorrenciasOriginaisFinalizadas(finalizadas);
       
+      // ✅ OTIMIZAÇÃO: Status dos popups já vem do backend
+      const novoChecklistStatus: Record<number, boolean> = {};
+      const novoSegundoApoioStatus: Record<number, boolean> = {};
+      
+      ocorrencias.forEach((ocorrencia: any) => {
+        // ✅ Usar status já calculado pelo backend
+        novoChecklistStatus[ocorrencia.id] = ocorrencia.checklistStatus?.completo || false;
+        novoSegundoApoioStatus[ocorrencia.id] = false; // Por enquanto, manter como false
+      });
+      
+      setChecklistStatus(novoChecklistStatus);
+      setSegundoApoioStatus(novoSegundoApoioStatus);
+      
       // Extrair operadores únicos
       const operadores = [...new Set(ocorrencias.map((o: Ocorrencia) => o.operador).filter(Boolean))] as string[];
       setOperadoresDisponiveis(operadores);
@@ -375,31 +388,7 @@ const OcorrenciasDashboard: React.FC = () => {
     }
   };
 
-  // ✅ FUNÇÃO PARA CARREGAR STATUS DOS POPUPS
-  const carregarStatusPopups = async (ocorrencias: Ocorrencia[]) => {
-    const novoChecklistStatus: Record<number, boolean> = {};
-    const novoSegundoApoioStatus: Record<number, boolean> = {};
-    
-    // Verificar status de cada ocorrência
-    for (const ocorrencia of ocorrencias) {
-      try {
-        const [checklistCompleto, segundoApoioCompleto] = await Promise.all([
-          verificarChecklistCompleto(ocorrencia.id),
-          verificarSegundoApoioCompleto(ocorrencia.id)
-        ]);
-        
-        novoChecklistStatus[ocorrencia.id] = checklistCompleto;
-        novoSegundoApoioStatus[ocorrencia.id] = segundoApoioCompleto;
-      } catch (error) {
-        console.debug(`Erro ao verificar status dos popups para ocorrência ${ocorrencia.id}:`, error);
-        novoChecklistStatus[ocorrencia.id] = false;
-        novoSegundoApoioStatus[ocorrencia.id] = false;
-      }
-    }
-    
-    setChecklistStatus(novoChecklistStatus);
-    setSegundoApoioStatus(novoSegundoApoioStatus);
-  };
+
 
   // ✅ FILTROS SEPARADOS: Manipular filtros de em andamento
   const handleFiltroOperadorEmAndamentoChange = (operador: string) => {
