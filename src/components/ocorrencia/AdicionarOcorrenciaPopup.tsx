@@ -143,7 +143,6 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
     const clienteObj: ClienteResumo | undefined = clientesArray.find(c => c.id === clienteSelecionado);
     const nomeCliente: string = clienteObj?.nome || '';
     const isClienteOpentech = nomeCliente.toUpperCase().includes('OPENTECH');
-    const isClienteBrk = nomeCliente.toUpperCase().includes('BRK');
 
     // Validações básicas para todos os clientes
     if (!clienteSelecionado) {
@@ -263,7 +262,6 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
           const clienteObj: ClienteResumo | undefined = clientesArray.find(c => c.id === clienteSelecionado);
           const nomeCliente: string = clienteObj?.nome || '';
           const isClienteOpentech = nomeCliente.toUpperCase().includes('OPENTECH') || nomeCliente.toUpperCase().includes('OPEN TECH');
-          const isClienteBrk = nomeCliente.toUpperCase().includes('BRK');
           
           return (
             <>
