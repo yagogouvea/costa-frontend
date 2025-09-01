@@ -419,7 +419,7 @@ const PassagemServicoPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }
       try {
         // Buscar resultado atualizado apenas se não tiver resultado
         if (!ocorrencia.resultado || ocorrencia.resultado.trim() === '') {
-          const resResultado = await api.get(`/api/ocorrencias/${ocorrencia.id}/resultado`);
+          const resResultado = await api.get(`/api/v1/ocorrencias/${ocorrencia.id}/resultado`);
           resultadoAtualizado = resResultado.data?.resultado || ocorrencia.resultado;
         }
       } catch (err) {
@@ -463,7 +463,7 @@ const PassagemServicoPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }
 
   const salvar = async () => {
     try {
-      const { data } = await api.put(`/api/ocorrencias/${ocorrencia.id}`, {
+              const { data } = await api.put(`/api/v1/ocorrencias/${ocorrencia.id}`, {
         passagem_servico: texto,
         despesas_detalhadas: ocorrencia.despesas_detalhadas
       });

@@ -84,7 +84,7 @@ const PrestadorPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, 
         });
         
         // Atualizar ocorrência com o nome do prestador não cadastrado
-        const { data } = await api.put(`/api/ocorrencias/${ocorrencia.id}`, {
+        const { data } = await api.put(`/api/v1/ocorrencias/${ocorrencia.id}`, {
           prestador: nomePrestadorNaoCadastrado.trim(),
         });
         
@@ -93,7 +93,7 @@ const PrestadorPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, 
         onClose();
       } else if (selecionado) {
         // ✅ SALVAR PRESTADOR CADASTRADO SELECIONADO
-        const { data } = await api.put(`/api/ocorrencias/${ocorrencia.id}`, {
+        const { data } = await api.put(`/api/v1/ocorrencias/${ocorrencia.id}`, {
           prestador: selecionado,
         });
         onUpdate(data);
@@ -150,7 +150,7 @@ const PrestadorPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, 
       setLoading(true);
       
       // Atualizar ocorrência removendo o prestador
-      const { data } = await api.put(`/api/ocorrencias/${ocorrencia.id}`, {
+      const { data } = await api.put(`/api/v1/ocorrencias/${ocorrencia.id}`, {
         prestador: null,
       });
       

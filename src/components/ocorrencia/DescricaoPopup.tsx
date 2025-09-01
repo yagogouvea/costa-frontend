@@ -47,14 +47,24 @@ const DescricaoPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
     if (!hasUnsavedChanges || descricao === ocorrencia.descricao) return;
     
     try {
+      console.log('🔄 [DescricaoPopup] Auto-save iniciado...');
       const descricaoFormatada = formatarTexto(descricao);
-      await api.put(`/api/ocorrencias/${ocorrencia.id}`, { 
+      console.log('🔄 [DescricaoPopup] Auto-save - descrição formatada:', descricaoFormatada);
+      
+      await api.put(`/api/v1/ocorrencias/${ocorrencia.id}`, { 
         descricao: descricaoFormatada 
       });
+      
+      console.log('✅ [DescricaoPopup] Auto-save concluído com sucesso');
       setLastSaved(new Date());
       setHasUnsavedChanges(false);
     } catch (error) {
-      console.error('Erro no auto-save:', error);
+      console.error('❌ [DescricaoPopup] Erro no auto-save:', error);
+      console.error('❌ [DescricaoPopup] Detalhes do erro auto-save:', {
+        message: error instanceof Error ? error.message : String(error),
+        response: (error as any)?.response?.data,
+        status: (error as any)?.response?.status
+      });
     }
   };
 
@@ -62,15 +72,39 @@ const DescricaoPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
     try {
       setIsSaving(true);
       const descricaoFormatada = formatarTexto(descricao);
-      const { data } = await api.put(`/api/ocorrencias/${ocorrencia.id}`, { 
+      
+      console.log('🔍 [DescricaoPopup] Tentando salvar descrição...');
+      console.log('🔍 [DescricaoPopup] ID da ocorrência:', ocorrencia.id);
+      console.log('🔍 [DescricaoPopup] Descrição original:', descricao);
+      console.log('🔍 [DescricaoPopup] Descrição formatada:', descricaoFormatada);
+      console.log('🔍 [DescricaoPopup] URL da API:', `/api/v1/ocorrencias/${ocorrencia.id}`);
+      
+      // Verificar token
+      const token = localStorage.getItem('segtrack.token');
+      console.log('🔍 [DescricaoPopup] Token disponível:', !!token);
+      if (token) {
+        console.log('🔍 [DescricaoPopup] Token (primeiros 20 chars):', token.substring(0, 20));
+      }
+      
+      const { data } = await api.put(`/api/v1/ocorrencias/${ocorrencia.id}`, { 
         descricao: descricaoFormatada 
       });
+      
+      console.log('✅ [DescricaoPopup] Resposta da API:', data);
+      console.log('✅ [DescricaoPopup] Descrição salva:', data.descricao);
+      
       onUpdate(data);
       setLastSaved(new Date());
       setHasUnsavedChanges(false);
       onClose();
     } catch (error) {
-      console.error('Erro ao salvar descrição:', error);
+      console.error('❌ [DescricaoPopup] Erro ao salvar descrição:', error);
+      console.error('❌ [DescricaoPopup] Detalhes do erro:', {
+        message: error instanceof Error ? error.message : String(error),
+        response: (error as any)?.response?.data,
+        status: (error as any)?.response?.status
+      });
+      alert('Erro ao salvar descrição. Verifique o console para mais detalhes.');
     } finally {
       setIsSaving(false);
     }

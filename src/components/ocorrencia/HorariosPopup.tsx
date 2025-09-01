@@ -95,7 +95,7 @@ const HorariosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
 
       console.log('🔍 Payload sendo enviado:', payload);
       
-      const response = await api.put(`/api/ocorrencias/${ocorrencia.id}`, payload);
+      const response = await api.put(`/api/v1/ocorrencias/${ocorrencia.id}`, payload);
       console.log('✅ Resposta do servidor:', response.data);
       
       if (onUpdate) {

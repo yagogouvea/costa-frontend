@@ -8,7 +8,7 @@ export const gerarRelatorioPDF = async (ocorrenciaId: string, setGerando: (v: bo
   try {
     setGerando(true);
 
-    const res = await api.get(`/api/ocorrencias/${ocorrenciaId}`);
+    const res = await api.get(`/api/v1/ocorrencias/${ocorrenciaId}`);
     const dados = res.data;
 
     const blob = await pdf(<RelatorioPDF dados={dados} />).toBlob();

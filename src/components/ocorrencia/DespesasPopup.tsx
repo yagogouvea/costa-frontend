@@ -96,7 +96,7 @@ const DespesasPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, o
         valor: formatarParaNumero(d.valor)
       }));
 
-      const { data } = await api.put(`/api/ocorrencias/${ocorrencia.id}`, {
+      const { data } = await api.put(`/api/v1/ocorrencias/${ocorrencia.id}`, {
         despesas: total,
         despesas_detalhadas: despesasDetalhadas
       });

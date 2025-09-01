@@ -131,7 +131,7 @@ const KMPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
         dadosParaEnviar.km_final = kmFinal;
       }
 
-      const { data } = await api.put(`/api/ocorrencias/${ocorrencia.id}`, dadosParaEnviar);
+      const { data } = await api.put(`/api/v1/ocorrencias/${ocorrencia.id}`, dadosParaEnviar);
 
       console.log("Resposta do PUT:", data);
       

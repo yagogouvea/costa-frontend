@@ -66,7 +66,7 @@ const StatusRecuperacaoPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose
         dadosAtualizacao.sub_resultado = null;
       }
 
-      const resposta = await api.put(`/api/ocorrencias/${ocorrencia.id}`, dadosAtualizacao);
+      const resposta = await api.put(`/api/v1/ocorrencias/${ocorrencia.id}`, dadosAtualizacao);
 
       const dados = resposta.data;
       console.log('✅ Resultado salvo com sucesso:', dados);

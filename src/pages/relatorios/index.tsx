@@ -262,7 +262,7 @@ export default function RelatoriosPage() {
           delete cleanBody[key];
         }
       });
-      await api.put(`/api/ocorrencias/${atualizada.id}`, cleanBody);
+              await api.put(`/api/v1/ocorrencias/${atualizada.id}`, cleanBody);
       await buscarOcorrencias();
     } catch (error) {
       console.error('Erro ao atualizar ocorrência:', error);
