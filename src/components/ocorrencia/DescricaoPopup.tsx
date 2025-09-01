@@ -256,8 +256,8 @@ const DescricaoPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
 
       {/* Footer - Responsivo e compacto */}
       <div className="p-3 sm:p-4 border-t border-gray-200 bg-gray-50 rounded-b-lg">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs sm:text-sm text-gray-600">
-          <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600">
             <span>📝 Editor de descrição</span>
             <span className="hidden sm:inline">•</span>
             <span>Formatação automática</span>
@@ -269,6 +269,18 @@ const DescricaoPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
               <span className="hidden sm:inline">Ctrl+S para salvar manualmente</span>
               <span className="sm:hidden">Ctrl+S</span>
             </span>
+            <DialogClose asChild>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={cancelar}
+                className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 border border-gray-300 hover:bg-gray-100"
+              >
+                <X className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Fechar</span>
+                <span className="sm:hidden">Fechar</span>
+              </Button>
+            </DialogClose>
           </div>
         </div>
       </div>

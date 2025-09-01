@@ -250,131 +250,135 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <DialogTitle className="text-base sm:text-lg font-bold">Adicionar Nova Ocorrência</DialogTitle>
       <DialogDescription className="text-xs sm:text-sm text-muted-foreground">
         Preencha os dados da ocorrência conforme o perfil do cliente.
       </DialogDescription>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
-        {(() => {
-          const clientesArray = Array.isArray(clientes) ? clientes : [];
-          const clienteObj: ClienteResumo | undefined = clientesArray.find(c => c.id === clienteSelecionado);
-          const nomeCliente: string = clienteObj?.nome || '';
-          const isClienteOpentech = nomeCliente.toUpperCase().includes('OPENTECH') || nomeCliente.toUpperCase().includes('OPEN TECH');
-          
-          return (
-            <>
-              <div>
-                <Label>Cliente</Label>
-                <Select onValueChange={setClienteSelecionado} value={clienteSelecionado}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione um cliente" />
-                  </SelectTrigger>
-                              <SelectContent>
-              {clientesArray.map((c: ClienteResumo) => (
-                <SelectItem key={c.id} value={c.id}>{c.nome_fantasia || c.nome}</SelectItem>
-              ))}
-            </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label>Sub cliente</Label>
-                <Input 
-                  value={subCliente} 
-                  onChange={e => setSubCliente(e.target.value)} 
-                  placeholder="Digite o sub cliente (opcional)"
-                />
-              </div>
-
-              <div>
-                <Label >
-                  Tipo de Ocorrência 
-                </Label>
-                <Select onValueChange={setTipoOcorrencia} value={tipoOcorrencia}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {TIPOS_OCORRENCIA_PADRAO.map((tipo: string) => (
-                      <SelectItem key={tipo} value={tipo}>{tipo}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label >
-                  Data do Acionamento 
-                </Label>
-                <Input type="date" value={dataAcionamento} onChange={e => setDataAcionamento(e.target.value)} />
-              </div>
-
-              <div>
-                <Label >
-                  Tipo de Veículo 
-                </Label>
-                <Select onValueChange={setTipoVeiculo}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {TIPOS_VEICULO.map(tipo => (
-                      <SelectItem key={tipo} value={tipo}>{tipo}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label >
-                  Operador 
-                </Label>
-                <Select onValueChange={setOperador} value={operador}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione o operador" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {OPERADORES.map(op => (
-                      <SelectItem key={op} value={op}>{op}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {isClienteOpentech && (
+      {/* Seção 1: Informações Básicas */}
+      <div className="bg-blue-50/50 rounded-lg p-3 sm:p-4 border border-blue-200">
+        <h3 className="text-sm sm:text-base font-semibold text-blue-800 mb-3 flex items-center gap-2">
+          <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
+          Informações Básicas
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+          {(() => {
+            const clientesArray = Array.isArray(clientes) ? clientes : [];
+            const clienteObj: ClienteResumo | undefined = clientesArray.find(c => c.id === clienteSelecionado);
+            const nomeCliente: string = clienteObj?.nome || '';
+            const isClienteOpentech = nomeCliente.toUpperCase().includes('OPENTECH') || nomeCliente.toUpperCase().includes('OPEN TECH');
+            
+            return (
+              <>
                 <div>
-                  <Label className="text-red-500">
-                    Operação <span className="text-red-500">*</span>
-                  </Label>
-                  <Select onValueChange={setOperacao} value={operacao}>
+                  <Label>Cliente</Label>
+                  <Select onValueChange={setClienteSelecionado} value={clienteSelecionado}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Selecione a operação" />
+                      <SelectValue placeholder="Selecione um cliente" />
                     </SelectTrigger>
                     <SelectContent>
-                      {OPERACOES_OPENTECH.map(operacao => (
-                        <SelectItem key={operacao} value={operacao}>{operacao}</SelectItem>
+                      {clientesArray.map((c: ClienteResumo) => (
+                        <SelectItem key={c.id} value={c.id}>{c.nome_fantasia || c.nome}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
-              )}
 
-              {/* ✅ REMOVIDO: Campo 'conta' não existe no schema do cliente-costa */}
-              {/* {isClienteBrk && (
                 <div>
-                  <Label className="text-red-500">
-                    Conta <span className="text-red-500">*</span>
-                  </Label>
+                  <Label>Sub cliente</Label>
                   <Input 
-                    value={conta} 
-                    onChange={e => setConta(e.target.value)} 
-                    placeholder="Digite a conta"
+                    value={subCliente} 
+                    onChange={e => setSubCliente(e.target.value)} 
+                    placeholder="Digite o sub cliente (opcional)"
                   />
                 </div>
-              )} */}
 
+                <div>
+                  <Label >
+                    Tipo de Ocorrência 
+                  </Label>
+                  <Select onValueChange={setTipoOcorrencia} value={tipoOcorrencia}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {TIPOS_OCORRENCIA_PADRAO.map((tipo: string) => (
+                        <SelectItem key={tipo} value={tipo}>{tipo}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label >
+                    Data do Acionamento 
+                  </Label>
+                  <Input type="date" value={dataAcionamento} onChange={e => setDataAcionamento(e.target.value)} />
+                </div>
+
+                <div>
+                  <Label >
+                    Tipo de Veículo 
+                  </Label>
+                  <Select onValueChange={setTipoVeiculo}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {TIPOS_VEICULO.map(tipo => (
+                        <SelectItem key={tipo} value={tipo}>{tipo}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label >
+                    Operador 
+                  </Label>
+                  <Select onValueChange={setOperador} value={operador}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o operador" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {OPERADORES.map(op => (
+                        <SelectItem key={op} value={op}>{op}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {isClienteOpentech && (
+                  <div>
+                    <Label className="text-red-500">
+                      Operação <span className="text-red-500">*</span>
+                    </Label>
+                    <Select onValueChange={setOperacao} value={operacao}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione a operação" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {OPERACOES_OPENTECH.map(operacao => (
+                          <SelectItem key={operacao} value={operacao}>{operacao}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              </>
+            );
+          })()}
+        </div>
+      </div>
+
+      {/* Seção 2: Informações do Veículo */}
+      <div className="bg-green-50/50 rounded-lg p-3 sm:p-4 border border-green-200">
+        <h3 className="text-sm sm:text-base font-semibold text-green-800 mb-3 flex items-center gap-2">
+          <span className="w-2 h-2 bg-green-600 rounded-full"></span>
+          Informações do Veículo
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               <div>
                 <Label >
                   Placa Principal 
@@ -405,15 +409,25 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
                 </Label>
                 <Input value={cores[0]} onChange={e => setCores([e.target.value, cores[1], cores[2]])} />
               </div>
+        </div>
+      </div>
 
-              <div className="col-span-3">
+      {/* Seção 3: Localização */}
+      <div className="bg-purple-50/50 rounded-lg p-3 sm:p-4 border border-purple-200">
+        <h3 className="text-sm sm:text-base font-semibold text-purple-800 mb-3 flex items-center gap-2">
+          <span className="w-2 h-2 bg-purple-600 rounded-full"></span>
+          Localização
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+
+              <div className="col-span-full">
                 <Label >
                   Local da abordagem (latitude, longitude) 
                 </Label>
                 <Input value={coordenadas} onChange={e => setCoordenadas(e.target.value)} placeholder="Ex: -23.550520, -46.633308" />
               </div>
 
-              <div className="col-span-3">
+              <div className="col-span-full">
                 <Label >
                   Endereço 
                 </Label>
@@ -440,19 +454,25 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
                 </Label>
                 <Input value={enderecoInfo.estado} onChange={e => setEnderecoInfo({ ...enderecoInfo, estado: e.target.value })} />
               </div>
-            </>
-          );
-        })()}
-
-        {/* Seção específica do Ituran removida - cliente não utilizado neste sistema */}
-
-        {/* Seção específica do Marfrig removida - cliente não utilizado neste sistema */}
+        </div>
       </div>
 
-      <div className="flex justify-end gap-2">
-        <Button variant="ghost" disabled={loading} onClick={onClose}>Cancelar</Button>
-        <Button onClick={handleSave} disabled={loading}>
-          {loading ? 'Salvando...' : 'Salvar'}
+      {/* Botões de ação - Mobile otimizado */}
+      <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 pt-2 border-t border-gray-200">
+        <Button 
+          variant="ghost" 
+          disabled={loading} 
+          onClick={onClose}
+          className="w-full sm:w-auto order-2 sm:order-1"
+        >
+          Cancelar
+        </Button>
+        <Button 
+          onClick={handleSave} 
+          disabled={loading}
+          className="w-full sm:w-auto order-1 sm:order-2 bg-blue-600 hover:bg-blue-700"
+        >
+          {loading ? 'Salvando...' : 'Salvar Ocorrência'}
         </Button>
       </div>
     </div>
