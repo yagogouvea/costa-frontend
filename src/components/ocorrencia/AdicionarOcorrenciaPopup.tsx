@@ -212,8 +212,9 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
         cidade_destino: cidadeDestino || undefined,
         km_acl: kmAcl || undefined,
         operador: operador || undefined,
-        operacao: operacao || undefined,
-        conta: conta || undefined
+        operacao: operacao || undefined
+        // ✅ REMOVIDO: Campo 'conta' não existe no schema do cliente-costa
+        // conta: conta || undefined
       };
 
       // ✅ DEBUG: Log detalhado dos dados de localização sendo enviados
