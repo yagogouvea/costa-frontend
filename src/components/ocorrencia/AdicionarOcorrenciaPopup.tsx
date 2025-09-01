@@ -39,6 +39,7 @@ interface Props {
     placa1: string;
     cliente: string;
     tipo: string;
+    ocorrencia?: any; // ✅ NOVO: Ocorrência completa criada
   }) => void;
   clientes: ClienteResumo[];
 }
@@ -215,11 +216,15 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
         conta: conta || undefined
       };
 
-      await api.post('/api/ocorrencias', novaOcorrencia);
+      const response = await api.post('/api/ocorrencias', novaOcorrencia);
+      console.log('✅ [AdicionarOcorrenciaPopup] Ocorrência criada:', response.data);
+      
+      // ✅ CORREÇÃO: Passar a ocorrência completa criada para o dashboard
       onSave({
         placa1: placas[0],
         cliente: nomeCliente,
-        tipo: tipoOcorrencia
+        tipo: tipoOcorrencia,
+        ocorrencia: response.data // Passar a ocorrência completa
       });
       onClose();
     } catch (error) {

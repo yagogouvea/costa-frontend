@@ -496,9 +496,20 @@ const OcorrenciasDashboard: React.FC = () => {
     }
   };
 
-  const handleNovaOcorrencia = () => {
+  const handleNovaOcorrencia = (data: { placa1: string; cliente: string; tipo: string; ocorrencia?: any }) => {
+    console.log('✅ [OcorrenciasDashboard] Nova ocorrência criada:', data);
+    
+    // ✅ CORREÇÃO: Se temos a ocorrência completa, adicionar diretamente ao estado
+    if (data.ocorrencia) {
+      console.log('✅ [OcorrenciasDashboard] Adicionando ocorrência ao estado:', data.ocorrencia);
+      setOcorrenciasEmAndamento(prev => [data.ocorrencia, ...prev]);
+    } else {
+      // Fallback: recarregar todas as ocorrências
+      console.log('⚠️ [OcorrenciasDashboard] Recarregando ocorrências (fallback)');
+      loadOcorrencias();
+    }
+    
     setShowAddPopup(false);
-    loadOcorrencias();
   };
 
   const handleUpdate = (id: number, dadosAtualizados: any) => {

@@ -93,10 +93,14 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
 
   const carregarChecklistComId = async (idFixo: number) => {
     try {
+      console.log(`🔍 [CheckListPopup] Carregando checklist para ocorrência ID: ${idFixo}`);
       const response = await api.get(`/api/v1/checklist/ocorrencia/${idFixo}`);
-      console.log(`📋 CheckList ID ${idFixo}:`, response.data ? 'ENCONTRADO' : 'NÃO EXISTE');
+      console.log(`📋 [CheckListPopup] Response completa:`, response);
+      console.log(`📋 [CheckListPopup] CheckList ID ${idFixo}:`, response.data ? 'ENCONTRADO' : 'NÃO EXISTE');
+      
       if (response.data) {
         const checklist = response.data;
+        console.log(`📋 [CheckListPopup] Dados recebidos do backend:`, checklist);
         setChecklistExistente(checklist);
         
         // Carregar dados existentes
@@ -124,7 +128,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
         }
         
         // Loja
-        console.log('🏪 Carregando dados da loja:', {
+        console.log('🏪 [CheckListPopup] Carregando dados da loja:', {
           nome_loja: checklist.nome_loja,
           endereco_loja: checklist.endereco_loja,
           nome_atendente: checklist.nome_atendente,
@@ -134,6 +138,13 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
         setEnderecoLoja(checklist.endereco_loja || '');
         setNomeAtendente(checklist.nome_atendente || '');
         setMatriculaAtendente(checklist.matricula_atendente || '');
+        
+        console.log('✅ [CheckListPopup] Estados da loja definidos:', {
+          nomeLoja: checklist.nome_loja || '',
+          enderecoLoja: checklist.endereco_loja || '',
+          nomeAtendente: checklist.nome_atendente || '',
+          matriculaAtendente: checklist.matricula_atendente || ''
+        });
         
         // Guincho
         setTipoGuincho(checklist.tipo_guincho || '');
