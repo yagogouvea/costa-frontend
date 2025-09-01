@@ -88,17 +88,17 @@ const DespesasPopup = ({ onSave, despesasExistentes = [] }: Props) => {
         <DialogTitle className="text-2xl font-bold text-center py-6 bg-gradient-to-r from-green-600 to-blue-700 text-white rounded-t-lg -mx-6 -mt-6 px-6">
           Adicionar Despesas
         </DialogTitle>
-        <DialogDescription className="text-center text-green-100 text-base mt-2 -mx-6 px-6 pb-4">
+        <DialogDescription className="text-center text-green-100 text-sm sm:text-base mt-2 -mx-6 px-6 pb-4">
           Preencha os campos com os valores correspondentes.
         </DialogDescription>
 
         <div className="px-6 pb-6">
           {despesas.map((d, index) => (
-            <div key={index} className="flex gap-4 mb-4 items-center">
+            <div key={index} className="flex gap-2 sm:gap-4 mb-4 items-center">
               <select
                 value={d.tipo}
                 onChange={(e) => handleChange(index, "tipo", e.target.value)}
-                className="w-1/2 border-2 border-gray-200 p-3 rounded-lg text-base focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all duration-200"
+                className="w-1/2 border-2 border-gray-200 p-3 rounded-lg text-sm sm:text-base focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all duration-200"
               >
                 <option value="">Tipo</option>
                 <option value="Pedágio">Pedágio</option>
@@ -111,7 +111,7 @@ const DespesasPopup = ({ onSave, despesasExistentes = [] }: Props) => {
                 placeholder="R$ 0,00"
                 value={d.valor}
                 onChange={(e) => handleChange(index, "valor", e.target.value)}
-                className="w-1/2 border-2 border-gray-200 p-3 rounded-lg text-right text-base focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all duration-200"
+                className="w-1/2 border-2 border-gray-200 p-3 rounded-lg text-right text-sm sm:text-base focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all duration-200"
               />
               {despesas.length > 1 && (
                 <button
@@ -126,21 +126,21 @@ const DespesasPopup = ({ onSave, despesasExistentes = [] }: Props) => {
 
           <button
             onClick={handleAdd}
-            className="text-green-600 text-base underline mb-6 hover:text-green-700 transition-colors duration-200"
+            className="text-green-600 text-sm sm:text-base underline mb-6 hover:text-green-700 transition-colors duration-200"
           >
             + Adicionar mais
           </button>
 
-          <div className="flex justify-end gap-4">
+          <div className="flex justify-end gap-2 sm:gap-4">
             <DialogClose asChild>
-              <button className="px-6 py-3 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-colors duration-200 text-base font-medium">
+              <button className="px-6 py-3 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-colors duration-200 text-sm sm:text-base font-medium">
                 Cancelar
               </button>
             </DialogClose>
             <button
               onClick={handleSave}
               disabled={isInvalid()}
-              className="px-6 py-3 bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-lg disabled:opacity-50 hover:from-green-700 hover:to-blue-700 transition-all duration-200 text-base font-medium shadow-lg"
+              className="px-6 py-3 bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-lg disabled:opacity-50 hover:from-green-700 hover:to-blue-700 transition-all duration-200 text-sm sm:text-base font-medium shadow-lg"
             >
               Salvar
             </button>

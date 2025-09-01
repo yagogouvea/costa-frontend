@@ -251,12 +251,12 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
 
   return (
     <div className="space-y-6">
-      <DialogTitle className="text-lg font-bold">Adicionar Nova Ocorrência</DialogTitle>
+      <DialogTitle className="text-base sm:text-lg font-bold">Adicionar Nova Ocorrência</DialogTitle>
       <DialogDescription className="text-xs sm:text-sm text-muted-foreground">
         Preencha os dados da ocorrência conforme o perfil do cliente.
       </DialogDescription>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
         {(() => {
           const clientesArray = Array.isArray(clientes) ? clientes : [];
           const clienteObj: ClienteResumo | undefined = clientesArray.find(c => c.id === clienteSelecionado);

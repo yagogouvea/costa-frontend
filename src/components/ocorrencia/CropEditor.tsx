@@ -54,7 +54,7 @@ const CropEditor = memo(({
   }, [handleZoomChange]);
 
   return (
-    <div className={`flex flex-col h-full ${isMobile ? 'gap-3' : 'gap-4'}`}>
+    <div className={`flex flex-col h-full ${isMobile ? 'gap-3' : 'gap-2 sm:gap-4'}`}>
       {/* Crop Area */}
       <div className={`flex-1 relative w-full bg-black rounded-lg overflow-hidden border border-gray-300`} style={{ minHeight: isMobile ? '300px' : '400px' }}>
         {image ? (
@@ -93,7 +93,7 @@ const CropEditor = memo(({
         {/* Zoom Control */}
         <div className={`flex flex-col ${isMobile ? 'gap-2' : 'gap-3'}`}>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
-            <label className={`font-medium text-gray-700 ${isMobile ? 'text-sm' : 'text-base'}`}>
+            <label className={`font-medium text-gray-700 ${isMobile ? 'text-sm' : 'text-sm sm:text-base'}`}>
               Zoom
             </label>
             <span className={`text-sm font-mono text-gray-600 ${isMobile ? 'text-xs' : 'text-sm'}`}>
@@ -128,7 +128,7 @@ const CropEditor = memo(({
               type="text"
               value={legenda}
               onChange={(e) => onLegendaChange(e.target.value)}
-              className={`w-full px-4 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all duration-200 bg-white shadow-sm ${isMobile ? 'py-2 text-sm' : 'py-3 text-base'}`}
+              className={`w-full px-4 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all duration-200 bg-white shadow-sm ${isMobile ? 'py-2 text-sm' : 'py-3 text-sm sm:text-base'}`}
               placeholder="Descreva esta imagem..."
             />
           </div>

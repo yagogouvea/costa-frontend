@@ -669,10 +669,10 @@ export default function FotosPopup({ ocorrencia, onClose, onUpdate }: FotosPopup
           </div>
         ) : (
           // Modo Editor - mostrar CropEditor
-          <div className={`flex-1 flex ${isMobile ? 'flex-col' : 'flex-row'} gap-3 sm:gap-4 lg:gap-6 overflow-hidden p-3 sm:p-4 lg:p-6`}>
+          <div className={`flex-1 flex ${isMobile ? 'flex-col' : 'flex-row'} gap-3 sm:gap-4 lg:gap-3 sm:gap-6 overflow-hidden p-3 sm:p-4 lg:p-6`}>
             {/* Galeria de fotos - Container com scroll */}
             <div className={`${isMobile ? 'w-full' : 'w-64 sm:w-72 lg:w-80'} flex-shrink-0 bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4`}>
-              <div className="flex items-center justify-between mb-3 sm:mb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3 sm:mb-4">
                 <h3 className="text-base sm:text-lg font-semibold text-gray-900">Galeria</h3>
                 <Button
                   variant="ghost"
@@ -789,7 +789,7 @@ export default function FotosPopup({ ocorrencia, onClose, onUpdate }: FotosPopup
                     );
                   })()}
                 </div>
-                <div className="flex items-center justify-between p-3 sm:p-4 border-t border-gray-200 bg-gray-50 rounded-b-xl">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 sm:p-4 border-t border-gray-200 bg-gray-50 rounded-b-xl">
                   <div className="flex items-center gap-2 sm:gap-3">
                     <Button 
                       variant="destructive" 

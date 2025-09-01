@@ -194,7 +194,7 @@ const OcorrenciasDashboard = () => {
   );
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-2 sm:gap-4 sm:p-8">
       <h1 className="text-2xl font-bold text-gray-800">Ocorrências em Andamento</h1>
       <div className="overflow-x-auto bg-white p-4 rounded-lg shadow-md">
         {renderOcorrencias(ocorrencias.filter(oc => !STATUS_ENCERRADOS.includes((oc.status || '').toLowerCase())))}
@@ -207,7 +207,7 @@ const OcorrenciasDashboard = () => {
       {popupData && (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
           <div className="bg-white p-3 sm:p-6 rounded-lg shadow-lg w-full max-w-md">
-            <h3 className="text-lg font-semibold mb-4">
+            <h3 className="text-base sm:text-lg font-semibold mb-4">
               {popupData.type === "horarios" ? "Horários" : popupData.type === "km" ? "Odômetro" : "Selecionar Prestador"}
             </h3>
             <div className="space-y-3">

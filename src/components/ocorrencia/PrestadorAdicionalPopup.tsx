@@ -495,7 +495,7 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
           <DialogTitle className="text-2xl md:text-3xl lg:text-4xl font-bold">
             Prestador Adicional
           </DialogTitle>
-          <p className="text-purple-100 text-base md:text-lg lg:text-xl mt-2">
+          <p className="text-purple-100 text-sm sm:text-base md:text-base sm:text-lg lg:text-xl mt-2">
             Adicione um ou mais prestadores de apoio à ocorrência
           </p>
         </DialogHeader>
@@ -503,13 +503,13 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
         <div className="px-6 md:px-8 lg:px-10 pb-6 md:pb-8 lg:pb-10">
           {/* Formulário para adicionar novo apoio */}
           <div className="mb-8 md:mb-10 lg:mb-12">
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-3 sm:p-6 md:p-8 lg:p-10">
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-3 sm:p-6 md:p-4 sm:p-8 lg:p-10">
               <h3 className="text-xl md:text-2xl font-semibold text-blue-800 mb-6 md:mb-8 flex items-center gap-2 sm:gap-3">
                 <Plus className="w-6 h-6 md:w-7 md:h-7" />
                 {editando ? 'Editar Apoio Existente' : 'Adicionar Novo Apoio'}
               </h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 sm:p-6 md:gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 sm:p-6 md:gap-2 sm:gap-4 sm:p-8">
                 {/* Seleção de prestador */}
                 <div className="md:col-span-2">
                   <div className="flex items-center gap-2 sm:gap-3 mb-6">
@@ -519,14 +519,14 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                       onCheckedChange={(checked) => togglePrestadorNaoCadastrado(checked as boolean)}
                       className="w-5 h-5 md:w-6 md:h-6"
                     />
-                    <Label htmlFor="prestadorNaoCadastrado" className="text-base md:text-lg font-medium text-blue-700 cursor-pointer">
+                    <Label htmlFor="prestadorNaoCadastrado" className="text-sm sm:text-base md:text-base sm:text-lg font-medium text-blue-700 cursor-pointer">
                       Prestador não cadastrado
                     </Label>
                   </div>
                   
                   {novoApoio.is_prestador_cadastrado ? (
                     <div className="space-y-4">
-                      <Label className="text-base md:text-lg font-medium text-blue-700">
+                      <Label className="text-sm sm:text-base md:text-base sm:text-lg font-medium text-blue-700">
                         Buscar prestador cadastrado
                       </Label>
                       <div className="relative">
@@ -534,7 +534,7 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                           placeholder="Buscar por nome, codinome, cidade ou estado..."
                           value={filtro}
                           onChange={(e) => setFiltro(e.target.value)}
-                          className="w-full pr-10 h-12 text-base"
+                          className="w-full pr-10 h-12 text-sm sm:text-base"
                         />
                         <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                       </div>
@@ -547,7 +547,7 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                               onClick={() => selecionarPrestador(prestador)}
                               className="p-4 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0"
                             >
-                              <div className="font-medium text-gray-800 text-base">{prestador.nome}</div>
+                              <div className="font-medium text-gray-800 text-sm sm:text-base">{prestador.nome}</div>
                               <div className="flex items-center gap-2 mt-2">
                                 {prestador.cod_nome && (
                                   <BadgeComponent className="text-xs bg-blue-100 text-blue-700">
@@ -574,14 +574,14 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      <Label className="text-base md:text-lg font-medium text-blue-700">
+                      <Label className="text-sm sm:text-base md:text-base sm:text-lg font-medium text-blue-700">
                         Nome do prestador <span className="text-red-500">*</span>
                       </Label>
                       <Input
                         placeholder="Nome completo"
                         value={novoApoio.nome_prestador}
                         onChange={(e) => setNovoApoio({...novoApoio, nome_prestador: e.target.value})}
-                        className={`h-12 text-base ${erros.nome_prestador ? 'border-red-500' : ''}`}
+                        className={`h-12 text-sm sm:text-base ${erros.nome_prestador ? 'border-red-500' : ''}`}
                       />
                       {erros.nome_prestador && (
                         <span className="text-red-500 text-xs sm:text-sm">{erros.nome_prestador}</span>
@@ -592,7 +592,7 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
 
                 {/* Telefone */}
                 <div>
-                  <Label className="text-base md:text-lg font-medium text-blue-700 mb-3 block">
+                  <Label className="text-sm sm:text-base md:text-base sm:text-lg font-medium text-blue-700 mb-3 block">
                     Telefone
                   </Label>
                   <Input
@@ -600,20 +600,20 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                     placeholder="(00) 00000-0000"
                     value={novoApoio.telefone || ''}
                     onChange={(e) => setNovoApoio({...novoApoio, telefone: e.target.value})}
-                    className="h-12 text-base"
+                    className="h-12 text-sm sm:text-base"
                   />
                 </div>
 
                 {/* Horários */}
                 <div>
-                  <Label className="text-base md:text-lg font-medium text-blue-700 mb-3 block">
+                  <Label className="text-sm sm:text-base md:text-base sm:text-lg font-medium text-blue-700 mb-3 block">
                     Data e hora inicial
                   </Label>
                   <Input
                     type="datetime-local"
                     value={novoApoio.hora_inicial || ''}
                     onChange={(e) => setNovoApoio({...novoApoio, hora_inicial: e.target.value})}
-                    className={`h-12 text-base ${erros.hora_inicial ? 'border-red-500' : ''}`}
+                    className={`h-12 text-sm sm:text-base ${erros.hora_inicial ? 'border-red-500' : ''}`}
                   />
                   {erros.hora_inicial && (
                     <span className="text-red-500 text-xs sm:text-sm">{erros.hora_inicial}</span>
@@ -621,26 +621,26 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                 </div>
 
                 <div>
-                  <Label className="text-base md:text-lg font-medium text-blue-700 mb-3 block">
+                  <Label className="text-sm sm:text-base md:text-base sm:text-lg font-medium text-blue-700 mb-3 block">
                     Data e hora local
                   </Label>
                   <Input
                     type="datetime-local"
                     value={novoApoio.hora_inicial_local || ''}
                     onChange={(e) => setNovoApoio({...novoApoio, hora_inicial_local: e.target.value})}
-                    className="h-12 text-base"
+                    className="h-12 text-sm sm:text-base"
                   />
                 </div>
 
                 <div>
-                  <Label className="text-base md:text-lg font-medium text-blue-700 mb-3 block">
+                  <Label className="text-sm sm:text-base md:text-base sm:text-lg font-medium text-blue-700 mb-3 block">
                     Data e hora final
                   </Label>
                   <Input
                     type="datetime-local"
                     value={novoApoio.hora_final || ''}
                     onChange={(e) => setNovoApoio({...novoApoio, hora_final: e.target.value})}
-                    className={`h-12 text-base ${erros.hora_final ? 'border-red-500' : ''}`}
+                    className={`h-12 text-sm sm:text-base ${erros.hora_final ? 'border-red-500' : ''}`}
                   />
                   {erros.hora_final && (
                     <span className="text-red-500 text-xs sm:text-sm">{erros.hora_final}</span>
@@ -649,7 +649,7 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
 
                 {/* KM */}
                 <div>
-                  <Label className="text-base md:text-lg font-medium text-blue-700 mb-3 block">
+                  <Label className="text-sm sm:text-base md:text-base sm:text-lg font-medium text-blue-700 mb-3 block">
                     KM inicial
                   </Label>
                   <Input
@@ -658,7 +658,7 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                     placeholder="0.0"
                     value={novoApoio.km_inicial || ''}
                     onChange={(e) => setNovoApoio({...novoApoio, km_inicial: parseFloat(e.target.value) || undefined})}
-                    className={`h-12 text-base ${erros.km_inicial ? 'border-red-500' : ''}`}
+                    className={`h-12 text-sm sm:text-base ${erros.km_inicial ? 'border-red-500' : ''}`}
                   />
                   {erros.km_inicial && (
                     <span className="text-red-500 text-xs sm:text-sm">{erros.km_inicial}</span>
@@ -666,7 +666,7 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                 </div>
 
                 <div>
-                  <Label className="text-base md:text-lg font-medium text-blue-700 mb-3 block">
+                  <Label className="text-sm sm:text-base md:text-base sm:text-lg font-medium text-blue-700 mb-3 block">
                     KM final
                   </Label>
                   <Input
@@ -675,7 +675,7 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                     placeholder="0.0"
                     value={novoApoio.km_final || ''}
                     onChange={(e) => setNovoApoio({...novoApoio, km_final: parseFloat(e.target.value) || undefined})}
-                    className={`h-12 text-base ${erros.km_final ? 'border-red-500' : ''}`}
+                    className={`h-12 text-sm sm:text-base ${erros.km_final ? 'border-red-500' : ''}`}
                   />
                   {erros.km_final && (
                     <span className="text-red-500 text-xs sm:text-sm">{erros.km_final}</span>
@@ -690,14 +690,14 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                     onCheckedChange={(checked) => setNovoApoio({...novoApoio, franquia_km: checked as boolean})}
                     className="w-5 h-5 md:w-6 md:h-6"
                   />
-                  <Label htmlFor="franquiaKm" className="text-base md:text-lg font-medium text-blue-700 cursor-pointer">
+                  <Label htmlFor="franquiaKm" className="text-sm sm:text-base md:text-base sm:text-lg font-medium text-blue-700 cursor-pointer">
                     Aplicar franquia KM (0-0)
                   </Label>
                 </div>
 
                 {/* Observações */}
                 <div className="md:col-span-2 lg:col-span-3">
-                  <Label className="text-base md:text-lg font-medium text-blue-700 mb-3 block">
+                  <Label className="text-sm sm:text-base md:text-base sm:text-lg font-medium text-blue-700 mb-3 block">
                     Observações
                   </Label>
                   <Textarea
@@ -705,17 +705,17 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                     value={novoApoio.observacoes || ''}
                     onChange={(e) => setNovoApoio({...novoApoio, observacoes: e.target.value})}
                     rows={4}
-                    className="text-base"
+                    className="text-sm sm:text-base"
                   />
                 </div>
               </div>
 
-              <div className="mt-6 md:mt-8 flex gap-4">
+              <div className="mt-6 md:mt-8 flex gap-2 sm:gap-4">
                 {editando && (
                   <Button
                     onClick={cancelarEdicao}
                     variant="ghost"
-                    className="px-8 py-4 border-2 border-gray-300 hover:bg-gray-100 text-base font-medium transition-all duration-200 rounded-lg"
+                    className="px-8 py-4 border-2 border-gray-300 hover:bg-gray-100 text-sm sm:text-base font-medium transition-all duration-200 rounded-lg"
                   >
                     Cancelar Edição
                   </Button>
@@ -723,7 +723,7 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                 <Button
                   onClick={adicionarApoio}
                   disabled={loading}
-                  className="w-full md:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 rounded-lg font-medium transition-all duration-200 text-base"
+                  className="w-full md:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 rounded-lg font-medium transition-all duration-200 text-sm sm:text-base"
                 >
                   {editando ? (
                     <>
@@ -756,18 +756,18 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
             {apoiosAdicionais.length > 0 ? (
               <div className="space-y-6 md:space-y-8">
                 {apoiosAdicionais.map((apoio, index) => (
-                  <div key={index} className="bg-white border border-gray-200 rounded-xl p-3 sm:p-6 md:p-8 shadow-sm">
+                  <div key={index} className="bg-white border border-gray-200 rounded-xl p-3 sm:p-6 md:p-4 sm:p-8 shadow-sm">
                     <div className="flex items-start justify-between mb-6">
-                      <div className="flex items-center gap-4">
-                        <BadgeComponent className="bg-purple-100 text-purple-700 text-base font-medium">
+                      <div className="flex items-center gap-2 sm:gap-4">
+                        <BadgeComponent className="bg-purple-100 text-purple-700 text-sm sm:text-base font-medium">
                           {formatarOrdem(apoio.ordem)} APOIO
                         </BadgeComponent>
                         {apoio.is_prestador_cadastrado ? (
-                          <BadgeComponent className="bg-blue-100 text-blue-700 text-base">
+                          <BadgeComponent className="bg-blue-100 text-blue-700 text-sm sm:text-base">
                             Cadastrado
                           </BadgeComponent>
                         ) : (
-                          <BadgeComponent className="bg-orange-100 text-orange-700 text-base">
+                          <BadgeComponent className="bg-orange-100 text-orange-700 text-sm sm:text-base">
                             Não Cadastrado
                           </BadgeComponent>
                         )}
@@ -794,10 +794,10 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                       </div>
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 sm:p-6 md:gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 sm:p-6 md:gap-2 sm:gap-4 sm:p-8">
                       <div>
                         <span className="text-xs sm:text-sm text-gray-500 uppercase font-medium">Prestador</span>
-                        <p className="text-base md:text-lg font-medium text-gray-800 mt-2">
+                        <p className="text-sm sm:text-base md:text-base sm:text-lg font-medium text-gray-800 mt-2">
                           {apoio.nome_prestador}
                         </p>
                       </div>
@@ -805,7 +805,7 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                       {apoio.telefone && (
                         <div>
                           <span className="text-xs sm:text-sm text-gray-500 uppercase font-medium">Telefone</span>
-                          <p className="text-base md:text-lg text-gray-800 mt-2 flex items-center gap-2 sm:gap-3">
+                          <p className="text-sm sm:text-base md:text-base sm:text-lg text-gray-800 mt-2 flex items-center gap-2 sm:gap-3">
                             <Phone className="w-5 h-5 text-green-600" />
                             {apoio.telefone}
                           </p>
@@ -818,7 +818,7 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                           <span className="text-xs sm:text-sm text-gray-500 uppercase font-medium">Horários</span>
                           <div className="space-y-2 mt-2">
                             {apoio.hora_inicial && (
-                              <p className="text-base md:text-lg text-gray-800 flex items-center gap-2 sm:gap-3">
+                              <p className="text-sm sm:text-base md:text-base sm:text-lg text-gray-800 flex items-center gap-2 sm:gap-3">
                                 <Clock className="w-5 h-5 text-blue-600" />
                                 <span className="font-medium">Inicial:</span>
                                 {formatarDataHora(apoio.hora_inicial)}
@@ -826,7 +826,7 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                             )}
                             
                             {/* Horário Local - sempre mostrar, mesmo se vazio */}
-                            <p className="text-base md:text-lg text-gray-800 flex items-center gap-2 sm:gap-3">
+                            <p className="text-sm sm:text-base md:text-base sm:text-lg text-gray-800 flex items-center gap-2 sm:gap-3">
                               <Clock className="w-5 h-5 text-green-600" />
                               <span className="font-medium">Local:</span>
                               {apoio.hora_inicial_local ? (
@@ -837,7 +837,7 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                             </p>
                             
                             {apoio.hora_final && (
-                              <p className="text-base md:text-lg text-gray-800 flex items-center gap-2 sm:gap-3">
+                              <p className="text-sm sm:text-base md:text-base sm:text-lg text-gray-800 flex items-center gap-2 sm:gap-3">
                                 <Clock className="w-5 h-5 text-red-600" />
                                 <span className="font-medium">Término:</span>
                                 {formatarDataHora(apoio.hora_final)}
@@ -850,7 +850,7 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                       {apoio.km_inicial !== undefined && apoio.km_final !== undefined && (
                         <div>
                           <span className="text-xs sm:text-sm text-gray-500 uppercase font-medium">Quilometragem</span>
-                          <p className="text-base md:text-lg text-gray-800 mt-2 flex items-center gap-2 sm:gap-3">
+                          <p className="text-sm sm:text-base md:text-base sm:text-lg text-gray-800 mt-2 flex items-center gap-2 sm:gap-3">
                             <Car className="w-5 h-5 text-purple-600" />
                             {apoio.km_inicial} → {apoio.km_final}
                             {apoio.franquia_km && (
@@ -866,7 +866,7 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                     {apoio.observacoes && (
                       <div className="mt-6 pt-6 border-t border-gray-100">
                         <span className="text-xs sm:text-sm text-gray-500 uppercase font-medium">Observações</span>
-                        <p className="text-base text-gray-700 mt-2">{apoio.observacoes}</p>
+                        <p className="text-sm sm:text-base text-gray-700 mt-2">{apoio.observacoes}</p>
                       </div>
                     )}
                   </div>
@@ -876,7 +876,7 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
               <div className="text-center py-16 md:py-20 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-300">
                 <Users className="w-16 h-16 md:w-20 md:h-20 text-gray-400 mx-auto mb-6" />
                 <h4 className="text-xl md:text-2xl font-medium text-gray-600 mb-3">Nenhum apoio adicional</h4>
-                <p className="text-gray-500 text-base md:text-lg">
+                <p className="text-gray-500 text-sm sm:text-base md:text-base sm:text-lg">
                   Adicione o primeiro prestador de apoio usando o formulário acima
                 </p>
               </div>
@@ -885,7 +885,7 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="flex flex-col sm:flex-row justify-end gap-4 md:gap-2 sm:gap-3 sm:p-6 pt-6 md:pt-8 lg:pt-10 border-t border-gray-200 bg-gradient-to-r from-gray-50 to-purple-50 -mx-6 md:-mx-8 lg:-mx-10 px-6 md:px-8 lg:px-10 pb-6 md:pb-8 lg:pb-10 rounded-b-lg">
+        <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-4 md:gap-2 sm:gap-3 sm:p-6 pt-6 md:pt-8 lg:pt-10 border-t border-gray-200 bg-gradient-to-r from-gray-50 to-purple-50 -mx-6 md:-mx-8 lg:-mx-10 px-6 md:px-8 lg:px-10 pb-6 md:pb-8 lg:pb-10 rounded-b-lg">
           <Button
             variant="ghost"
             onClick={() => {
@@ -898,14 +898,14 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
               }
               onClose();
             }}
-            className="w-full sm:w-auto px-8 md:px-10 py-3 md:py-4 border-2 border-gray-300 hover:bg-gray-100 hover:border-gray-400 text-base md:text-lg font-medium transition-all duration-200 rounded-xl"
+            className="w-full sm:w-auto px-8 md:px-10 py-3 md:py-4 border-2 border-gray-300 hover:bg-gray-100 hover:border-gray-400 text-sm sm:text-base md:text-base sm:text-lg font-medium transition-all duration-200 rounded-xl"
           >
             Cancelar
           </Button>
           <Button
             onClick={salvarTodos}
             disabled={loading || (apoiosAdicionais.length === 0 && apoiosRemovidos.length === 0)}
-            className="w-full sm:w-auto px-8 md:px-10 py-3 md:py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-base md:text-lg font-semibold text-white shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full sm:w-auto px-8 md:px-10 py-3 md:py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-sm sm:text-base md:text-base sm:text-lg font-semibold text-white shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <div className="flex items-center gap-2 sm:gap-3">

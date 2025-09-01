@@ -120,7 +120,7 @@ export default function PreviewGrid({
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="flex-shrink-0 p-4 border-b border-gray-200 bg-gray-50">
-        <h3 className="text-lg font-semibold text-gray-900">Preview das Fotos</h3>
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900">Preview das Fotos</h3>
         <p className="text-xs sm:text-sm text-gray-600 mt-1">
           Visualize todas as fotos com suas legendas antes de salvar
         </p>
@@ -129,7 +129,7 @@ export default function PreviewGrid({
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ maxHeight: 'calc(100vh - 200px)' }}>
         {fotos.map((foto, i) => (
-          <div key={foto.id ?? i} className="flex gap-4 items-start bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+          <div key={foto.id ?? i} className="flex gap-2 sm:gap-4 items-start bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
             {/* Thumbnail */}
             <div className="w-48 h-36 rounded overflow-hidden border bg-gray-50 shadow-sm flex-shrink-0">
               {imageErrors[i] ? (
@@ -182,7 +182,7 @@ export default function PreviewGrid({
               </div>
 
               {/* Foto details */}
-              <div className="flex items-center gap-4 text-xs text-gray-500">
+              <div className="flex items-center gap-2 sm:gap-4 text-xs text-gray-500">
                 <span>Zoom: {Math.round((foto.tempZoom || foto.zoom) * 100)}%</span>
                 <span>Crop: {foto.tempCroppedArea ? 'Aplicado' : 'Original'}</span>
               </div>

@@ -480,7 +480,7 @@ const ClientePopup: React.FC<Props> = ({ onClose, onSave, clienteEdicao }) => {
                 Permite Negociação
               </Label>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
               <div>
                 <Label>Franquia Horas</Label>
                 <Input
@@ -496,7 +496,7 @@ const ClientePopup: React.FC<Props> = ({ onClose, onSave, clienteEdicao }) => {
                 />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
               <div>
                 <Label>Hora Extra (R$)</Label>
                 <Input
@@ -628,7 +628,7 @@ const ClientePopup: React.FC<Props> = ({ onClose, onSave, clienteEdicao }) => {
             <div className="space-y-4 sm:space-y-6">
               {/* Informações Básicas */}
               <div className="bg-gray-50 p-2 sm:p-4 rounded-lg">
-                <h3 className="font-semibold text-gray-700 mb-2 sm:mb-4 text-base sm:text-lg">Informações Básicas</h3>
+                <h3 className="font-semibold text-gray-700 mb-2 sm:mb-4 text-sm sm:text-base sm:text-lg">Informações Básicas</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-4">
                   <div>
                     <Label className="text-xs sm:text-sm font-medium">Nome *</Label>
@@ -691,7 +691,7 @@ const ClientePopup: React.FC<Props> = ({ onClose, onSave, clienteEdicao }) => {
 
               {/* Logo */}
               <div className="bg-gray-50 p-2 sm:p-4 rounded-lg">
-                <h3 className="font-semibold text-gray-700 mb-2 sm:mb-4 text-base sm:text-lg">Logo da Empresa</h3>
+                <h3 className="font-semibold text-gray-700 mb-2 sm:mb-4 text-sm sm:text-base sm:text-lg">Logo da Empresa</h3>
                 <div className="space-y-2 sm:space-y-4">
                   <div>
                     <Label className="text-xs sm:text-sm font-medium">Upload do Logo</Label>
@@ -752,7 +752,7 @@ const ClientePopup: React.FC<Props> = ({ onClose, onSave, clienteEdicao }) => {
 
               {/* Endereço */}
               <div className="bg-gray-50 p-2 sm:p-4 rounded-lg">
-                <h3 className="font-semibold text-gray-700 mb-2 sm:mb-4 text-base sm:text-lg">Endereço</h3>
+                <h3 className="font-semibold text-gray-700 mb-2 sm:mb-4 text-sm sm:text-base sm:text-lg">Endereço</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
                   <div className="md:col-span-2 lg:col-span-3">
                     <Label className="text-xs sm:text-sm font-medium">Endereço</Label>
@@ -789,7 +789,7 @@ const ClientePopup: React.FC<Props> = ({ onClose, onSave, clienteEdicao }) => {
               {/* Contratos */}
               <div className="bg-gray-50 p-2 sm:p-4 rounded-lg">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2 sm:mb-4 gap-2 sm:gap-0">
-                  <h3 className="font-semibold text-gray-700 text-base sm:text-lg">Contratos</h3>
+                  <h3 className="font-semibold text-gray-700 text-sm sm:text-base sm:text-lg">Contratos</h3>
                   <Button 
                     type="button" 
                     onClick={handleAddContrato}

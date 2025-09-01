@@ -86,16 +86,16 @@ const FinanceiroPage: React.FC = () => {
 
   return (
     <PageAccessControl pageKey="access:financeiro">
-      <div className="min-h-screen bg-gradient-to-br from-slate-100 to-blue-50 p-4 lg:p-8">
+      <div className="min-h-screen bg-gradient-to-br from-slate-100 to-blue-50 p-4 lg:p-4 sm:p-8">
       <div className="max-w-6xl mx-auto">
         {/* Cabeçalho e Abas */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 sm:gap-4 mb-8">
           <div>
             <h1 className="text-2xl lg:text-3xl font-bold flex items-center gap-2 sm:gap-3 text-blue-900">
               <FileText className="w-8 h-8 text-blue-500" />
               Financeiro
             </h1>
-            <p className="text-slate-500 mt-2 text-xs sm:text-sm lg:text-base">
+            <p className="text-slate-500 mt-2 text-xs sm:text-sm lg:text-sm sm:text-base">
               Acompanhe receitas, despesas e o fluxo financeiro do sistema
             </p>
           </div>
@@ -114,7 +114,7 @@ const FinanceiroPage: React.FC = () => {
 
         {/* Conteúdo das Abas */}
         {aba === 'dashboard' && (
-          <div className="bg-white rounded-xl shadow border border-blue-100 p-8 text-center text-slate-700">
+          <div className="bg-white rounded-xl shadow border border-blue-100 p-4 sm:p-8 text-center text-slate-700">
             <h2 className="text-xl font-bold mb-4 flex items-center justify-center gap-2"><BarChart2 className="w-6 h-6 text-blue-500" /> Dashboard Financeiro</h2>
             <p>Resumo financeiro, gráficos e indicadores serão exibidos aqui.</p>
           </div>
@@ -122,7 +122,7 @@ const FinanceiroPage: React.FC = () => {
 
         {aba === 'fechamentos' && (
           <div className="bg-white rounded-xl shadow border border-blue-100 p-4 overflow-x-auto">
-            <h2 className="text-lg font-bold mb-4 flex items-center gap-2"><Table className="w-5 h-5 text-blue-500" /> Fechamentos de Ocorrências</h2>
+            <h2 className="text-base sm:text-lg font-bold mb-4 flex items-center gap-2"><Table className="w-5 h-5 text-blue-500" /> Fechamentos de Ocorrências</h2>
             <table className="min-w-full divide-y divide-blue-100 text-blue-900 text-xs">
               <thead>
                 <tr>
@@ -171,7 +171,7 @@ const FinanceiroPage: React.FC = () => {
         )}
 
         {aba === 'prestadores' && (
-          <div className="bg-white rounded-xl shadow border border-blue-100 p-8 text-center text-slate-700">
+          <div className="bg-white rounded-xl shadow border border-blue-100 p-4 sm:p-8 text-center text-slate-700">
             <h2 className="text-xl font-bold mb-4 flex items-center justify-center gap-2"><Users className="w-6 h-6 text-blue-500" /> Prestadores</h2>
             <p>Informações e relatórios de prestadores serão exibidos aqui.</p>
           </div>

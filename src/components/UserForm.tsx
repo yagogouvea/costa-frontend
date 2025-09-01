@@ -142,7 +142,7 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl p-3 sm:p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-xl p-3 sm:p-6 w-full max-w-4xl max-min-h-[80vh] max-h-[95vh] overflow-y-auto">
         <h2 className="text-2xl font-bold mb-6">
           {user ? "Editar Usuário" : "Novo Usuário"}
         </h2>
@@ -191,7 +191,7 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
               </button>
 
               {showPasswordChange && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-4 pt-2">
                   <div>
                     <label className="block text-xs sm:text-sm font-medium text-gray-700">
                       Nova senha
@@ -280,7 +280,7 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
           </div>
 
           {/* BOTÕES */}
-          <div className="flex justify-end gap-4 pt-6 border-t">
+          <div className="flex justify-end gap-2 sm:gap-4 pt-6 border-t">
             <button 
               type="button" 
               onClick={onClose} 

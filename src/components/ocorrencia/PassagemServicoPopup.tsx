@@ -483,7 +483,7 @@ const PassagemServicoPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }
   return (
     <div className="space-y-4 w-full max-w-6xl mx-auto p-4">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-gray-200 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-200 pb-4">
         <DialogTitle className="text-xl font-semibold text-gray-900">
           📋 Passagem de Serviço
         </DialogTitle>
@@ -501,7 +501,7 @@ const PassagemServicoPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }
           <Textarea
             value={texto}
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setTexto(e.target.value)}
-            className="min-h-[400px] md:min-h-[500px] lg:min-h-[600px] text-xs sm:text-sm md:text-base resize-none border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-4"
+            className="min-h-[400px] md:min-h-[500px] lg:min-h-[600px] text-xs sm:text-sm md:text-sm sm:text-base resize-none border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-4"
             placeholder="Gerando passagem de serviço..."
           />
           
@@ -521,7 +521,7 @@ const PassagemServicoPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }
 
         {/* Informações da ocorrência */}
         <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs sm:text-sm">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 text-xs sm:text-sm">
             <div>
               <span className="font-medium text-gray-700">Cliente:</span>
               <span className="ml-2 text-gray-900">{ocorrencia.cliente || '-'}</span>

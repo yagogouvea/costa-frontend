@@ -160,7 +160,7 @@ const KMPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
   return (
     <div className="p-3 sm:p-6 w-96 max-w-full">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-gray-200 pb-4 mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-200 pb-4 mb-4">
         <DialogTitle className="text-xl font-semibold text-gray-900 flex items-center gap-2">
           <Calculator size={20} className="text-blue-600" />
           Editar Quilometragem
@@ -245,11 +245,11 @@ const KMPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                 : 'bg-green-50 border-green-200'
               : 'bg-blue-50 border-blue-200'
           }`}>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <span className="text-xs sm:text-sm font-medium text-gray-700">
                 Status do KM:
               </span>
-              <span className={`text-lg font-bold ${
+              <span className={`text-base sm:text-lg font-bold ${
                 kmTotal !== null
                   ? kmTotal === 0 || kmTotal <= 50
                     ? 'text-yellow-600'

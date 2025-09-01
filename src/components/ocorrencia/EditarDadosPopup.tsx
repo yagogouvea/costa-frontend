@@ -214,12 +214,12 @@ const EditarDadosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) =>
 
   return (
     <div className="space-y-6 max-h-[80vh] overflow-y-auto">
-      <DialogTitle className="text-lg font-bold">Editar Dados da Ocorrência</DialogTitle>
+      <DialogTitle className="text-base sm:text-lg font-bold">Editar Dados da Ocorrência</DialogTitle>
       <DialogDescription className="text-xs sm:text-sm text-muted-foreground">
         Atualize os dados gerais lançados na abertura da ocorrência.
       </DialogDescription>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
         <div>
           <Label>Cliente</Label>
           <Input value={cliente} onChange={e => setCliente(e.target.value)} />
