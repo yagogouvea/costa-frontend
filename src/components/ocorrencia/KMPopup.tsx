@@ -158,7 +158,7 @@ const KMPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
   const kmTotal = calculateTotal();
 
   return (
-    <div className="p-6 w-96 max-w-full">
+    <div className="p-3 sm:p-6 w-96 max-w-full">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-gray-200 pb-4 mb-4">
         <DialogTitle className="text-xl font-semibold text-gray-900 flex items-center gap-2">
@@ -182,7 +182,7 @@ const KMPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
       <div className="space-y-4">
         {/* KM Inicial */}
         <div>
-          <label className="text-sm font-medium text-gray-700 block mb-2">
+          <label className="text-xs sm:text-sm font-medium text-gray-700 block mb-2">
             KM Inicial
           </label>
                      <input
@@ -198,7 +198,7 @@ const KMPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
              placeholder="Ex: 0, 12345.6"
            />
           {errors.inicial && (
-            <div className="flex items-center gap-1 mt-1 text-red-600 text-sm">
+            <div className="flex items-center gap-1 mt-1 text-red-600 text-xs sm:text-sm">
               <AlertCircle size={14} />
               {errors.inicial}
             </div>
@@ -207,7 +207,7 @@ const KMPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
 
         {/* KM Final */}
         <div>
-          <label className="text-sm font-medium text-gray-700 block mb-2">
+          <label className="text-xs sm:text-sm font-medium text-gray-700 block mb-2">
             KM Final <span className="text-gray-500 text-xs">(opcional)</span>
           </label>
                      <input
@@ -223,13 +223,13 @@ const KMPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
              placeholder="Ex: 0, 12450.2 (deixe vazio se não souber)"
            />
           {errors.final && (
-            <div className="flex items-center gap-1 mt-1 text-red-600 text-sm">
+            <div className="flex items-center gap-1 mt-1 text-red-600 text-xs sm:text-sm">
               <AlertCircle size={14} />
               {errors.final}
             </div>
           )}
           {final === '' && inicial !== '' && (
-            <div className="flex items-center gap-1 mt-1 text-blue-600 text-sm">
+            <div className="flex items-center gap-1 mt-1 text-blue-600 text-xs sm:text-sm">
               <CheckCircle size={14} />
               KM final pode ser registrado posteriormente
             </div>
@@ -246,7 +246,7 @@ const KMPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
               : 'bg-blue-50 border-blue-200'
           }`}>
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-700">
+              <span className="text-xs sm:text-sm font-medium text-gray-700">
                 Status do KM:
               </span>
               <span className={`text-lg font-bold ${
@@ -268,21 +268,21 @@ const KMPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
             </div>
             
             {final === '' && inicial !== '' && (
-              <div className="flex items-center gap-1 mt-2 text-blue-600 text-sm">
+              <div className="flex items-center gap-1 mt-2 text-blue-600 text-xs sm:text-sm">
                 <CheckCircle size={14} />
                 KM inicial registrado - pode completar com KM final posteriormente
               </div>
             )}
             
             {errors.total && (
-              <div className="flex items-center gap-1 mt-2 text-red-600 text-sm">
+              <div className="flex items-center gap-1 mt-2 text-red-600 text-xs sm:text-sm">
                 <AlertCircle size={14} />
                 {errors.total}
               </div>
             )}
             
             {kmTotal !== null && final !== '' && (
-              <div className="flex items-center gap-1 mt-2 text-sm">
+              <div className="flex items-center gap-1 mt-2 text-xs sm:text-sm">
                 {kmTotal === 0 || kmTotal <= 50 ? (
                   <span className="text-yellow-600">
                     <CheckCircle size={14} />
@@ -301,20 +301,20 @@ const KMPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
 
         {/* Informações da ocorrência */}
         <div className="bg-gray-50 rounded-lg p-3 space-y-2">
-          <div className="text-sm text-gray-600">
+          <div className="text-xs sm:text-sm text-gray-600">
             <span className="font-medium">Ocorrência:</span> {ocorrencia.id}
           </div>
-          <div className="text-sm text-gray-600">
+          <div className="text-xs sm:text-sm text-gray-600">
             <span className="font-medium">Placa:</span> {ocorrencia.placa1 || '-'}
           </div>
-          <div className="text-sm text-gray-600">
+          <div className="text-xs sm:text-sm text-gray-600">
             <span className="font-medium">Cliente:</span> {ocorrencia.cliente || '-'}
           </div>
         </div>
       </div>
 
       {/* Botões de ação */}
-      <div className="flex flex-col sm:flex-row gap-3 justify-end pt-4 border-t border-gray-200 mt-6">
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-end pt-4 border-t border-gray-200 mt-6">
         <Button
           onClick={cancelar}
           className="flex items-center justify-center gap-2 px-6 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700"

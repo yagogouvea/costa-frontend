@@ -104,14 +104,14 @@ const CadastroClientes: React.FC = () => {
       
       <div className="relative z-10">
         {/* Header Elegante */}
-        <div className="bg-gradient-to-r from-slate-800/95 to-slate-900/95 backdrop-blur-sm text-white rounded-2xl p-6 mb-8 shadow-xl border border-white/10">
+        <div className="bg-gradient-to-r from-slate-800/95 to-slate-900/95 backdrop-blur-sm text-white rounded-2xl p-3 sm:p-6 mb-8 shadow-xl border border-white/10">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
-              <h1 className="text-2xl lg:text-3xl font-bold flex items-center gap-3">
+              <h1 className="text-2xl lg:text-3xl font-bold flex items-center gap-2 sm:gap-3">
                 <Building className="w-8 h-8 text-blue-400" />
                 Cadastro de Clientes
               </h1>
-              <p className="text-slate-300 mt-2 text-sm lg:text-base">
+              <p className="text-slate-300 mt-2 text-xs sm:text-sm lg:text-base">
                 Gerencie e cadastre todos os clientes da empresa
               </p>
             </div>
@@ -130,8 +130,8 @@ const CadastroClientes: React.FC = () => {
         </div>
 
         {/* Filtros de busca */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-4 lg:p-6 flex flex-col gap-4 mb-8">
-          <div className="flex items-center justify-between mb-2">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-4 lg:p-3 sm:p-6 flex flex-col gap-4 mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 mb-2">
             <h3 className="text-lg font-semibold text-slate-800">Filtros de Busca</h3>
             <div className="text-xs text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
               💡 Use os filtros para encontrar clientes específicos
@@ -144,7 +144,7 @@ const CadastroClientes: React.FC = () => {
                 placeholder="Nome do cliente"
                 value={filtros.nome}
                 onChange={e => setFiltros(f => ({ ...f, nome: e.target.value }))}
-                className="text-sm bg-white/60 backdrop-blur-sm border-white/30"
+                className="text-xs sm:text-sm bg-white/60 backdrop-blur-sm border-white/30"
               />
             </div>
             <div className="flex flex-col gap-1">
@@ -153,7 +153,7 @@ const CadastroClientes: React.FC = () => {
                 placeholder="CNPJ"
                 value={filtros.cnpj}
                 onChange={e => setFiltros(f => ({ ...f, cnpj: e.target.value }))}
-                className="text-sm bg-white/60 backdrop-blur-sm border-white/30"
+                className="text-xs sm:text-sm bg-white/60 backdrop-blur-sm border-white/30"
               />
             </div>
           </div>
@@ -174,7 +174,7 @@ const CadastroClientes: React.FC = () => {
             <div className="text-center">
               <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
               <p className="text-slate-600 font-medium text-lg">Carregando clientes...</p>
-              <p className="text-slate-500 text-sm mt-2">Aguarde enquanto buscamos os dados</p>
+              <p className="text-slate-500 text-xs sm:text-sm mt-2">Aguarde enquanto buscamos os dados</p>
             </div>
           </div>
         ) : !buscou ? (
@@ -191,21 +191,21 @@ const CadastroClientes: React.FC = () => {
               <Building className="w-8 h-8 text-slate-400" />
             </div>
             <div className="text-lg mb-2">🔍 Nenhum cliente encontrado</div>
-            <div className="text-sm text-slate-400">
+            <div className="text-xs sm:text-sm text-slate-400">
               Tente ajustar os filtros ou verificar se os dados estão corretos
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-2 sm:gap-3 sm:p-6">
             {clientes.map((cliente) => (
-              <div key={cliente.id} className="bg-gradient-to-br from-slate-500/10 to-gray-500/10 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-200/50 p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden">
+              <div key={cliente.id} className="bg-gradient-to-br from-slate-500/10 to-gray-500/10 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-200/50 p-3 sm:p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden">
                 {/* Decorative background element */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/20 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
                 
                 <div className="relative z-10">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-3 mb-2">
+                      <div className="flex items-center gap-2 sm:gap-3 mb-2">
                         {cliente.logo && (
                           <img
                             src={cliente.logo.startsWith('http') ? cliente.logo : `${API_URL.replace(/\/$/, '')}/${cliente.logo.replace(/^\//, '')}`}
@@ -217,7 +217,7 @@ const CadastroClientes: React.FC = () => {
                             }}
                           />
                         )}
-                        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-3 py-1 rounded-full text-sm font-bold">
+                        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-3 py-1 rounded-full text-xs sm:text-sm font-bold">
                           #{cliente.id}
                         </div>
                       </div>
@@ -234,7 +234,7 @@ const CadastroClientes: React.FC = () => {
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
+                  <div className="grid grid-cols-2 gap-4 mb-4 text-xs sm:text-sm">
                     <div className="bg-white/60 backdrop-blur-sm rounded-xl p-3 border border-white/30 shadow-sm">
                       <div className="flex items-center gap-2 mb-1">
                         <Building className="w-4 h-4 text-blue-600" />
@@ -319,7 +319,7 @@ const CadastroClientes: React.FC = () => {
                   {/* Contratos */}
                   {cliente.contratos && cliente.contratos.length > 0 && (
                     <div className="mt-4 pt-3 border-t border-slate-300/60">
-                      <div className="space-y-1 text-sm">
+                      <div className="space-y-1 text-xs sm:text-sm">
                         <div className="bg-slate-50/95 backdrop-blur-sm p-3 rounded-lg border border-slate-200/70">
                           <p className="text-slate-800 font-semibold text-xs mb-2 flex items-center gap-1">
                             <Users className="w-3 h-3 text-blue-600" />

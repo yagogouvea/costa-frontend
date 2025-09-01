@@ -103,7 +103,7 @@ const StatusRecuperacaoPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose
 
       <div className="space-y-4">
         <div>
-          <Label className="text-sm font-medium">Resultado:</Label>
+          <Label className="text-xs sm:text-sm font-medium">Resultado:</Label>
           <RadioGroup value={resultado} onValueChange={value => {
             setResultado(value);
             // Limpar sub_resultado se não for RECUPERADO
@@ -122,7 +122,7 @@ const StatusRecuperacaoPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose
 
         {resultado === 'RECUPERADO' && (
           <div>
-            <Label className="text-sm font-medium">Tipo de Recuperação:</Label>
+            <Label className="text-xs sm:text-sm font-medium">Tipo de Recuperação:</Label>
             <RadioGroup value={subResultado || ''} onValueChange={value => setSubResultado(value)}>
               {opcoesSubResultado.map(opcao => (
                 <div key={opcao.value} className="flex items-center space-x-2 mt-2">

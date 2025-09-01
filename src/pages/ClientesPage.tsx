@@ -121,7 +121,7 @@ const ClientesPage: React.FC = () => {
 
   return (
     <PageAccessControl pageKey="access:clientes">
-      <div className="p-2 sm:p-4 md:p-6 space-y-4 sm:space-y-6">
+      <div className="p-2 sm:p-4 md:p-3 sm:p-6 space-y-4 sm:space-y-6">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2 sm:gap-4">
         <h1 className="text-xl sm:text-2xl font-bold">Cadastro de Clientes</h1>
         <FeatureAccessControl featureKey="clientes:create" hideIfNoAccess>
@@ -179,7 +179,7 @@ const ClientesPage: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
           {clientes.map(cliente => (
             <Card key={cliente.id} className="overflow-hidden">
-              <CardContent className="p-4 sm:p-6">
+              <CardContent className="p-4 sm:p-3 sm:p-6">
                 <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-start mb-2 sm:mb-4">
                   <div>
                     <h3 className="text-base sm:text-lg font-semibold">{cliente.nome}</h3>

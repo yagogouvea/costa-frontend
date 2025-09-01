@@ -182,8 +182,8 @@ const PrestadorPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, 
         <div className="px-6 md:px-8 lg:px-10 pb-6 md:pb-8 lg:pb-10">
           {/* ✅ SEÇÃO PRESTADOR NÃO CADASTRADO */}
           <div className="mb-8 md:mb-10 lg:mb-12">
-            <div className="bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-2xl p-6 md:p-8 lg:p-10">
-              <div className="flex items-center gap-3 md:gap-4 mb-6">
+            <div className="bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-2xl p-3 sm:p-6 md:p-8 lg:p-10">
+              <div className="flex items-center gap-2 sm:gap-3 md:gap-4 mb-6">
                 <input
                   type="checkbox"
                   id="prestadorNaoCadastrado"
@@ -197,9 +197,9 @@ const PrestadorPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, 
               </div>
               
               {usarPrestadorNaoCadastrado && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-2 sm:gap-3 sm:p-6">
                   <div>
-                    <label className="block text-sm md:text-base font-medium text-orange-700 mb-2">
+                    <label className="block text-xs sm:text-sm md:text-base font-medium text-orange-700 mb-2">
                       Nome do prestador <span className="text-red-500">*</span>
                     </label>
                     <Input
@@ -211,7 +211,7 @@ const PrestadorPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, 
                     />
                   </div>
                   <div>
-                    <label className="block text-sm md:text-base font-medium text-orange-700 mb-2">
+                    <label className="block text-xs sm:text-sm md:text-base font-medium text-orange-700 mb-2">
                       Telefone
                     </label>
                     <Input
@@ -263,9 +263,9 @@ const PrestadorPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, 
                 {/* ✅ PRESTADOR SALVO/SELEcionado Mobile */}
                 {(prestadorSalvo || prestadorSelecionado) && (
                   <div className="mb-4 md:mb-6">
-                    <div className="bg-gradient-to-br from-emerald-50 to-green-100 border border-emerald-200 rounded-2xl p-4 md:p-6 shadow-lg">
+                    <div className="bg-gradient-to-br from-emerald-50 to-green-100 border border-emerald-200 rounded-2xl p-4 md:p-3 sm:p-6 shadow-lg">
                       <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2 sm:gap-3">
                           <div className="bg-emerald-500 p-2 md:p-3 rounded-full shadow-md">
                             <CheckCircle className="h-5 w-5 md:h-6 md:w-6 text-white" />
                           </div>
@@ -277,14 +277,14 @@ const PrestadorPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, 
                           <Button
                             onClick={excluirPrestador}
                             disabled={loading}
-                            className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+                            className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors"
                           >
                             {loading ? 'Removendo...' : 'Remover'}
                           </Button>
                         )}
                       </div>
                       <div className="space-y-3 md:space-y-4">
-                        <div className="flex items-center gap-3 p-3 md:p-4 bg-white rounded-xl shadow-sm">
+                        <div className="flex items-center gap-2 sm:gap-3 p-3 md:p-4 bg-white rounded-xl shadow-sm">
                           <div className="bg-blue-100 p-2 md:p-3 rounded-full">
                             <User className="h-5 w-5 md:h-6 md:w-6 text-blue-600" />
                           </div>
@@ -293,12 +293,12 @@ const PrestadorPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, 
                               {prestadorSalvo || prestadorSelecionado?.nome}
                             </span>
                             {prestadorSelecionado?.cod_nome && (
-                              <BadgeComponent key="selected-cod" className="text-xs md:text-sm px-2 md:px-3 py-1 bg-blue-100 text-blue-700 border-0 ml-2">
+                              <BadgeComponent key="selected-cod" className="text-xs md:text-xs sm:text-sm px-2 md:px-3 py-1 bg-blue-100 text-blue-700 border-0 ml-2">
                                 {prestadorSelecionado.cod_nome}
                               </BadgeComponent>
                             )}
                             {isPrestadorNaoCadastrado && (
-                              <BadgeComponent className="text-xs md:text-sm px-2 md:px-3 py-1 bg-orange-100 text-orange-700 border-0 ml-2">
+                              <BadgeComponent className="text-xs md:text-xs sm:text-sm px-2 md:px-3 py-1 bg-orange-100 text-orange-700 border-0 ml-2">
                                 Não Cadastrado
                               </BadgeComponent>
                             )}
@@ -306,20 +306,20 @@ const PrestadorPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, 
                         </div>
                         {/* Mostrar telefone se disponível (prestador cadastrado) */}
                         {prestadorSelecionado?.telefone && (
-                          <div className="flex items-center gap-3 p-3 md:p-4 bg-white rounded-xl shadow-sm">
+                          <div className="flex items-center gap-2 sm:gap-3 p-3 md:p-4 bg-white rounded-xl shadow-sm">
                             <div className="bg-green-100 p-2 md:p-3 rounded-full">
                               <Phone className="h-5 w-5 md:h-6 md:w-6 text-green-600" />
                             </div>
-                            <span className="text-sm md:text-base text-gray-700 font-medium truncate">{prestadorSelecionado.telefone}</span>
+                            <span className="text-xs sm:text-sm md:text-base text-gray-700 font-medium truncate">{prestadorSelecionado.telefone}</span>
                           </div>
                         )}
                         {/* Mostrar localização se disponível (prestador cadastrado) */}
                         {(prestadorSelecionado?.cidade || prestadorSelecionado?.estado) && (
-                          <div className="flex items-center gap-3 p-3 md:p-4 bg-white rounded-xl shadow-sm">
+                          <div className="flex items-center gap-2 sm:gap-3 p-3 md:p-4 bg-white rounded-xl shadow-sm">
                             <div className="bg-purple-100 p-2 md:p-3 rounded-full">
                               <MapPin className="h-5 w-5 md:h-6 md:w-6 text-purple-600" />
                             </div>
-                            <span className="text-sm md:text-base text-gray-700 font-medium truncate">
+                            <span className="text-xs sm:text-sm md:text-base text-gray-700 font-medium truncate">
                               {[prestadorSelecionado.cidade, prestadorSelecionado.estado].filter(Boolean).join(', ')}
                             </span>
                           </div>
@@ -334,7 +334,7 @@ const PrestadorPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, 
                   <div className="space-y-3 md:space-y-4 max-h-[60vh] md:max-h-[65vh] overflow-y-auto border-0 rounded-2xl p-3 md:p-4 bg-white/80 backdrop-blur-sm shadow-lg">
                     {filtrados.map(p => (
                       <label key={p.id} className="group block cursor-pointer hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:shadow-lg p-3 md:p-4 rounded-xl transition-all duration-300 border border-gray-100 hover:border-blue-200 bg-white shadow-sm">
-                        <div className="flex items-start gap-3 md:gap-4">
+                        <div className="flex items-start gap-2 sm:gap-3 md:gap-4">
                           <div className="relative">
                             <input
                               type="radio"
@@ -349,7 +349,7 @@ const PrestadorPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, 
                             )}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-3">
+                            <div className="flex items-center gap-2 md:gap-2 sm:gap-3 mb-2 md:mb-3">
                               <span className="font-bold text-base md:text-lg truncate text-gray-800 group-hover:text-blue-700 transition-colors">
                                 {p.nome}
                               </span>
@@ -359,17 +359,17 @@ const PrestadorPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, 
                                 </BadgeComponent>
                               )}
                             </div>
-                            <div className="text-sm md:text-base text-gray-600 space-y-2 md:space-y-3">
+                            <div className="text-xs sm:text-sm md:text-base text-gray-600 space-y-2 md:space-y-3">
                               {p.telefone && (
-                                <div className="flex items-center gap-2 md:gap-3 p-1 md:p-2 bg-gray-50 rounded-lg">
+                                <div className="flex items-center gap-2 md:gap-2 sm:gap-3 p-1 md:p-2 bg-gray-50 rounded-lg">
                                   <Phone className="h-4 w-4 md:h-5 md:w-5 flex-shrink-0 text-green-500" />
-                                  <span className="truncate font-medium text-xs md:text-sm">{p.telefone}</span>
+                                  <span className="truncate font-medium text-xs md:text-xs sm:text-sm">{p.telefone}</span>
                                 </div>
                               )}
                               {(p.cidade || p.estado) && (
-                                <div className="flex items-center gap-2 md:gap-3 p-1 md:p-2 bg-gray-50 rounded-lg">
+                                <div className="flex items-center gap-2 md:gap-2 sm:gap-3 p-1 md:p-2 bg-gray-50 rounded-lg">
                                   <MapPin className="h-4 w-4 md:h-5 md:w-5 flex-shrink-0 text-purple-500" />
-                                  <span className="truncate font-medium text-xs md:text-sm">{[p.cidade, p.estado].filter(Boolean).join(', ')}</span>
+                                  <span className="truncate font-medium text-xs md:text-xs sm:text-sm">{[p.cidade, p.estado].filter(Boolean).join(', ')}</span>
                                 </div>
                               )}
                               {p.funcoes && p.funcoes.length > 0 && (
@@ -394,27 +394,27 @@ const PrestadorPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, 
                     
                     {filtro.length >= 2 && filtrados.length === 0 && (
                       <div className="text-center py-8 md:py-12">
-                        <div className="bg-gray-50 rounded-2xl p-4 md:p-6">
+                        <div className="bg-gray-50 rounded-2xl p-4 md:p-3 sm:p-6">
                           <div className="w-12 h-12 md:w-16 md:h-16 bg-gray-200 rounded-full mx-auto mb-3 md:mb-4 flex items-center justify-center">
                             <svg className="w-6 h-6 md:w-8 md:h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.47-.881-6.08-2.33" />
                             </svg>
                           </div>
                           <p className="text-gray-600 text-base md:text-lg font-semibold mb-1 md:mb-2">Nenhum prestador encontrado</p>
-                          <p className="text-gray-500 text-sm md:text-base">Tente ajustar os termos de busca</p>
+                          <p className="text-gray-500 text-xs sm:text-sm md:text-base">Tente ajustar os termos de busca</p>
                         </div>
                       </div>
                     )}
                     {filtro.length < 2 && filtrados.length === 0 && (
                       <div className="text-center py-8 md:p-12">
-                        <div className="bg-blue-50 rounded-2xl p-4 md:p-6">
+                        <div className="bg-blue-50 rounded-2xl p-4 md:p-3 sm:p-6">
                           <div className="w-12 h-12 md:w-16 md:h-16 bg-blue-100 rounded-full mx-auto mb-3 md:mb-4 flex items-center justify-center">
                             <svg className="w-6 h-6 md:w-8 md:h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
                           </div>
                           <p className="text-blue-800 text-base md:text-lg font-semibold mb-1 md:mb-2">Digite para buscar</p>
-                          <p className="text-blue-600 text-sm md:text-base">Digite pelo menos 2 caracteres para buscar prestadores</p>
+                          <p className="text-blue-600 text-xs sm:text-sm md:text-base">Digite pelo menos 2 caracteres para buscar prestadores</p>
                         </div>
                       </div>
                     )}
@@ -423,7 +423,7 @@ const PrestadorPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, 
               </div>
 
               {/* Layout Desktop - Grid */}
-              <div className="hidden lg:grid lg:grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8">
+              <div className="hidden lg:grid lg:grid-cols-1 xl:grid-cols-3 gap-2 sm:gap-3 sm:p-6 lg:gap-8">
                 {/* ✅ PRESTADOR SALVO/SELEcionado Desktop */}
                 {(prestadorSalvo || prestadorSelecionado) && (
                   <div className="xl:col-span-1">
@@ -441,7 +441,7 @@ const PrestadorPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, 
                           <Button
                             onClick={excluirPrestador}
                             disabled={loading}
-                            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors"
                           >
                             {loading ? 'Removendo...' : 'Remover'}
                           </Button>
@@ -455,12 +455,12 @@ const PrestadorPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, 
                           <div className="flex-1">
                             <span className="font-bold text-xl text-gray-800">{prestadorSalvo || prestadorSelecionado?.nome}</span>
                             {prestadorSelecionado?.cod_nome && (
-                              <BadgeComponent key="selected-cod" className="text-sm px-3 py-1 bg-blue-100 text-blue-700 border-0 ml-2">
+                              <BadgeComponent key="selected-cod" className="text-xs sm:text-sm px-3 py-1 bg-blue-100 text-blue-700 border-0 ml-2">
                                 {prestadorSelecionado.cod_nome}
                               </BadgeComponent>
                             )}
                             {isPrestadorNaoCadastrado && (
-                              <BadgeComponent className="text-sm px-3 py-1 bg-orange-100 text-orange-700 border-0 ml-2">
+                              <BadgeComponent className="text-xs sm:text-sm px-3 py-1 bg-orange-100 text-orange-700 border-0 ml-2">
                                 Não Cadastrado
                               </BadgeComponent>
                             )}
@@ -494,10 +494,10 @@ const PrestadorPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, 
                 {/* Lista de Prestadores Desktop - Mostrar apenas se não há prestador salvo */}
                 {!prestadorSalvo && (
                   <div className={`${prestadorSelecionado ? 'xl:col-span-2' : 'xl:col-span-3'}`}>
-                    <div className="space-y-4 max-h-[70vh] overflow-y-auto border-0 rounded-3xl p-6 bg-white/80 backdrop-blur-sm shadow-xl">
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div className="space-y-4 max-h-[70vh] overflow-y-auto border-0 rounded-3xl p-3 sm:p-6 bg-white/80 backdrop-blur-sm shadow-xl">
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-3 sm:p-6">
                         {filtrados.map(p => (
-                          <label key={p.id} className="group block cursor-pointer hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:shadow-2xl p-6 rounded-2xl transition-all duration-300 border border-gray-100 hover:border-blue-200 bg-white shadow-sm hover:scale-[1.02]">
+                          <label key={p.id} className="group block cursor-pointer hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:shadow-2xl p-3 sm:p-6 rounded-2xl transition-all duration-300 border border-gray-100 hover:border-blue-200 bg-white shadow-sm hover:scale-[1.02]">
                             <div className="flex items-start gap-4">
                               <div className="relative">
                                 <input
@@ -513,25 +513,25 @@ const PrestadorPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, 
                                 )}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-3 mb-3">
+                                <div className="flex items-center gap-2 sm:gap-3 mb-3">
                                   <span className="font-bold text-lg truncate text-gray-800 group-hover:text-blue-700 transition-colors">
                                     {p.nome}
                                   </span>
                                   {p.cod_nome && (
-                                    <BadgeComponent className="text-sm px-3 py-1 bg-gradient-to-r from-blue-500 to-indigo-600 text-white border-0 flex-shrink-0 shadow-sm">
+                                    <BadgeComponent className="text-xs sm:text-sm px-3 py-1 bg-gradient-to-r from-blue-500 to-indigo-600 text-white border-0 flex-shrink-0 shadow-sm">
                                       {p.cod_nome}
                                     </BadgeComponent>
                                   )}
                                 </div>
-                                <div className="text-sm text-gray-600 space-y-3">
+                                <div className="text-xs sm:text-sm text-gray-600 space-y-3">
                                   {p.telefone && (
-                                    <div className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
+                                    <div className="flex items-center gap-2 sm:gap-3 p-2 bg-gray-50 rounded-lg">
                                       <Phone className="h-5 w-5 flex-shrink-0 text-green-500" />
                                       <span className="truncate font-medium">{p.telefone}</span>
                                     </div>
                                   )}
                                   {(p.cidade || p.estado) && (
-                                    <div className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
+                                    <div className="flex items-center gap-2 sm:gap-3 p-2 bg-gray-50 rounded-lg">
                                       <MapPin className="h-5 w-5 flex-shrink-0 text-purple-500" />
                                       <span className="truncate font-medium">{[p.cidade, p.estado].filter(Boolean).join(', ')}</span>
                                     </div>
@@ -559,27 +559,27 @@ const PrestadorPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, 
                       
                       {filtro.length >= 2 && filtrados.length === 0 && (
                         <div className="text-center py-8 md:py-12">
-                          <div className="bg-gray-50 rounded-2xl p-4 md:p-6">
+                          <div className="bg-gray-50 rounded-2xl p-4 md:p-3 sm:p-6">
                             <div className="w-12 h-12 md:w-16 md:h-16 bg-gray-200 rounded-full mx-auto mb-3 md:mb-4 flex items-center justify-center">
                               <svg className="w-6 h-6 md:w-8 md:h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.47-.881-6.08-2.33" />
                               </svg>
                             </div>
                             <p className="text-gray-600 text-base md:text-lg font-semibold mb-1 md:mb-2">Nenhum prestador encontrado</p>
-                            <p className="text-gray-500 text-sm md:text-base">Tente ajustar os termos de busca</p>
+                            <p className="text-gray-500 text-xs sm:text-sm md:text-base">Tente ajustar os termos de busca</p>
                           </div>
                         </div>
                       )}
                       {filtro.length < 2 && filtrados.length === 0 && (
                         <div className="text-center py-8 md:p-12">
-                          <div className="bg-blue-50 rounded-2xl p-4 md:p-6">
+                          <div className="bg-blue-50 rounded-2xl p-4 md:p-3 sm:p-6">
                             <div className="w-12 h-12 md:w-16 md:h-16 bg-blue-100 rounded-full mx-auto mb-3 md:mb-4 flex items-center justify-center">
                               <svg className="w-6 h-6 md:w-8 md:h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                               </svg>
                             </div>
                             <p className="text-blue-800 text-base md:text-lg font-semibold mb-1 md:mb-2">Digite para buscar</p>
-                            <p className="text-blue-600 text-sm md:text-base">Digite pelo menos 2 caracteres para buscar prestadores</p>
+                            <p className="text-blue-600 text-xs sm:text-sm md:text-base">Digite pelo menos 2 caracteres para buscar prestadores</p>
                           </div>
                         </div>
                       )}
@@ -591,7 +591,7 @@ const PrestadorPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, 
           )}
 
           {/* Footer */}
-          <div className="flex flex-col sm:flex-row justify-end gap-4 md:gap-6 pt-6 md:pt-8 lg:pt-10 border-t border-gray-200 bg-gradient-to-r from-gray-50 to-blue-50 -mx-6 md:-mx-8 lg:-mx-10 px-6 md:px-8 lg:px-10 pb-6 md:pb-8 lg:pb-10 rounded-b-lg">
+          <div className="flex flex-col sm:flex-row justify-end gap-4 md:gap-2 sm:gap-3 sm:p-6 pt-6 md:pt-8 lg:pt-10 border-t border-gray-200 bg-gradient-to-r from-gray-50 to-blue-50 -mx-6 md:-mx-8 lg:-mx-10 px-6 md:px-8 lg:px-10 pb-6 md:pb-8 lg:pb-10 rounded-b-lg">
             <DialogClose asChild>
               <Button 
                 variant="ghost" 
@@ -610,7 +610,7 @@ const PrestadorPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, 
               className="w-full sm:w-auto px-8 md:px-10 py-3 md:py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-base md:text-lg font-semibold text-white shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3">
                   <div className="animate-spin rounded-full h-4 w-4 md:h-5 md:w-5 border-2 border-white border-t-transparent"></div>
                   Salvando...
                 </div>

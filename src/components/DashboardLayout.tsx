@@ -90,7 +90,7 @@ const DashboardLayout: React.FC<Props> = ({ sidebarButtons, children }) => {
         }}
       >
         {/* Logo Section */}
-        <div className="min-h-[120px] flex items-center justify-between px-6 relative" style={{ borderBottom: `1px solid ${COSTA_THEME.colors.accent[600]}` }}>
+        <div className="min-h-[120px] flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 px-6 relative" style={{ borderBottom: `1px solid ${COSTA_THEME.colors.accent[600]}` }}>
           {!isSidebarCollapsed && (
             <div className="w-full flex items-center justify-center py-6">
               <LogoClienteCosta
@@ -166,7 +166,7 @@ const DashboardLayout: React.FC<Props> = ({ sidebarButtons, children }) => {
                         {btn.icon}
                       </div>
                       {!isSidebarCollapsed && (
-                        <span className="text-sm tracking-wide whitespace-nowrap">
+                        <span className="text-xs sm:text-sm tracking-wide whitespace-nowrap">
                           {btn.label}
                         </span>
                       )}
@@ -189,7 +189,7 @@ const DashboardLayout: React.FC<Props> = ({ sidebarButtons, children }) => {
                         {btn.icon}
                       </div>
                       {!isSidebarCollapsed && (
-                        <span className="text-sm tracking-wide whitespace-nowrap">
+                        <span className="text-xs sm:text-sm tracking-wide whitespace-nowrap">
                           {btn.label}
                         </span>
                       )}
@@ -206,13 +206,13 @@ const DashboardLayout: React.FC<Props> = ({ sidebarButtons, children }) => {
           {/* User Info */}
           {!isSidebarCollapsed && user && (
             <div className="mb-4 p-3 rounded-lg" style={{ background: `${COSTA_THEME.colors.primary[600]}20` }}>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center" 
                      style={{ background: COSTA_THEME.colors.secondary[500] }}>
                   <User size={16} style={{ color: COSTA_THEME.colors.secondary[50] }} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate" style={{ color: COSTA_THEME.colors.primary[100] }}>
+                  <p className="text-xs sm:text-sm font-medium truncate" style={{ color: COSTA_THEME.colors.primary[100] }}>
                     {user.nome || 'Usuário'}
                   </p>
                   <p className="text-xs truncate" style={{ color: COSTA_THEME.colors.accent[400] }}>
@@ -238,7 +238,7 @@ const DashboardLayout: React.FC<Props> = ({ sidebarButtons, children }) => {
               <LogOut size={18} />
             </div>
             {!isSidebarCollapsed && (
-              <span className="text-sm tracking-wide whitespace-nowrap font-medium">
+              <span className="text-xs sm:text-sm tracking-wide whitespace-nowrap font-medium">
                 Sair
               </span>
             )}
@@ -261,7 +261,7 @@ const DashboardLayout: React.FC<Props> = ({ sidebarButtons, children }) => {
         }`}
       >
         {/* Mobile Header */}
-        <div className="flex items-center justify-between p-4 border-b border-white/10">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 p-4 border-b border-white/10">
           <div className="flex items-center justify-center py-4">
             <LogoClienteCosta
               className="h-12 w-auto object-contain"
@@ -307,7 +307,7 @@ const DashboardLayout: React.FC<Props> = ({ sidebarButtons, children }) => {
                       }`}>
                         {btn.icon}
                       </div>
-                      <span className="text-sm tracking-wide whitespace-nowrap">
+                      <span className="text-xs sm:text-sm tracking-wide whitespace-nowrap">
                         {btn.label}
                       </span>
                     </Link>
@@ -318,12 +318,12 @@ const DashboardLayout: React.FC<Props> = ({ sidebarButtons, children }) => {
                         btn.onClick?.();
                         setIsMobileMenuOpen(false);
                       }}
-                      className="group flex items-center justify-start w-full gap-3 px-3 py-3 rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition-all duration-200"
+                      className="group flex items-center justify-start w-full gap-2 sm:gap-3 px-3 py-3 rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition-all duration-200"
                     >
                       <div className="flex items-center justify-center min-w-[20px] text-white/70 group-hover:text-white">
                         {btn.icon}
                       </div>
-                      <span className="text-sm tracking-wide whitespace-nowrap">
+                      <span className="text-xs sm:text-sm tracking-wide whitespace-nowrap">
                         {btn.label}
                       </span>
                     </button>
@@ -341,12 +341,12 @@ const DashboardLayout: React.FC<Props> = ({ sidebarButtons, children }) => {
               logout();
               setIsMobileMenuOpen(false);
             }}
-            className="flex items-center justify-start gap-3 w-full px-3 py-3 rounded-lg text-red-300 hover:bg-red-500/20 hover:text-red-200 transition-all duration-200"
+            className="flex items-center justify-start gap-2 sm:gap-3 w-full px-3 py-3 rounded-lg text-red-300 hover:bg-red-500/20 hover:text-red-200 transition-all duration-200"
           >
             <div className="flex items-center justify-center min-w-[20px]">
               <LogOut size={18} />
             </div>
-            <span className="text-sm tracking-wide whitespace-nowrap font-medium">
+            <span className="text-xs sm:text-sm tracking-wide whitespace-nowrap font-medium">
               Sair
             </span>
           </button>
@@ -356,7 +356,7 @@ const DashboardLayout: React.FC<Props> = ({ sidebarButtons, children }) => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        <header className="h-16 lg:h-20 backdrop-blur-sm flex items-center justify-between px-4 lg:px-8"
+        <header className="h-16 lg:h-20 backdrop-blur-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 px-4 lg:px-8"
                 style={{ 
                   background: COSTA_THEME.gradients.primary,
                   borderBottom: `1px solid ${COSTA_THEME.colors.accent[700]}`
@@ -384,7 +384,7 @@ const DashboardLayout: React.FC<Props> = ({ sidebarButtons, children }) => {
                 {getPageTitle()}
               </h1>
               {/* Breadcrumb */}
-              <nav className="flex items-center space-x-2 text-sm modern-header-breadcrumb">
+              <nav className="flex items-center space-x-2 text-xs sm:text-sm modern-header-breadcrumb">
                 {getBreadcrumb().map((item, index) => (
                   <React.Fragment key={index}>
                     {index > 0 && <span className="font-thin text-xs mx-2" 
@@ -412,14 +412,14 @@ const DashboardLayout: React.FC<Props> = ({ sidebarButtons, children }) => {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3 p-3 rounded-lg" 
+            <div className="flex items-center gap-2 sm:gap-3 p-3 rounded-lg" 
                  style={{ background: `${COSTA_THEME.colors.primary[600]}20` }}>
               <div className="w-8 h-8 rounded-full flex items-center justify-center" 
                    style={{ background: COSTA_THEME.colors.secondary[500] }}>
                 <User size={16} style={{ color: COSTA_THEME.colors.secondary[50] }} />
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-semibold tracking-wide" 
+                <span className="text-xs sm:text-sm font-semibold tracking-wide" 
                       style={{ 
                         fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', 
                         fontWeight: '600',

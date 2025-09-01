@@ -127,7 +127,7 @@ const OcorrenciasDashboard = () => {
   };
 
   const renderOcorrencias = (data: Ocorrencia[]) => (
-    <table className="min-w-full text-sm">
+    <table className="min-w-full text-xs sm:text-sm">
       <thead className="text-gray-600 text-xs uppercase border-b">
         <tr>
           <th className="px-4 py-2 text-left">Placa</th>
@@ -206,7 +206,7 @@ const OcorrenciasDashboard = () => {
 
       {popupData && (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+          <div className="bg-white p-3 sm:p-6 rounded-lg shadow-lg w-full max-w-md">
             <h3 className="text-lg font-semibold mb-4">
               {popupData.type === "horarios" ? "Horários" : popupData.type === "km" ? "Odômetro" : "Selecionar Prestador"}
             </h3>

@@ -501,7 +501,7 @@ const PassagemServicoPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }
           <Textarea
             value={texto}
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setTexto(e.target.value)}
-            className="min-h-[400px] md:min-h-[500px] lg:min-h-[600px] text-sm md:text-base resize-none border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-4"
+            className="min-h-[400px] md:min-h-[500px] lg:min-h-[600px] text-xs sm:text-sm md:text-base resize-none border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg p-4"
             placeholder="Gerando passagem de serviço..."
           />
           
@@ -521,7 +521,7 @@ const PassagemServicoPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }
 
         {/* Informações da ocorrência */}
         <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs sm:text-sm">
             <div>
               <span className="font-medium text-gray-700">Cliente:</span>
               <span className="ml-2 text-gray-900">{ocorrencia.cliente || '-'}</span>
@@ -558,7 +558,7 @@ const PassagemServicoPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }
       </div>
 
       {/* Botões de ação */}
-      <div className="flex flex-col sm:flex-row gap-3 justify-end pt-4 border-t border-gray-200">
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-end pt-4 border-t border-gray-200">
         <Button
           onClick={copiarTexto}
           className="flex items-center justify-center gap-2 px-6 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700"

@@ -82,7 +82,7 @@ const CropEditor = memo(({
             <div className="text-center">
               <div className="text-4xl mb-2">📷</div>
               <p>Nenhuma imagem selecionada</p>
-              <p className="text-sm mt-1">URL: {image || 'undefined'}</p>
+              <p className="text-xs sm:text-sm mt-1">URL: {image || 'undefined'}</p>
             </div>
           </div>
         )}
@@ -92,7 +92,7 @@ const CropEditor = memo(({
       <div className={`flex-shrink-0 space-y-4 ${isMobile ? 'p-2' : 'p-4'} bg-gray-50 rounded-lg border border-gray-200`}>
         {/* Zoom Control */}
         <div className={`flex flex-col ${isMobile ? 'gap-2' : 'gap-3'}`}>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
             <label className={`font-medium text-gray-700 ${isMobile ? 'text-sm' : 'text-base'}`}>
               Zoom
             </label>

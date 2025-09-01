@@ -616,14 +616,14 @@ const ClientePopup: React.FC<Props> = ({ onClose, onSave, clienteEdicao }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
-      <div className="bg-white rounded-xl shadow-lg w-full max-w-lg sm:max-w-2xl md:max-w-4xl max-h-[90vh] overflow-hidden">
+      <div className="bg-white rounded-xl shadow-lg w-full max-w-lg sm:max-w-2xl md:max-w-4xl max-min-h-[80vh] max-h-[95vh] overflow-hidden">
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-4 sm:px-6 py-3 sm:py-4">
           <h1 className="text-lg sm:text-xl font-semibold text-white">
             {clienteEdicao ? 'Editar Cliente' : 'Novo Cliente'}
           </h1>
         </div>
         
-        <div className="p-2 sm:p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+        <div className="p-2 sm:p-3 sm:p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-4 sm:space-y-6">
               {/* Informações Básicas */}
@@ -631,11 +631,11 @@ const ClientePopup: React.FC<Props> = ({ onClose, onSave, clienteEdicao }) => {
                 <h3 className="font-semibold text-gray-700 mb-2 sm:mb-4 text-base sm:text-lg">Informações Básicas</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-4">
                   <div>
-                    <Label className="text-sm font-medium">Nome *</Label>
+                    <Label className="text-xs sm:text-sm font-medium">Nome *</Label>
                     <Input {...register("nome")} placeholder="Nome da empresa" className="w-full" />
                   </div>
                   <div>
-                    <Label className="text-sm font-medium">CNPJ *</Label>
+                    <Label className="text-xs sm:text-sm font-medium">CNPJ *</Label>
                     <div className="relative">
                       <Input 
                         {...register("cnpj")} 
@@ -658,11 +658,11 @@ const ClientePopup: React.FC<Props> = ({ onClose, onSave, clienteEdicao }) => {
                     )}
                   </div>
                   <div>
-                    <Label className="text-sm font-medium">Contato</Label>
+                    <Label className="text-xs sm:text-sm font-medium">Contato</Label>
                     <Input {...register("contato")} placeholder="Nome do responsável" className="w-full" />
                   </div>
                   <div>
-                    <Label className="text-sm font-medium">Telefone</Label>
+                    <Label className="text-xs sm:text-sm font-medium">Telefone</Label>
                     <Input 
                       {...register("telefone")} 
                       placeholder="(11) 99999-9999"
@@ -675,7 +675,7 @@ const ClientePopup: React.FC<Props> = ({ onClose, onSave, clienteEdicao }) => {
                     />
                   </div>
                   <div className="md:col-span-2">
-                    <Label className="text-sm font-medium">Email</Label>
+                    <Label className="text-xs sm:text-sm font-medium">Email</Label>
                     <Input {...register("email")} placeholder="contato@empresa.com" type="email" className="w-full" />
                   </div>
                   <div className="flex flex-col gap-1">
@@ -683,7 +683,7 @@ const ClientePopup: React.FC<Props> = ({ onClose, onSave, clienteEdicao }) => {
                     <Input
                       {...register("nome_fantasia")}
                       placeholder="Nome Fantasia"
-                      className="text-sm"
+                      className="text-xs sm:text-sm"
                     />
                   </div>
                 </div>
@@ -694,12 +694,12 @@ const ClientePopup: React.FC<Props> = ({ onClose, onSave, clienteEdicao }) => {
                 <h3 className="font-semibold text-gray-700 mb-2 sm:mb-4 text-base sm:text-lg">Logo da Empresa</h3>
                 <div className="space-y-2 sm:space-y-4">
                   <div>
-                    <Label className="text-sm font-medium">Upload do Logo</Label>
+                    <Label className="text-xs sm:text-sm font-medium">Upload do Logo</Label>
                     <input
                       type="file"
                       accept="image/*"
                       onChange={handleLogoChange}
-                      className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                      className="mt-1 block w-full text-xs sm:text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                     />
                     <p className="text-xs text-gray-500 mt-1">
                       Formatos aceitos: JPG, PNG, GIF. Tamanho máximo: 5MB
@@ -725,7 +725,7 @@ const ClientePopup: React.FC<Props> = ({ onClose, onSave, clienteEdicao }) => {
                           </button>
                         </div>
                         <div className="flex-1">
-                          <p className="text-sm text-gray-600">Preview do logo</p>
+                          <p className="text-xs sm:text-sm text-gray-600">Preview do logo</p>
                           {uploadingLogo && (
                             <div className="flex items-center mt-2">
                               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
@@ -755,23 +755,23 @@ const ClientePopup: React.FC<Props> = ({ onClose, onSave, clienteEdicao }) => {
                 <h3 className="font-semibold text-gray-700 mb-2 sm:mb-4 text-base sm:text-lg">Endereço</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
                   <div className="md:col-span-2 lg:col-span-3">
-                    <Label className="text-sm font-medium">Endereço</Label>
+                    <Label className="text-xs sm:text-sm font-medium">Endereço</Label>
                     <Input {...register("endereco")} placeholder="Rua, número, complemento" className="w-full" />
                   </div>
                   <div>
-                    <Label className="text-sm font-medium">Bairro</Label>
+                    <Label className="text-xs sm:text-sm font-medium">Bairro</Label>
                     <Input {...register("bairro")} placeholder="Nome do bairro" className="w-full" />
                   </div>
                   <div>
-                    <Label className="text-sm font-medium">Cidade</Label>
+                    <Label className="text-xs sm:text-sm font-medium">Cidade</Label>
                     <Input {...register("cidade")} placeholder="Nome da cidade" className="w-full" />
                   </div>
                   <div>
-                    <Label className="text-sm font-medium">Estado</Label>
+                    <Label className="text-xs sm:text-sm font-medium">Estado</Label>
                     <Input {...register("estado")} placeholder="SP" className="w-full" />
                   </div>
                   <div>
-                    <Label className="text-sm font-medium">CEP</Label>
+                    <Label className="text-xs sm:text-sm font-medium">CEP</Label>
                     <Input 
                       {...register("cep")} 
                       placeholder="00000-000"
@@ -825,7 +825,7 @@ const ClientePopup: React.FC<Props> = ({ onClose, onSave, clienteEdicao }) => {
                         />
                         <select 
                           {...register(`contratos.${index}.tipo`)} 
-                          className="border p-2 rounded text-sm w-full sm:w-auto"
+                          className="border p-2 rounded text-xs sm:text-sm w-full sm:w-auto"
                         >
                           <option value="PADRAO_REGIAO">Padrão por Região</option>
                           <option value="ACL_KM">ACL - Por KM</option>

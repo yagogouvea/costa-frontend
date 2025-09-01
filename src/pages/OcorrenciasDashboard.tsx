@@ -663,13 +663,13 @@ const OcorrenciasDashboard: React.FC = () => {
       <div className="relative z-10">
         <div className="flex justify-between items-start mb-3 md:mb-4">
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 md:gap-3 mb-2">
-              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-bold">
+            <div className="flex items-center gap-2 md:gap-2 sm:gap-3 mb-2">
+              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-2 md:px-3 py-1 rounded-full text-xs md:text-xs sm:text-sm font-bold">
                 {String(ocorrencia.placa1 || '–')}
               </div>
-              <span className="text-slate-500 text-xs md:text-sm font-medium">#{ocorrencia.id}</span>
+              <span className="text-slate-500 text-xs md:text-xs sm:text-sm font-medium">#{ocorrencia.id}</span>
             </div>
-            <p className="text-slate-700 text-xs md:text-sm mb-1 font-medium truncate">{getNomeCliente(String(ocorrencia.cliente || '')) || '–'}</p>
+            <p className="text-slate-700 text-xs md:text-xs sm:text-sm mb-1 font-medium truncate">{getNomeCliente(String(ocorrencia.cliente || '')) || '–'}</p>
             <p className="text-slate-500 text-xs flex items-center gap-1 md:gap-2">
               <User className="w-3 h-3" />
               <span className="truncate">{String(ocorrencia.operador || '–')}</span>
@@ -718,13 +718,13 @@ const OcorrenciasDashboard: React.FC = () => {
           </div>
         </div>
         
-        <div className="grid grid-cols-2 gap-2 md:gap-4 mb-3 md:mb-4 text-xs md:text-sm">
+        <div className="grid grid-cols-2 gap-2 md:gap-4 mb-3 md:mb-4 text-xs md:text-xs sm:text-sm">
           <div className="bg-white/60 backdrop-blur-sm rounded-lg md:rounded-xl p-2 md:p-3 border border-white/30 shadow-sm">
             <div className="flex items-center gap-1 md:gap-2 mb-1">
               <MapPin className="w-3 h-3 md:w-4 md:h-4 text-blue-600" />
-              <span className="text-slate-700 font-semibold text-xs md:text-sm">KM</span>
+              <span className="text-slate-700 font-semibold text-xs md:text-xs sm:text-sm">KM</span>
             </div>
-            <p className="text-slate-900 font-bold text-sm md:text-lg truncate">
+            <p className="text-slate-900 font-bold text-xs sm:text-sm md:text-lg truncate">
               {ocorrencia.km !== undefined && ocorrencia.km !== null 
                 ? (Number(ocorrencia.km) === 0 || Number(ocorrencia.km) <= 50 ? 'Franquia' : String(ocorrencia.km))
                 : '–'
@@ -734,21 +734,21 @@ const OcorrenciasDashboard: React.FC = () => {
           <div className="bg-white/60 backdrop-blur-sm rounded-lg md:rounded-xl p-2 md:p-3 border border-white/30 shadow-sm">
             <div className="flex items-center gap-1 md:gap-2 mb-1">
               <User className="w-3 h-3 md:w-4 md:h-4 text-indigo-600" />
-              <span className="text-slate-700 font-semibold text-xs md:text-sm">Prestador</span>
+              <span className="text-slate-700 font-semibold text-xs md:text-xs sm:text-sm">Prestador</span>
             </div>
-            <p className="text-slate-900 font-bold text-xs md:text-sm truncate">{String(ocorrencia.prestador || '–')}</p>
+            <p className="text-slate-900 font-bold text-xs md:text-xs sm:text-sm truncate">{String(ocorrencia.prestador || '–')}</p>
           </div>
           <div className="bg-white/60 backdrop-blur-sm rounded-lg md:rounded-xl p-2 md:p-3 border border-white/30 shadow-sm">
             <div className="flex items-center gap-1 md:gap-2 mb-1">
               <DollarSign className="w-3 h-3 md:w-4 md:h-4 text-green-600" />
-              <span className="text-slate-700 font-semibold text-xs md:text-sm">Despesas</span>
+              <span className="text-slate-700 font-semibold text-xs md:text-xs sm:text-sm">Despesas</span>
             </div>
-            <p className="text-slate-900 font-bold text-xs md:text-sm truncate">{formatarDespesas(ocorrencia)}</p>
+            <p className="text-slate-900 font-bold text-xs md:text-xs sm:text-sm truncate">{formatarDespesas(ocorrencia)}</p>
           </div>
           <div className="bg-white/60 backdrop-blur-sm rounded-lg md:rounded-xl p-2 md:p-3 border border-white/30 shadow-sm">
             <div className="flex items-center gap-1 md:gap-2 mb-1">
               <Clock className="w-3 h-3 md:w-4 md:h-4 text-purple-600" />
-              <span className="text-slate-700 font-semibold text-xs md:text-sm">Horários</span>
+              <span className="text-slate-700 font-semibold text-xs md:text-xs sm:text-sm">Horários</span>
             </div>
             <div className="text-xs text-slate-700 space-y-0.5">
               {ocorrencia.inicio ? <div className="truncate">Início: {formatarDataHora(ocorrencia.inicio)}</div> : null}
@@ -871,10 +871,10 @@ const OcorrenciasDashboard: React.FC = () => {
             variant="ghost" 
             size="sm" 
             onClick={() => handleStatusClick(ocorrencia)} 
-            className="flex items-center gap-2 md:gap-3 px-4 md:px-8 py-2 md:py-3 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200 border border-transparent transition-all duration-200 rounded-lg md:rounded-xl bg-gradient-to-r from-orange-50 to-amber-50 shadow-lg hover:shadow-xl"
+            className="flex items-center gap-2 md:gap-2 sm:gap-3 px-4 md:px-8 py-2 md:py-3 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200 border border-transparent transition-all duration-200 rounded-lg md:rounded-xl bg-gradient-to-r from-orange-50 to-amber-50 shadow-lg hover:shadow-xl"
           >
             <Flag className="w-4 h-4 md:w-5 md:h-5 text-orange-600" />
-            <span className="font-medium text-xs md:text-sm">{buttonText}</span>
+            <span className="font-medium text-xs md:text-xs sm:text-sm">{buttonText}</span>
           </Button>
         </div>
       </div>
@@ -883,10 +883,10 @@ const OcorrenciasDashboard: React.FC = () => {
     } catch (error) {
       console.error('❌ Erro ao renderizar card da ocorrência:', ocorrencia.id, error);
       return (
-        <div key={ocorrencia.id} className="bg-red-50 border border-red-200 rounded-xl md:rounded-2xl p-4 md:p-6">
+        <div key={ocorrencia.id} className="bg-red-50 border border-red-200 rounded-xl md:rounded-2xl p-4 md:p-3 sm:p-6">
           <div className="text-red-600 flex items-center gap-2">
             <AlertCircle className="w-4 h-4 md:w-5 md:h-5" />
-            <span className="text-xs md:text-sm">Erro ao renderizar ocorrência {ocorrencia.id}</span>
+            <span className="text-xs md:text-xs sm:text-sm">Erro ao renderizar ocorrência {ocorrencia.id}</span>
           </div>
         </div>
       );
@@ -905,14 +905,14 @@ const OcorrenciasDashboard: React.FC = () => {
         
         <div className="relative z-10">
           {/* Header Elegante */}
-          <div className="bg-gradient-to-r from-slate-800/95 to-slate-900/95 backdrop-blur-sm text-white rounded-2xl p-6 mb-8 shadow-xl border border-white/10">
+          <div className="bg-gradient-to-r from-slate-800/95 to-slate-900/95 backdrop-blur-sm text-white rounded-2xl p-3 sm:p-6 mb-8 shadow-xl border border-white/10">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
               <div>
-                <h1 className="text-2xl lg:text-3xl font-bold flex items-center gap-3">
+                <h1 className="text-2xl lg:text-3xl font-bold flex items-center gap-2 sm:gap-3">
                   <Activity className="w-8 h-8 text-blue-400" />
                   Painel de Ocorrências
                 </h1>
-                <p className="text-slate-300 mt-2 text-sm lg:text-base">
+                <p className="text-slate-300 mt-2 text-xs sm:text-sm lg:text-base">
                   Gerencie e acompanhe todas as ocorrências em tempo real
                 </p>
               </div>
@@ -940,11 +940,11 @@ const OcorrenciasDashboard: React.FC = () => {
 
 
           {/* Cards de Status Informativos */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 max-w-4xl mx-auto">
-            <div className="bg-gradient-to-br from-blue-500/90 to-blue-600/90 backdrop-blur-sm text-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-white/20">
-              <div className="flex items-center justify-between">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3 sm:p-6 mb-8 max-w-4xl mx-auto">
+            <div className="bg-gradient-to-br from-blue-500/90 to-blue-600/90 backdrop-blur-sm text-white rounded-2xl p-3 sm:p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-white/20">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
                 <div>
-                  <p className="text-blue-100 text-sm font-medium mb-1">Em Andamento</p>
+                  <p className="text-blue-100 text-xs sm:text-sm font-medium mb-1">Em Andamento</p>
                   <p className="text-3xl font-bold">{ocorrenciasEmAndamento.length}</p>
                   <p className="text-blue-200 text-xs mt-1">Ocorrências ativas</p>
                 </div>
@@ -952,10 +952,10 @@ const OcorrenciasDashboard: React.FC = () => {
               </div>
             </div>
             
-            <div className="bg-gradient-to-br from-green-500/90 to-emerald-600/90 backdrop-blur-sm text-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-white/20">
-              <div className="flex items-center justify-between">
+            <div className="bg-gradient-to-br from-green-500/90 to-emerald-600/90 backdrop-blur-sm text-white rounded-2xl p-3 sm:p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-white/20">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
                 <div>
-                  <p className="text-green-100 text-sm font-medium mb-1">Finalizadas (24h)</p>
+                  <p className="text-green-100 text-xs sm:text-sm font-medium mb-1">Finalizadas (24h)</p>
                   <p className="text-3xl font-bold">{ocorrenciasFinalizadasUltimas24h.length}</p>
                   <p className="text-green-200 text-xs mt-1">Últimas 24 horas</p>
                 </div>
@@ -969,7 +969,7 @@ const OcorrenciasDashboard: React.FC = () => {
             <div className="text-center">
               <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
               <p className="text-slate-600 font-medium text-lg">Carregando ocorrências...</p>
-              <p className="text-slate-500 text-sm mt-2">Aguarde enquanto buscamos os dados</p>
+              <p className="text-slate-500 text-xs sm:text-sm mt-2">Aguarde enquanto buscamos os dados</p>
             </div>
           </div>
         ) : error ? (
@@ -991,10 +991,10 @@ const OcorrenciasDashboard: React.FC = () => {
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 overflow-hidden">
               <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-6 py-4 border-b border-slate-200">
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                  <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-3">
+                  <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-2 sm:gap-3">
                     <Clock className="w-6 h-6 text-blue-600" />
                     Ocorrências em Andamento
-                    <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                    <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
                       {ocorrenciasEmAndamento.length}
                     </span>
                   </h2>
@@ -1030,7 +1030,7 @@ const OcorrenciasDashboard: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-end">
                       {/* Filtro por Operador */}
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700">
+                        <label className="text-xs sm:text-sm font-medium text-slate-700">
                           Operador
                         </label>
                         <Select value={filtroOperadorEmAndamento} onValueChange={handleFiltroOperadorEmAndamentoChange}>
@@ -1050,7 +1050,7 @@ const OcorrenciasDashboard: React.FC = () => {
 
                       {/* Filtro por Placa */}
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700">
+                        <label className="text-xs sm:text-sm font-medium text-slate-700">
                           Placa
                         </label>
                         <div className="relative">
@@ -1099,9 +1099,9 @@ const OcorrenciasDashboard: React.FC = () => {
                   <p className="text-slate-500">Todas as ocorrências foram finalizadas ou ainda não foram iniciadas.</p>
                 </div>
               ) : (
-                <div className="p-4 md:p-6">
+                <div className="p-4 md:p-3 sm:p-6">
                   {layout === 'cards' ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-2 sm:gap-3 sm:p-6">
                       {ocorrenciasEmAndamento.map((ocorrencia, index) => {
                         try {
                           return renderOcorrenciaCard(ocorrencia);
@@ -1192,10 +1192,10 @@ const OcorrenciasDashboard: React.FC = () => {
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 overflow-hidden">
               <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-6 py-4 border-b border-slate-200">
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                  <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-3">
+                  <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-2 sm:gap-3">
                     <CheckCircle className="w-6 h-6 text-green-600" />
                     Finalizadas (últimas 24h)
-                    <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                    <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
                       {ocorrenciasFinalizadasUltimas24h.length}
                     </span>
                   </h2>
@@ -1242,7 +1242,7 @@ const OcorrenciasDashboard: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-end">
                       {/* Filtro por Operador */}
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700">
+                        <label className="text-xs sm:text-sm font-medium text-slate-700">
                           Operador
                         </label>
                         <Select value={filtroOperadorFinalizadas} onValueChange={handleFiltroOperadorFinalizadasChange}>
@@ -1262,7 +1262,7 @@ const OcorrenciasDashboard: React.FC = () => {
 
                       {/* Filtro por Placa */}
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700">
+                        <label className="text-xs sm:text-sm font-medium text-slate-700">
                           Placa
                         </label>
                         <div className="relative">
@@ -1313,9 +1313,9 @@ const OcorrenciasDashboard: React.FC = () => {
                     <p className="text-slate-500">Não há ocorrências finalizadas nas últimas 24 horas.</p>
                   </div>
                 ) : (
-                  <div className="p-4 md:p-6">
+                  <div className="p-4 md:p-3 sm:p-6">
                     {layout === 'cards' ? (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-2 sm:gap-3 sm:p-6">
                         {ocorrenciasFinalizadasUltimas24h.map((ocorrencia, index) => {
                           try {
                             return renderOcorrenciaCard(ocorrencia);
@@ -1403,9 +1403,9 @@ const OcorrenciasDashboard: React.FC = () => {
               ) : (
                 /* ✅ RECOLHIMENTO: Estado recolhido - mostrar apenas resumo */
                 <div className="text-center py-8 bg-slate-50/50">
-                  <div className="flex items-center justify-center gap-3 text-slate-600">
+                  <div className="flex items-center justify-center gap-2 sm:gap-3 text-slate-600">
                     <Minimize2 className="w-5 h-5" />
-                    <span className="text-sm font-medium">
+                    <span className="text-xs sm:text-sm font-medium">
                       Grid recolhido - {ocorrenciasFinalizadasUltimas24h.length} ocorrência{ocorrenciasFinalizadasUltimas24h.length !== 1 ? 's' : ''} finalizada{ocorrenciasFinalizadasUltimas24h.length !== 1 ? 's' : ''}
                     </span>
                   </div>
@@ -1551,7 +1551,7 @@ const OcorrenciasDashboard: React.FC = () => {
   } catch (error) {
     console.error('Erro crítico no componente OcorrenciasDashboard:', error);
     return (
-      <div className="w-full bg-gray-100 min-h-screen p-4 lg:p-6">
+      <div className="w-full bg-gray-100 min-h-screen p-4 lg:p-3 sm:p-6">
         <div className="flex items-center justify-center min-h-[200px]">
           <div className="text-xl text-red-500">
             Erro crítico no carregamento da página. Por favor, recarregue a página.

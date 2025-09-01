@@ -18,7 +18,7 @@ export default function PrestadoresPage() {
           </div>
           
           {/* Botões de ação baseados em permissões */}
-          <div className="flex gap-3">
+          <div className="flex gap-2 sm:gap-3">
             <FeatureAccessControl featureKey="prestadores:export" hideIfNoAccess>
               <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -40,14 +40,14 @@ export default function PrestadoresPage() {
         </div>
 
         {/* Conteúdo da página */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 sm:p-6">
             {/* Card de exemplo */}
             <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
               <div className="flex justify-between items-start mb-3">
                 <div>
                   <h3 className="font-semibold text-gray-900">João Silva</h3>
-                  <p className="text-sm text-gray-600">Segurança</p>
+                  <p className="text-xs sm:text-sm text-gray-600">Segurança</p>
                 </div>
                 <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
                   Ativo
@@ -55,13 +55,13 @@ export default function PrestadoresPage() {
               </div>
               
               <div className="space-y-2 mb-4">
-                <p className="text-sm text-gray-600">
+                <p className="text-xs sm:text-sm text-gray-600">
                   <span className="font-medium">CPF:</span> 123.456.789-00
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-xs sm:text-sm text-gray-600">
                   <span className="font-medium">Telefone:</span> (11) 99999-9999
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-xs sm:text-sm text-gray-600">
                   <span className="font-medium">Email:</span> joao@email.com
                 </p>
               </div>
@@ -69,13 +69,13 @@ export default function PrestadoresPage() {
               {/* Botões de ação baseados em permissões */}
               <div className="flex gap-2">
                 <FeatureAccessControl featureKey="prestadores:edit" hideIfNoAccess>
-                  <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm transition-colors">
+                  <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-xs sm:text-sm transition-colors">
                     Editar
                   </button>
                 </FeatureAccessControl>
 
                 <FeatureAccessControl featureKey="prestadores:delete" hideIfNoAccess>
-                  <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition-colors">
+                  <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs sm:text-sm transition-colors">
                     Excluir
                   </button>
                 </FeatureAccessControl>
@@ -87,7 +87,7 @@ export default function PrestadoresPage() {
               <div className="flex justify-between items-start mb-3">
                 <div>
                   <h3 className="font-semibold text-gray-900">Maria Santos</h3>
-                  <p className="text-sm text-gray-600">Limpeza</p>
+                  <p className="text-xs sm:text-sm text-gray-600">Limpeza</p>
                 </div>
                 <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">
                   Pendente
@@ -95,26 +95,26 @@ export default function PrestadoresPage() {
               </div>
               
               <div className="space-y-2 mb-4">
-                <p className="text-sm text-gray-600">
+                <p className="text-xs sm:text-sm text-gray-600">
                   <span className="font-medium">CPF:</span> 987.654.321-00
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-xs sm:text-sm text-gray-600">
                   <span className="font-medium">Telefone:</span> (11) 88888-8888
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-xs sm:text-sm text-gray-600">
                   <span className="font-medium">Email:</span> maria@email.com
                 </p>
               </div>
 
               <div className="flex gap-2">
                 <FeatureAccessControl featureKey="prestadores:edit" hideIfNoAccess>
-                  <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm transition-colors">
+                  <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-xs sm:text-sm transition-colors">
                     Editar
                   </button>
                 </FeatureAccessControl>
 
                 <FeatureAccessControl featureKey="prestadores:delete" hideIfNoAccess>
-                  <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition-colors">
+                  <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs sm:text-sm transition-colors">
                     Excluir
                   </button>
                 </FeatureAccessControl>
@@ -126,7 +126,7 @@ export default function PrestadoresPage() {
               <div className="flex justify-between items-start mb-3">
                 <div>
                   <h3 className="font-semibold text-gray-900">Pedro Costa</h3>
-                  <p className="text-sm text-gray-600">Manutenção</p>
+                  <p className="text-xs sm:text-sm text-gray-600">Manutenção</p>
                 </div>
                 <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">
                   Inativo
@@ -134,26 +134,26 @@ export default function PrestadoresPage() {
               </div>
               
               <div className="space-y-2 mb-4">
-                <p className="text-sm text-gray-600">
+                <p className="text-xs sm:text-sm text-gray-600">
                   <span className="font-medium">CPF:</span> 456.789.123-00
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-xs sm:text-sm text-gray-600">
                   <span className="font-medium">Telefone:</span> (11) 77777-7777
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-xs sm:text-sm text-gray-600">
                   <span className="font-medium">Email:</span> pedro@email.com
                 </p>
               </div>
 
               <div className="flex gap-2">
                 <FeatureAccessControl featureKey="prestadores:edit" hideIfNoAccess>
-                  <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm transition-colors">
+                  <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-xs sm:text-sm transition-colors">
                     Editar
                   </button>
                 </FeatureAccessControl>
 
                 <FeatureAccessControl featureKey="prestadores:delete" hideIfNoAccess>
-                  <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition-colors">
+                  <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs sm:text-sm transition-colors">
                     Excluir
                   </button>
                 </FeatureAccessControl>
@@ -171,10 +171,10 @@ export default function PrestadoresPage() {
               </svg>
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-blue-800">
+              <h3 className="text-xs sm:text-sm font-medium text-blue-800">
                 Controle de Permissões Ativo
               </h3>
-              <div className="mt-2 text-sm text-blue-700">
+              <div className="mt-2 text-xs sm:text-sm text-blue-700">
                 <p>
                   Esta página está protegida pelo sistema de permissões. 
                   Funcionalidades específicas só aparecem se você tiver as permissões necessárias.

@@ -73,7 +73,7 @@ export default function LoginPage() {
       return (
         <>
           <p className="font-medium mb-2">{title}</p>
-          <ul className="list-disc list-inside text-sm space-y-1">
+          <ul className="list-disc list-inside text-xs sm:text-sm space-y-1">
             {items.map((item, index) => (
               <li key={index}>{item.trim()}</li>
             ))}
@@ -94,7 +94,7 @@ export default function LoginPage() {
          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
            <div className="flex flex-col lg:flex-row min-h-[600px]">
             {/* Seção lateral esquerda - Logo e Boas-vindas */}
-                         <div className="lg:w-1/2 bg-gradient-to-br from-gray-800 via-gray-700 to-slate-600 p-6 sm:p-8 lg:p-12 flex flex-col justify-center items-center text-center">
+                         <div className="lg:w-1/2 bg-gradient-to-br from-gray-800 via-gray-700 to-slate-600 p-3 sm:p-6 sm:p-8 lg:p-12 flex flex-col justify-center items-center text-center">
                              <div className="mb-4">
                  <LogoClienteCosta
                    className="logo-costa-login object-contain mb-2 sm:mb-3 drop-shadow-lg"
@@ -114,12 +114,12 @@ export default function LoginPage() {
             </div>
 
             {/* Seção direita - Formulário de Login */}
-                         <div className="lg:w-1/2 bg-white p-6 sm:p-8 lg:p-12">
+                         <div className="lg:w-1/2 bg-white p-3 sm:p-6 sm:p-8 lg:p-12">
                              <div className="mb-6 sm:mb-8">
                  <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
                    Login
                  </h2>
-                 <p className="text-sm sm:text-base text-gray-600">
+                 <p className="text-xs sm:text-sm sm:text-base text-gray-600">
                    Acesse sua conta
                  </p>
                </div>
@@ -128,10 +128,10 @@ export default function LoginPage() {
                 <div className="rounded-md bg-red-50 p-4 shadow mb-6">
                   <div className="flex">
                     <div className="ml-3">
-                      <h3 className="text-sm font-medium text-red-800">
+                      <h3 className="text-xs sm:text-sm font-medium text-red-800">
                         Erro de Conexão
                       </h3>
-                      <div className="text-sm text-red-700">
+                      <div className="text-xs sm:text-sm text-red-700">
                         {erro && formatErrorMessage(erro)}
                       </div>
                     </div>
@@ -160,7 +160,7 @@ export default function LoginPage() {
                   type="email"
                   autoComplete="email"
                   required
-                  className="appearance-none relative block w-full pl-10 pr-3 py-2.5 sm:py-3 lg:py-4 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 focus:z-10 text-sm sm:text-base bg-gray-50 focus:bg-white transition-colors"
+                  className="appearance-none relative block w-full pl-10 pr-3 py-2.5 sm:py-3 lg:py-4 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 focus:z-10 text-xs sm:text-sm sm:text-base bg-gray-50 focus:bg-white transition-colors"
                   placeholder="Digite seu e-mail"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -184,7 +184,7 @@ export default function LoginPage() {
                   type="password"
                   autoComplete="current-password"
                   required
-                  className="appearance-none relative block w-full pl-10 pr-3 py-2.5 sm:py-3 lg:py-4 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 focus:z-10 text-sm sm:text-base bg-gray-50 focus:bg-white transition-colors"
+                  className="appearance-none relative block w-full pl-10 pr-3 py-2.5 sm:py-3 lg:py-4 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 focus:z-10 text-xs sm:text-sm sm:text-base bg-gray-50 focus:bg-white transition-colors"
                   placeholder="Digite sua senha"
                   value={senha}
                   onChange={(e) => setSenha(e.target.value)}
@@ -198,7 +198,7 @@ export default function LoginPage() {
             <div className="rounded-md bg-red-50 p-4 shadow">
               <div className="flex">
                 <div className="ml-3">
-                  <div className="text-sm text-red-700">
+                  <div className="text-xs sm:text-sm text-red-700">
                     {formatErrorMessage(erro)}
                   </div>
                 </div>

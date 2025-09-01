@@ -121,7 +121,7 @@ export default function PreviewGrid({
       {/* Header */}
       <div className="flex-shrink-0 p-4 border-b border-gray-200 bg-gray-50">
         <h3 className="text-lg font-semibold text-gray-900">Preview das Fotos</h3>
-        <p className="text-sm text-gray-600 mt-1">
+        <p className="text-xs sm:text-sm text-gray-600 mt-1">
           Visualize todas as fotos com suas legendas antes de salvar
         </p>
       </div>
@@ -133,7 +133,7 @@ export default function PreviewGrid({
             {/* Thumbnail */}
             <div className="w-48 h-36 rounded overflow-hidden border bg-gray-50 shadow-sm flex-shrink-0">
               {imageErrors[i] ? (
-                <div className="w-full h-full flex items-center justify-center text-red-500 text-sm p-2 text-center">
+                <div className="w-full h-full flex items-center justify-center text-red-500 text-xs sm:text-sm p-2 text-center">
                   Erro ao carregar imagem
                 </div>
               ) : (
@@ -147,10 +147,10 @@ export default function PreviewGrid({
             </div>
 
             {/* Content */}
-            <div className="flex-1 flex flex-col gap-3 min-w-0">
+            <div className="flex-1 flex flex-col gap-2 sm:gap-3 min-w-0">
               {/* Foto info */}
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-700">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
+                <span className="text-xs sm:text-sm font-medium text-gray-700">
                   Foto {i + 1} de {fotos.length}
                 </span>
                 <Button 
@@ -193,7 +193,7 @@ export default function PreviewGrid({
         {fotos.length === 0 && (
           <div className="text-center py-8 text-gray-500">
             <p>Nenhuma foto adicionada ainda.</p>
-            <p className="text-sm mt-1">Adicione fotos no modo editor.</p>
+            <p className="text-xs sm:text-sm mt-1">Adicione fotos no modo editor.</p>
           </div>
         )}
       </div>
@@ -201,7 +201,7 @@ export default function PreviewGrid({
       {/* Footer */}
       <div className="flex-shrink-0 p-4 border-t border-gray-200 bg-gray-50">
         <div className="flex justify-between items-center">
-          <div className="text-sm text-gray-600">
+          <div className="text-xs sm:text-sm text-gray-600">
             {fotos.length} foto{fotos.length !== 1 ? 's' : ''} no total
           </div>
           <div className="flex gap-2">

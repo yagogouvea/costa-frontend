@@ -252,7 +252,7 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
   return (
     <div className="space-y-6">
       <DialogTitle className="text-lg font-bold">Adicionar Nova Ocorrência</DialogTitle>
-      <DialogDescription className="text-sm text-muted-foreground">
+      <DialogDescription className="text-xs sm:text-sm text-muted-foreground">
         Preencha os dados da ocorrência conforme o perfil do cliente.
       </DialogDescription>
 

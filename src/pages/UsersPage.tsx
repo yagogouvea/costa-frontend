@@ -172,7 +172,7 @@ export default function UsersPage() {
         console.log('Current Permissions:', { hasPageAccess: hasPageAccess('access:usuarios'), hasFeatureAccess: hasFeatureAccess('prestadores:export') });
         alert('Debug info logged to console. Check DevTools > Console');
               }}
-              className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded-lg text-sm"
+              className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded-lg text-xs sm:text-sm"
             >
               Debug Info
             </button>

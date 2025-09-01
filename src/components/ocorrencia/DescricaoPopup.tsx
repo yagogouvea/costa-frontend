@@ -134,77 +134,86 @@ const DescricaoPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
   };
 
   return (
-    <div className="p-0 max-w-6xl w-full mx-auto bg-white rounded-lg shadow-xl h-[90vh] flex flex-col">
-      {/* Header */}
-      <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gray-50 rounded-t-lg">
-        <div className="flex items-center gap-3">
-          <FileText className="h-6 w-6 text-blue-600" />
-          <div>
+    <div className="p-0 max-w-6xl w-full mx-auto bg-white rounded-lg shadow-xl min-h-[80vh] max-h-[95vh] flex flex-col">
+      {/* Header - Responsivo e compacto */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-6 border-b border-gray-200 bg-gray-50 rounded-t-lg gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <FileText className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 flex-shrink-0" />
+          <div className="min-w-0 flex-1">
             <DialogTitle asChild>
-              <h3 className="text-xl font-semibold text-gray-900">Descrição da Ocorrência</h3>
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 truncate">
+                Descrição da Ocorrência
+              </h3>
             </DialogTitle>
             <DialogDescription asChild>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-xs sm:text-sm text-gray-600 mt-1 truncate">
                 Ocorrência #{ocorrencia.id} - {ocorrencia.placa1 || 'Sem placa'}
               </p>
             </DialogDescription>
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        
+        {/* Status indicators - Responsivo */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
           {/* Status indicator */}
-          <div className="flex items-center gap-2 text-sm">
+          <div className="flex items-center gap-2 text-xs sm:text-sm">
             {lastSaved && (
               <div className="flex items-center gap-1 text-green-600">
-                <CheckCircle className="h-4 w-4" />
-                <span>Salvo às {formatLastSaved()}</span>
+                <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Salvo às {formatLastSaved()}</span>
+                <span className="sm:hidden">Salvo</span>
               </div>
             )}
             {hasUnsavedChanges && (
               <div className="flex items-center gap-1 text-orange-600">
                 <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
-                <span>Alterações não salvas</span>
+                <span className="hidden sm:inline">Alterações não salvas</span>
+                <span className="sm:hidden">Não salvo</span>
               </div>
             )}
           </div>
           
+          {/* Buttons */}
           <div className="flex items-center gap-2">
             <DialogClose asChild>
               <Button 
                 variant="ghost" 
                 size="sm" 
                 onClick={cancelar}
-                className="flex items-center gap-2"
+                className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3"
               >
-                <X className="h-4 w-4" />
-                Cancelar
+                <X className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Cancelar</span>
+                <span className="sm:hidden">Cancel</span>
               </Button>
             </DialogClose>
             <DialogClose asChild>
               <Button 
                 onClick={salvar} 
                 disabled={isSaving}
-                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
+                className="flex items-center gap-1 sm:gap-2 bg-blue-600 hover:bg-blue-700 text-xs sm:text-sm px-2 sm:px-3"
               >
-                <Save className="h-4 w-4" />
-                {isSaving ? 'Salvando...' : 'Salvar'}
+                <Save className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">{isSaving ? 'Salvando...' : 'Salvar'}</span>
+                <span className="sm:hidden">{isSaving ? '...' : 'Salvar'}</span>
               </Button>
             </DialogClose>
           </div>
         </div>
       </div>
 
-      {/* Editor Area */}
-      <div className="flex-1 p-6 overflow-hidden">
+      {/* Editor Area - Melhor responsividade */}
+      <div className="flex-1 p-3 sm:p-6 overflow-hidden min-h-0">
         <div className="h-full flex flex-col">
-          {/* Toolbar */}
-          <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
-            <div className="flex items-center justify-between text-sm text-gray-600">
-              <div className="flex items-center gap-4">
+          {/* Toolbar - Responsivo e compacto */}
+          <div className="mb-3 sm:mb-4 p-2 sm:p-3 bg-gray-50 rounded-lg border border-gray-200">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs sm:text-sm text-gray-600">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4">
                 <span className="font-medium">Editor de Texto</span>
-                <span className="text-gray-400">|</span>
-                <span>Use Enter para novos parágrafos</span>
-                <span className="text-gray-400">|</span>
-                <span>Ctrl+S para salvar</span>
+                <span className="hidden sm:inline text-gray-400">|</span>
+                <span className="text-xs sm:text-sm">Enter para parágrafos</span>
+                <span className="hidden sm:inline text-gray-400">|</span>
+                <span className="text-xs sm:text-sm">Ctrl+S para salvar</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
@@ -214,19 +223,19 @@ const DescricaoPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
             </div>
           </div>
 
-          {/* Text Area */}
-          <div className="flex-1 relative">
+          {/* Text Area - Melhor scroll e responsividade */}
+          <div className="flex-1 relative min-h-0">
             <textarea
-              className="w-full h-full border-2 border-gray-200 rounded-lg p-6 text-base resize-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+              className="w-full h-full border-2 border-gray-200 rounded-lg p-3 sm:p-6 text-sm sm:text-base resize-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 overflow-y-auto"
               placeholder="Digite aqui a descrição detalhada da ocorrência..."
               value={descricao}
               onChange={handleDescricaoChange}
               style={{ 
                 whiteSpace: 'pre-wrap',
                 wordBreak: 'break-word',
-                lineHeight: '1.8',
+                lineHeight: '1.6',
                 fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-                fontSize: '16px'
+                fontSize: 'inherit'
               }}
               onKeyDown={(e) => {
                 // Ctrl+S para salvar
@@ -237,27 +246,28 @@ const DescricaoPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
               }}
             />
             
-            {/* Character count */}
-            <div className="absolute bottom-4 right-4 text-xs text-gray-400 bg-white px-2 py-1 rounded shadow-sm">
-              {descricao.length} caracteres
+            {/* Character count - Responsivo */}
+            <div className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 text-xs text-gray-400 bg-white px-2 py-1 rounded shadow-sm border border-gray-200">
+              {descricao.length} chars
             </div>
           </div>
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="p-4 border-t border-gray-200 bg-gray-50 rounded-b-lg">
-        <div className="flex items-center justify-between text-sm text-gray-600">
-          <div className="flex items-center gap-4">
+      {/* Footer - Responsivo e compacto */}
+      <div className="p-3 sm:p-4 border-t border-gray-200 bg-gray-50 rounded-b-lg">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs sm:text-sm text-gray-600">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4">
             <span>📝 Editor de descrição</span>
-            <span>•</span>
+            <span className="hidden sm:inline">•</span>
             <span>Formatação automática</span>
-            <span>•</span>
+            <span className="hidden sm:inline">•</span>
             <span>Auto-save a cada 2s</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
-              Ctrl+S para salvar manualmente
+              <span className="hidden sm:inline">Ctrl+S para salvar manualmente</span>
+              <span className="sm:hidden">Ctrl+S</span>
             </span>
           </div>
         </div>

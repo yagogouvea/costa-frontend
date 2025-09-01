@@ -268,25 +268,25 @@ const Home = () => {
     return (
       <div className="space-y-6">
         {/* Header com loading */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
             <p className="text-gray-600">Visão geral dos atendimentos</p>
           </div>
-          <div className="flex items-center gap-2 text-sm text-gray-500">
+          <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-500">
             <RefreshCw size={16} className="animate-spin" />
             <span>Carregando...</span>
           </div>
         </div>
 
         {/* Cards loading */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-2 sm:gap-3 sm:p-6">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div
               key={i}
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 animate-pulse"
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-6 animate-pulse"
             >
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 mb-4">
                 <div className="h-6 bg-gray-200 rounded w-32"></div>
                 <div className="h-8 w-8 bg-gray-200 rounded"></div>
               </div>
@@ -302,7 +302,7 @@ const Home = () => {
   if (error) {
     return (
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
             <p className="text-gray-600">Visão geral dos atendimentos</p>
@@ -329,12 +329,12 @@ const Home = () => {
     <PageAccessControl pageKey="access:dashboard">
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
             <p className="text-gray-600">Visão geral dos atendimentos</p>
           </div>
-          <div className="flex items-center gap-3 text-sm text-gray-500">
+          <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-500">
             <div className="flex items-center gap-1">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
               <span className="text-xs text-green-600 font-medium">Atualização automática</span>
@@ -350,14 +350,14 @@ const Home = () => {
         </div>
 
       {/* Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-2 sm:gap-3 sm:p-6">
         {cards.map((card, i) => (
           <div
             key={i}
             className={`${card.bgColor} rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1`}
           >
-            <div className="p-6 text-white">
-              <div className="flex items-center justify-between mb-4">
+            <div className="p-3 sm:p-6 text-white">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 mb-4">
                 <h3 className="text-lg font-semibold">{card.title}</h3>
                 <div className="p-2 bg-white/20 rounded-lg">
                   {card.icon}
@@ -368,7 +368,7 @@ const Home = () => {
                 <span className="text-3xl font-bold">{card.value}</span>
               </div>
               
-              <p className="text-sm text-white/80 mb-3">{card.description}</p>
+              <p className="text-xs sm:text-sm text-white/80 mb-3">{card.description}</p>
               
               <div className="flex items-center gap-1 text-xs text-white/70">
                 <TrendingUp size={12} />
@@ -397,7 +397,7 @@ const Home = () => {
                   {clientesOcorrencias.slice(0, 5).map((cliente) => {
                     
                     return (
-                      <div key={cliente.cliente_id} className="flex items-center justify-between text-xs">
+                      <div key={cliente.cliente_id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 text-xs">
                         <span className="text-white/90 truncate flex-1 mr-2">{cliente.cliente_nome}</span>
                         <span className="text-white font-medium text-right">{cliente.ocorrencias_mes}</span>
                       </div>
@@ -411,33 +411,33 @@ const Home = () => {
       </div>
 
       {/* Seção de Ações Rápidas */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Ações Rápidas</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <button 
             onClick={() => navigate('/ocorrencias')}
-            className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors"
+            className="flex items-center gap-2 sm:gap-3 p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors"
           >
             <FileText size={20} className="text-blue-600" />
             <span className="font-medium text-gray-700">Painel de Ocorrências</span>
           </button>
           <button 
             onClick={() => navigate('/prestadores')}
-            className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 hover:border-orange-300 hover:bg-orange-50 transition-colors"
+            className="flex items-center gap-2 sm:gap-3 p-4 rounded-lg border border-gray-200 hover:border-orange-300 hover:bg-orange-50 transition-colors"
           >
             <User size={20} className="text-orange-600" />
             <span className="font-medium text-gray-700">Cadastro de Prestadores</span>
           </button>
           <button 
             onClick={() => navigate('/ocorrencias?status=em_andamento')}
-            className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 hover:border-purple-300 hover:bg-purple-50 transition-colors"
+            className="flex items-center gap-2 sm:gap-3 p-4 rounded-lg border border-gray-200 hover:border-purple-300 hover:bg-purple-50 transition-colors"
           >
             <Clock size={20} className="text-purple-600" />
             <span className="font-medium text-gray-700">Ocorrências em Andamento</span>
           </button>
           <button 
             onClick={() => navigate('/ocorrencias?status=recuperado')}
-            className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-2 sm:gap-3 p-4 rounded-lg border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-colors"
           >
             <ShieldCheck size={20} className="text-green-600" />
             <span className="font-medium text-gray-700">Ocorrências Recuperadas</span>

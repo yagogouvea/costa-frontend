@@ -617,7 +617,7 @@ export default function FotosPopup({ ocorrencia, onClose, onUpdate }: FotosPopup
   return (
     <div className="w-full h-full flex flex-col bg-gradient-to-br from-gray-50 to-white">
       {/* Header moderno - responsivo */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 lg:p-6 border-b border-gray-200 bg-white/80 backdrop-blur-sm gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 lg:p-3 sm:p-6 border-b border-gray-200 bg-white/80 backdrop-blur-sm gap-3">
         <div className="flex items-center gap-2 sm:gap-4">
           <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">Fotos da Ocorrência</h2>
           <span className="px-2 sm:px-3 py-1 bg-blue-100 text-blue-800 text-xs sm:text-sm font-medium rounded-full">
@@ -822,7 +822,7 @@ export default function FotosPopup({ ocorrencia, onClose, onUpdate }: FotosPopup
       {/* Modal de confirmação para sair */}
       {showExitConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-4 sm:p-6 max-w-sm w-full mx-4">
+          <div className="bg-white rounded-xl p-4 sm:p-3 sm:p-6 max-w-sm w-full mx-4">
             <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">Atenção</h3>
             <p className="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">
               Você tem alterações não salvas. Deseja sair mesmo assim?

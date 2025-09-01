@@ -142,16 +142,16 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-xl p-3 sm:p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         <h2 className="text-2xl font-bold mb-6">
           {user ? "Editar Usuário" : "Novo Usuário"}
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* INFORMAÇÕES BÁSICAS */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3 sm:p-6">
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700">
                 Nome completo
               </label>
               <input
@@ -165,7 +165,7 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
             </div>
 
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700">
                 Email
               </label>
               <input
@@ -185,7 +185,7 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
               <button
                 type="button"
                 onClick={() => setShowPasswordChange(!showPasswordChange)}
-                className="text-blue-600 hover:text-blue-800 text-sm"
+                className="text-blue-600 hover:text-blue-800 text-xs sm:text-sm"
               >
                 {showPasswordChange ? "Cancelar alteração de senha" : "Alterar senha"}
               </button>
@@ -193,7 +193,7 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
               {showPasswordChange && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-xs sm:text-sm font-medium text-gray-700">
                       Nova senha
                     </label>
                     <input
@@ -205,7 +205,7 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-xs sm:text-sm font-medium text-gray-700">
                       Confirmar nova senha
                     </label>
                     <input
@@ -221,7 +221,7 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
             </div>
           ) : (
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700">
                 Senha
               </label>
               <input
@@ -237,7 +237,7 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
 
           {/* CARGO */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">Cargo</label>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700">Cargo</label>
             <select
               name="role"
               className="w-full border p-2 rounded"
@@ -248,7 +248,7 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
               <option value="manager">Supervisor</option>
               <option value="admin">Administrador</option>
             </select>
-            <p className="text-sm text-gray-500">{ROLE_DESCRIPTIONS[formData.role || "operator"]}</p>
+            <p className="text-xs sm:text-sm text-gray-500">{ROLE_DESCRIPTIONS[formData.role || "operator"]}</p>
           </div>
 
           {/* PERMISSÕES */}
@@ -259,7 +259,7 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
               availablePermissions={PERMISSIONS}
               disabled={false}
             />
-            <p className="text-sm text-gray-500 mt-4">
+            <p className="text-xs sm:text-sm text-gray-500 mt-4">
               {formData.role === 'admin' 
                 ? "Administradores têm acesso total ao sistema automaticamente."
                 : "Você pode personalizar as permissões independentemente do cargo selecionado."}
@@ -275,7 +275,7 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
                 checked={formData.active ?? true}
                 onChange={handleChange}
               />
-              <span className="text-sm font-medium text-gray-700">Usuário ativo</span>
+              <span className="text-xs sm:text-sm font-medium text-gray-700">Usuário ativo</span>
             </label>
           </div>
 

@@ -118,7 +118,7 @@ const HorariosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
   };
 
   return (
-    <div className="p-6 rounded-lg bg-white shadow-lg w-full max-w-2xl mx-auto my-auto border border-gray-200 max-h-[90vh] overflow-y-auto">
+    <div className="p-3 sm:p-6 rounded-lg bg-white shadow-lg w-full max-w-2xl mx-auto my-auto border border-gray-200 max-min-h-[80vh] max-h-[95vh] overflow-y-auto">
       <DialogTitle className="text-lg font-bold text-blue-700 text-center">Editar Horários</DialogTitle>
       <DialogDescription className="sr-only">
         Informe os horários e informações complementares da ocorrência.

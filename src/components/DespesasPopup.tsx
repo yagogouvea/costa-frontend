@@ -84,7 +84,7 @@ const DespesasPopup = ({ onSave, despesasExistentes = [] }: Props) => {
       <DialogTrigger asChild>
         <button className="text-xs text-blue-600 underline">Despesas</button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl w-[90vw] max-h-[90vh] overflow-y-auto bg-gradient-to-br from-green-50 via-white to-blue-50 border-0 shadow-2xl">
+      <DialogContent className="max-w-2xl w-[90vw] max-min-h-[80vh] max-h-[95vh] overflow-y-auto bg-gradient-to-br from-green-50 via-white to-blue-50 border-0 shadow-2xl">
         <DialogTitle className="text-2xl font-bold text-center py-6 bg-gradient-to-r from-green-600 to-blue-700 text-white rounded-t-lg -mx-6 -mt-6 px-6">
           Adicionar Despesas
         </DialogTitle>

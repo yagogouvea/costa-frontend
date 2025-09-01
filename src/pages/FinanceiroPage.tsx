@@ -91,11 +91,11 @@ const FinanceiroPage: React.FC = () => {
         {/* Cabeçalho e Abas */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold flex items-center gap-3 text-blue-900">
+            <h1 className="text-2xl lg:text-3xl font-bold flex items-center gap-2 sm:gap-3 text-blue-900">
               <FileText className="w-8 h-8 text-blue-500" />
               Financeiro
             </h1>
-            <p className="text-slate-500 mt-2 text-sm lg:text-base">
+            <p className="text-slate-500 mt-2 text-xs sm:text-sm lg:text-base">
               Acompanhe receitas, despesas e o fluxo financeiro do sistema
             </p>
           </div>

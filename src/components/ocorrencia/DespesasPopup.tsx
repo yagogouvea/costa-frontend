@@ -128,13 +128,13 @@ const DespesasPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, o
                 if (!semDespesas) setDespesas([]);
               }}
             />
-            <span className="text-sm">Sem despesas neste atendimento</span>
+            <span className="text-xs sm:text-sm">Sem despesas neste atendimento</span>
           </label>
 
           {!semDespesas && (
             <div className="space-y-3">
               {despesas.map((despesa) => (
-                <div key={despesa.id} className="flex items-center gap-3">
+                <div key={despesa.id} className="flex items-center gap-2 sm:gap-3">
                   <select
                     value={despesa.tipo}
                     onChange={(e) => atualizarCampo(despesa.id, 'tipo', e.target.value)}
