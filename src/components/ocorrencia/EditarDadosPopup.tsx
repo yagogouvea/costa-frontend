@@ -104,6 +104,15 @@ const EditarDadosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) =>
   // Efeito para recarregar os dados quando a ocorrência mudar
   useEffect(() => {
     console.log('Carregando dados da ocorrência:', ocorrencia);
+    
+    // ✅ DEBUG: Log detalhado dos dados de localização carregados
+    console.log('🔍 [EditarDadosPopup] Dados de localização carregados:', {
+      coordenadas: ocorrencia.coordenadas,
+      endereco: ocorrencia.endereco,
+      bairro: ocorrencia.bairro,
+      cidade: ocorrencia.cidade,
+      estado: ocorrencia.estado
+    });
     setCliente(ocorrencia.cliente || '');
     setSubCliente(ocorrencia.sub_cliente || '');
     setTipo(ocorrencia.tipo || '');
@@ -187,7 +196,7 @@ const EditarDadosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) =>
       console.log('Dados sendo enviados para atualização:', dados);
       console.log('ID da ocorrência:', ocorrencia.id);
 
-      const { data } = await api.put(`/api/ocorrencias/${ocorrencia.id}`, dados);
+      const { data } = await api.put(`/api/v1/ocorrencias/${ocorrencia.id}`, dados);
       onUpdate(data);
       onClose();
     } catch (error) {

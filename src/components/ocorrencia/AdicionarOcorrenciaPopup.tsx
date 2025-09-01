@@ -216,7 +216,19 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
         conta: conta || undefined
       };
 
-      const response = await api.post('/api/ocorrencias', novaOcorrencia);
+      // ✅ DEBUG: Log detalhado dos dados de localização sendo enviados
+      console.log('🔍 [AdicionarOcorrenciaPopup] Dados de localização sendo enviados:', {
+        coordenadas,
+        endereco: enderecoInfo.endereco,
+        bairro: enderecoInfo.bairro,
+        cidade: enderecoInfo.cidade,
+        estado: enderecoInfo.estado,
+        enderecoInfo
+      });
+      
+      console.log('🔍 [AdicionarOcorrenciaPopup] Payload completo:', novaOcorrencia);
+
+      const response = await api.post('/api/v1/ocorrencias', novaOcorrencia);
       console.log('✅ [AdicionarOcorrenciaPopup] Ocorrência criada:', response.data);
       
       // ✅ CORREÇÃO: Passar a ocorrência completa criada para o dashboard
