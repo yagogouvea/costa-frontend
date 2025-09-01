@@ -82,7 +82,8 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
 
   const [operador, setOperador] = useState('');
   const [operacao, setOperacao] = useState('');
-  const [conta, setConta] = useState('');
+  // ✅ REMOVIDO: Campo 'conta' não existe no schema do cliente-costa
+  // const [conta, setConta] = useState('');
 
   const [clienteSelecionado, setClienteSelecionado] = useState('');
   const [subCliente, setSubCliente] = useState('');
@@ -167,12 +168,13 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
     }
 
     // Validações específicas para cliente BRK
-    if (isClienteBrk) {
-      if (!conta) {
-        alert('Preencha a conta');
-        return;
-      }
-    }
+    // ✅ REMOVIDO: Campo 'conta' não existe no schema do cliente-costa
+    // if (isClienteBrk) {
+    //   if (!conta) {
+    //     alert('Preencha a conta');
+    //     return;
+    //   }
+    // }
 
     setLoading(true);
     try {
@@ -361,7 +363,8 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
                 </div>
               )}
 
-              {isClienteBrk && (
+              {/* ✅ REMOVIDO: Campo 'conta' não existe no schema do cliente-costa */}
+              {/* {isClienteBrk && (
                 <div>
                   <Label className="text-red-500">
                     Conta <span className="text-red-500">*</span>
@@ -372,7 +375,7 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
                     placeholder="Digite a conta"
                   />
                 </div>
-              )}
+              )} */}
 
               <div>
                 <Label >
