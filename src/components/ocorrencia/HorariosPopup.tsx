@@ -62,16 +62,6 @@ const HorariosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
   // Campos removidos: tipoRemocao, enderecoLoja, nomeLoja, nomeGuincho, enderecoBase, detalhesLocal
 
   // const isMobile = useMediaQuery({ maxWidth: 767 });
-  // Modo de entrada no mobile: false = calendário (datetime-local), true = digitação manual (texto)
-  const [mobileManual, setMobileManual] = useState(false);
-
-  // Estados para digitação manual no mobile (dd/MM/aaaa e HH:mm)
-  const [inicioDate, setInicioDate] = useState('');
-  const [inicioTime, setInicioTime] = useState('');
-  const [chegadaDate, setChegadaDate] = useState('');
-  const [chegadaTime, setChegadaTime] = useState('');
-  const [terminoDate, setTerminoDate] = useState('');
-  const [terminoTime, setTerminoTime] = useState('');
 
   useEffect(() => {
     // Campos originais
@@ -79,55 +69,16 @@ const HorariosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
     setChegada(ocorrencia.chegada ? toInputLocal(ocorrencia.chegada) : '');
     setTermino(ocorrencia.termino ? toInputLocal(ocorrencia.termino) : '');
 
-    // Popular campos manuais no mobile
-    const formatBR = (iso?: string | null) => {
-      if (!iso) return { d: '', t: '' };
-      try {
-        const date = new Date(iso);
-        if (isNaN(date.getTime())) return { d: '', t: '' };
-        const dd = String(date.getDate()).padStart(2, '0');
-        const mm = String(date.getMonth() + 1).padStart(2, '0');
-        const yyyy = String(date.getFullYear());
-        const hh = String(date.getHours()).padStart(2, '0');
-        const mi = String(date.getMinutes()).padStart(2, '0');
-        return { d: `${dd}/${mm}/${yyyy}`, t: `${hh}:${mi}` };
-      } catch {
-        return { d: '', t: '' };
-      }
-    };
-
-    const i = formatBR(ocorrencia.inicio || null);
-    const c = formatBR(ocorrencia.chegada || null);
-    const f = formatBR(ocorrencia.termino || null);
-    setInicioDate(i.d); setInicioTime(i.t);
-    setChegadaDate(c.d); setChegadaTime(c.t);
-    setTerminoDate(f.d); setTerminoTime(f.t);
   }, [ocorrencia]);
 
   const salvar = async () => {
     try {
       const payload: any = {};
       
-      // Helpers para montar ISO a partir de manual (dd/MM/aaaa + HH:mm)
-      const buildIsoFromManual = (d: string, t: string): string | null => {
-        if (!d && !t) return null;
-        const [dd, mm, yyyy] = (d || '').split('/');
-        const [hh, mi] = (t || '').split(':');
-        if (!dd || !mm || !yyyy || !hh || !mi) return null;
-        const isoLike = `${yyyy}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}T${hh.padStart(2,'0')}:${mi.padStart(2,'0')}:00`;
-        const date = new Date(isoLike);
-        if (isNaN(date.getTime())) return null;
-        return date.toISOString();
-      };
-
-      // Campos de horários considerando modo mobile manual
-      const inicioIso = mobileManual ? buildIsoFromManual(inicioDate, inicioTime) : (inicio ? new Date(inicio).toISOString() : null);
-      const chegadaIso = mobileManual ? buildIsoFromManual(chegadaDate, chegadaTime) : (chegada ? new Date(chegada).toISOString() : null);
-      const terminoIso = mobileManual ? buildIsoFromManual(terminoDate, terminoTime) : (termino ? new Date(termino).toISOString() : null);
-
-      if (inicioIso) payload.inicio = inicioIso;
-      if (chegadaIso) payload.chegada = chegadaIso;
-      if (terminoIso) payload.termino = terminoIso;
+      // Campos de horários a partir de datetime-local (permite digitação e seleção)
+      if (inicio) payload.inicio = new Date(inicio).toISOString();
+      if (chegada) payload.chegada = new Date(chegada).toISOString();
+      if (termino) payload.termino = new Date(termino).toISOString();
 
       if (Object.keys(payload).length === 0) {
         alert('Preencha pelo menos um horário.');
@@ -169,133 +120,33 @@ const HorariosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
         {/* Seção: Horários */}
         <div>
           <h3 className="text-sm md:text-md font-semibold text-gray-800 mb-2 md:mb-3">Horários da Ocorrência</h3>
-          {/* Toggle de modo de entrada (somente mobile) */}
-          <div className="md:hidden flex items-center gap-2 mb-2">
-            <Button variant={mobileManual ? 'default' : 'ghost'} size="sm" onClick={() => setMobileManual(true)}>Digitar</Button>
-            <Button variant={!mobileManual ? 'default' : 'ghost'} size="sm" onClick={() => setMobileManual(false)}>Calendário</Button>
-          </div>
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-3">
             <div>
               <Label>Início da ocorrência</Label>
-              {/* Desktop ou Mobile (Calendário) */}
-              <div className="hidden md:block">
-                <input
-                  type="datetime-local"
-                  className="w-full border border-gray-300 p-2 md:p-2 rounded focus:ring focus:ring-blue-500 text-sm"
-                  value={inicio}
-                  onChange={(e) => setInicio(e.target.value)}
-                />
-              </div>
-              <div className="md:hidden">
-                {mobileManual ? (
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      placeholder="dd/mm/aaaa"
-                      className="w-full border border-gray-300 p-2 rounded text-sm"
-                      value={inicioDate}
-                      onChange={(e) => setInicioDate(e.target.value)}
-                    />
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      placeholder="hh:mm"
-                      className="w-full border border-gray-300 p-2 rounded text-sm"
-                      value={inicioTime}
-                      onChange={(e) => setInicioTime(e.target.value)}
-                    />
-                  </div>
-                ) : (
-                  <input
-                    type="datetime-local"
-                    className="w-full border border-gray-300 p-2 rounded text-sm"
-                    value={inicio}
-                    onChange={(e) => setInicio(e.target.value)}
-                  />
-                )}
-              </div>
+              <input
+                type="datetime-local"
+                className="w-full border border-gray-300 p-2 md:p-2 rounded focus:ring focus:ring-blue-500 text-sm"
+                value={inicio}
+                onChange={(e) => setInicio(e.target.value)}
+              />
             </div>
             <div>
               <Label>Chegada ao Local</Label>
-              <div className="hidden md:block">
-                <input
-                  type="datetime-local"
-                  className="w-full border border-gray-300 p-2 md:p-2 rounded focus:ring focus:ring-blue-500 text-sm"
-                  value={chegada}
-                  onChange={(e) => setChegada(e.target.value)}
-                />
-              </div>
-              <div className="md:hidden">
-                {mobileManual ? (
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      placeholder="dd/mm/aaaa"
-                      className="w-full border border-gray-300 p-2 rounded text-sm"
-                      value={chegadaDate}
-                      onChange={(e) => setChegadaDate(e.target.value)}
-                    />
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      placeholder="hh:mm"
-                      className="w-full border border-gray-300 p-2 rounded text-sm"
-                      value={chegadaTime}
-                      onChange={(e) => setChegadaTime(e.target.value)}
-                    />
-                  </div>
-                ) : (
-                  <input
-                    type="datetime-local"
-                    className="w-full border border-gray-300 p-2 rounded text-sm"
-                    value={chegada}
-                    onChange={(e) => setChegada(e.target.value)}
-                  />
-                )}
-              </div>
+              <input
+                type="datetime-local"
+                className="w-full border border-gray-300 p-2 md:p-2 rounded focus:ring focus:ring-blue-500 text-sm"
+                value={chegada}
+                onChange={(e) => setChegada(e.target.value)}
+              />
             </div>
             <div>
               <Label>Término</Label>
-              <div className="hidden md:block">
-                <input
-                  type="datetime-local"
-                  className="w-full border border-gray-300 p-2 md:p-2 rounded focus:ring focus:ring-blue-500 text-sm"
-                  value={termino}
-                  onChange={(e) => setTermino(e.target.value)}
-                />
-              </div>
-              <div className="md:hidden">
-                {mobileManual ? (
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      placeholder="dd/mm/aaaa"
-                      className="w-full border border-gray-300 p-2 rounded text-sm"
-                      value={terminoDate}
-                      onChange={(e) => setTerminoDate(e.target.value)}
-                    />
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      placeholder="hh:mm"
-                      className="w-full border border-gray-300 p-2 rounded text-sm"
-                      value={terminoTime}
-                      onChange={(e) => setTerminoTime(e.target.value)}
-                    />
-                  </div>
-                ) : (
-                  <input
-                    type="datetime-local"
-                    className="w-full border border-gray-300 p-2 rounded text-sm"
-                    value={termino}
-                    onChange={(e) => setTermino(e.target.value)}
-                  />
-                )}
-              </div>
+              <input
+                type="datetime-local"
+                className="w-full border border-gray-300 p-2 md:p-2 rounded focus:ring focus:ring-blue-500 text-sm"
+                value={termino}
+                onChange={(e) => setTermino(e.target.value)}
+              />
             </div>
           </div>
         </div>
