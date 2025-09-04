@@ -110,13 +110,34 @@ const DespesasPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, o
     }
   };
 
+  const totalAtual = semDespesas
+    ? 0
+    : despesas.reduce((acc, d) => acc + formatarParaNumero(d.valor), 0);
+
+  const formatarBRL = (valor: number) =>
+    `R$ ${valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[95vw] max-w-[95vw] sm:max-w-[90vw] md:max-w-[70vw] lg:max-w-[60vw] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-[95vw] max-w-[95vw] sm:max-w-[92vw] md:max-w-[560px] lg:max-w-[640px] xl:max-w-[720px] max-h-[90vh] overflow-y-auto">
         <DialogTitle>Despesas da Ocorrência</DialogTitle>
         <DialogDescription>
           Formulário para editar despesas vinculadas à ocorrência
         </DialogDescription>
+
+        {/* Barra de status compacta (desktop) */}
+        <div className="hidden md:flex items-center justify-between mt-2 mb-4 p-3 bg-slate-50 border border-slate-200 rounded-lg">
+          <div className="flex items-center gap-2 text-slate-600 text-sm">
+            <span>Total atual</span>
+            <span className="inline-block px-2 py-1 bg-white border border-slate-200 rounded-md font-semibold text-slate-800">
+              {formatarBRL(totalAtual)}
+            </span>
+          </div>
+          <div className="flex items-center gap-2 text-slate-600 text-xs">
+            <span>ID:</span>
+            <span className="font-medium text-slate-800">{ocorrencia.id}</span>
+          </div>
+        </div>
 
         <div className="space-y-4">
           <label className="flex items-center gap-2">
@@ -133,47 +154,64 @@ const DespesasPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, o
 
           {!semDespesas && (
             <div className="space-y-3">
-              {despesas.map((despesa) => (
-                <div key={despesa.id} className="flex items-center gap-2 sm:gap-3">
-                  <select
-                    value={despesa.tipo}
-                    onChange={(e) => atualizarCampo(despesa.id, 'tipo', e.target.value)}
-                    className="border px-2 py-1 rounded flex-1"
-                  >
-                    <option value="">Tipo</option>
-                    {tipos.map((t) => (
-                      <option key={t} value={t}>{t}</option>
-                    ))}
-                  </select>
+              {/* Cabeçalho da grade (desktop) */}
+              <div className="hidden md:grid grid-cols-[1fr,150px,40px] gap-2 text-xs text-slate-500 px-1">
+                <div>Tipo</div>
+                <div className="text-right pr-2">Valor</div>
+                <div></div>
+              </div>
 
-                  <Input
-                    type="text"
-                    placeholder="R$ 0,00"
-                    value={despesa.valor}
-                    onChange={(e) => atualizarCampo(despesa.id, 'valor', e.target.value)}
-                    className="w-32"
-                    inputMode="numeric"
-                  />
+              <div className="space-y-2">
+                {despesas.map((despesa) => (
+                  <div key={despesa.id} className="grid grid-cols-1 md:grid-cols-[1fr,150px,40px] gap-2 items-center p-2 border border-slate-200 rounded-lg bg-white/80">
+                    <select
+                      value={despesa.tipo}
+                      onChange={(e) => atualizarCampo(despesa.id, 'tipo', e.target.value)}
+                      className="border px-2 py-2 rounded w-full text-sm"
+                    >
+                      <option value="">Tipo</option>
+                      {tipos.map((t) => (
+                        <option key={t} value={t}>{t}</option>
+                      ))}
+                    </select>
 
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => removerDespesa(despesa.id)}
-                    className="px-2 py-1"
-                  >
-                    ×
-                  </Button>
+                    <Input
+                      type="text"
+                      placeholder="R$ 0,00"
+                      value={despesa.valor}
+                      onChange={(e) => atualizarCampo(despesa.id, 'valor', e.target.value)}
+                      className="md:w-full w-32 text-right"
+                      inputMode="numeric"
+                    />
+
+                    <div className="flex md:justify-center">
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => removerDespesa(despesa.id)}
+                        className="h-8 w-8 p-0 rounded-full"
+                        title="Remover"
+                      >
+                        ×
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex items-center justify-between">
+                <Button onClick={adicionarDespesa} size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
+                  + Adicionar despesa
+                </Button>
+                <div className="md:hidden text-sm text-slate-700 font-medium">
+                  Total: {formatarBRL(totalAtual)}
                 </div>
-              ))}
-
-              <Button onClick={adicionarDespesa} size="sm">
-                + Adicionar nova despesa
-              </Button>
+              </div>
             </div>
           )}
 
-          <div className="flex gap-2 justify-end">
+          <div className="flex gap-2 justify-end pt-2 border-t border-slate-200">
             <DialogClose asChild>
               <Button variant="destructive" onClick={() => {
                 onClose();
