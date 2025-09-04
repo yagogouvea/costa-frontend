@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 // import { Input } from '@/components/ui/input';
@@ -63,13 +63,39 @@ const HorariosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
 
   // const isMobile = useMediaQuery({ maxWidth: 767 });
   const isMobile = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
+  // Estados auxiliares para mobile (entrada texto com máscara dd/MM/aaaa HH:mm)
+  const [inicioBR, setInicioBR] = useState('');
+  const [chegadaBR, setChegadaBR] = useState('');
+  const [terminoBR, setTerminoBR] = useState('');
+  // Refs para abrir picker nativo quando desejar
+  const inicioRef = useRef<HTMLInputElement | null>(null);
+  const chegadaRef = useRef<HTMLInputElement | null>(null);
+  const terminoRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     // Campos originais
     setInicio(ocorrencia.inicio ? toInputLocal(ocorrencia.inicio) : '');
     setChegada(ocorrencia.chegada ? toInputLocal(ocorrencia.chegada) : '');
     setTermino(ocorrencia.termino ? toInputLocal(ocorrencia.termino) : '');
-
+    // Popular campos BR também
+    const toBR = (iso?: string | null) => {
+      if (!iso) return '';
+      try {
+        const d = new Date(iso);
+        if (isNaN(d.getTime())) return '';
+        const dd = String(d.getDate()).padStart(2, '0');
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const yyyy = String(d.getFullYear());
+        const hh = String(d.getHours()).padStart(2, '0');
+        const mi = String(d.getMinutes()).padStart(2, '0');
+        return `${dd}/${mm}/${yyyy} ${hh}:${mi}`;
+      } catch {
+        return '';
+      }
+    };
+    setInicioBR(toBR(ocorrencia.inicio || null));
+    setChegadaBR(toBR(ocorrencia.chegada || null));
+    setTerminoBR(toBR(ocorrencia.termino || null));
   }, [ocorrencia]);
 
   // Formata sequência de dígitos em yyyy-MM-ddTHH:mm de forma progressiva
@@ -101,14 +127,43 @@ const HorariosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
     setFn(next);
   };
 
+  // Máscara BR dd/MM/aaaa HH:mm
+  const maskBR = (value: string): string => {
+    const d = value.replace(/\D/g, '').slice(0, 12); // dd MM yyyy HH mm
+    if (d.length <= 2) return d;
+    if (d.length <= 4) return `${d.slice(0,2)}/${d.slice(2,4)}`;
+    if (d.length <= 8) return `${d.slice(0,2)}/${d.slice(2,4)}/${d.slice(4,8)}`;
+    if (d.length <= 10) return `${d.slice(0,2)}/${d.slice(2,4)}/${d.slice(4,8)} ${d.slice(8,10)}`;
+    return `${d.slice(0,2)}/${d.slice(2,4)}/${d.slice(4,8)} ${d.slice(8,10)}:${d.slice(10,12)}`;
+  };
+
+  const parseBRToISO = (br: string): string | null => {
+    const m = br.match(/^(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})$/);
+    if (!m) return null;
+    const dd = m[1], mm = m[2], yyyy = m[3], hh = m[4], mi = m[5];
+    const isoLike = `${yyyy}-${mm}-${dd}T${hh}:${mi}:00`;
+    const date = new Date(isoLike);
+    if (isNaN(date.getTime())) return null;
+    return date.toISOString();
+  };
+
   const salvar = async () => {
     try {
       const payload: any = {};
       
-      // Campos de horários a partir de datetime-local (permite digitação e seleção)
-      if (inicio) payload.inicio = new Date(inicio).toISOString();
-      if (chegada) payload.chegada = new Date(chegada).toISOString();
-      if (termino) payload.termino = new Date(termino).toISOString();
+      // Campos de horários: no mobile priorizar texto BR se válido
+      if (isMobile) {
+        const i = parseBRToISO(inicioBR) || (inicio ? new Date(inicio).toISOString() : null);
+        const c = parseBRToISO(chegadaBR) || (chegada ? new Date(chegada).toISOString() : null);
+        const f = parseBRToISO(terminoBR) || (termino ? new Date(termino).toISOString() : null);
+        if (i) payload.inicio = i;
+        if (c) payload.chegada = c;
+        if (f) payload.termino = f;
+      } else {
+        if (inicio) payload.inicio = new Date(inicio).toISOString();
+        if (chegada) payload.chegada = new Date(chegada).toISOString();
+        if (termino) payload.termino = new Date(termino).toISOString();
+      }
 
       if (Object.keys(payload).length === 0) {
         alert('Preencha pelo menos um horário.');
@@ -153,36 +208,75 @@ const HorariosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-3">
             <div>
               <Label>Início da ocorrência</Label>
-              <input
-                type="datetime-local"
-                className="w-full border border-gray-300 p-2 md:p-2 rounded focus:ring focus:ring-blue-500 text-sm"
-                value={inicio}
-                inputMode="numeric"
-                placeholder="aaaa-mm-ddThh:mm"
-                onChange={(e) => handleDateTimeInput(e.target.value, setInicio)}
-              />
+              {isMobile ? (
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 p-2 rounded text-sm"
+                    inputMode="numeric"
+                    placeholder="dd/mm/aaaa hh:mm"
+                    value={inicioBR}
+                    onChange={(e) => setInicioBR(maskBR(e.target.value))}
+                  />
+                  <Button type="button" variant="ghost" size="sm" onClick={() => inicioRef.current?.showPicker?.()} title="Calendário">📅</Button>
+                  <input ref={inicioRef} type="datetime-local" className="hidden" value={inicio} onChange={(e) => setInicio(e.target.value)} />
+                </div>
+              ) : (
+                <input
+                  type="datetime-local"
+                  className="w-full border border-gray-300 p-2 md:p-2 rounded focus:ring focus:ring-blue-500 text-sm"
+                  value={inicio}
+                  onChange={(e) => setInicio(e.target.value)}
+                />
+              )}
             </div>
             <div>
               <Label>Chegada ao Local</Label>
-              <input
-                type="datetime-local"
-                className="w-full border border-gray-300 p-2 md:p-2 rounded focus:ring focus:ring-blue-500 text-sm"
-                value={chegada}
-                inputMode="numeric"
-                placeholder="aaaa-mm-ddThh:mm"
-                onChange={(e) => handleDateTimeInput(e.target.value, setChegada)}
-              />
+              {isMobile ? (
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 p-2 rounded text-sm"
+                    inputMode="numeric"
+                    placeholder="dd/mm/aaaa hh:mm"
+                    value={chegadaBR}
+                    onChange={(e) => setChegadaBR(maskBR(e.target.value))}
+                  />
+                  <Button type="button" variant="ghost" size="sm" onClick={() => chegadaRef.current?.showPicker?.()} title="Calendário">📅</Button>
+                  <input ref={chegadaRef} type="datetime-local" className="hidden" value={chegada} onChange={(e) => setChegada(e.target.value)} />
+                </div>
+              ) : (
+                <input
+                  type="datetime-local"
+                  className="w-full border border-gray-300 p-2 md:p-2 rounded focus:ring focus:ring-blue-500 text-sm"
+                  value={chegada}
+                  onChange={(e) => setChegada(e.target.value)}
+                />
+              )}
             </div>
             <div>
               <Label>Término</Label>
-              <input
-                type="datetime-local"
-                className="w-full border border-gray-300 p-2 md:p-2 rounded focus:ring focus:ring-blue-500 text-sm"
-                value={termino}
-                inputMode="numeric"
-                placeholder="aaaa-mm-ddThh:mm"
-                onChange={(e) => handleDateTimeInput(e.target.value, setTermino)}
-              />
+              {isMobile ? (
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 p-2 rounded text-sm"
+                    inputMode="numeric"
+                    placeholder="dd/mm/aaaa hh:mm"
+                    value={terminoBR}
+                    onChange={(e) => setTerminoBR(maskBR(e.target.value))}
+                  />
+                  <Button type="button" variant="ghost" size="sm" onClick={() => terminoRef.current?.showPicker?.()} title="Calendário">📅</Button>
+                  <input ref={terminoRef} type="datetime-local" className="hidden" value={termino} onChange={(e) => setTermino(e.target.value)} />
+                </div>
+              ) : (
+                <input
+                  type="datetime-local"
+                  className="w-full border border-gray-300 p-2 md:p-2 rounded focus:ring focus:ring-blue-500 text-sm"
+                  value={termino}
+                  onChange={(e) => setTermino(e.target.value)}
+                />
+              )}
             </div>
           </div>
         </div>
