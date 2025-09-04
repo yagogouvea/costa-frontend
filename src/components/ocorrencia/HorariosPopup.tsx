@@ -171,8 +171,8 @@ const HorariosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
           <h3 className="text-sm md:text-md font-semibold text-gray-800 mb-2 md:mb-3">Horários da Ocorrência</h3>
           {/* Toggle de modo de entrada (somente mobile) */}
           <div className="md:hidden flex items-center gap-2 mb-2">
-            <Button variant={mobileManual ? 'default' : 'outline'} size="sm" onClick={() => setMobileManual(true)}>Digitar</Button>
-            <Button variant={!mobileManual ? 'default' : 'outline'} size="sm" onClick={() => setMobileManual(false)}>Calendário</Button>
+            <Button variant={mobileManual ? 'default' : 'ghost'} size="sm" onClick={() => setMobileManual(true)}>Digitar</Button>
+            <Button variant={!mobileManual ? 'default' : 'ghost'} size="sm" onClick={() => setMobileManual(false)}>Calendário</Button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-3">
