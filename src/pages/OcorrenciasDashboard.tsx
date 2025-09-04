@@ -1644,39 +1644,7 @@ const OcorrenciasDashboard: React.FC = () => {
                   onClose={handlePopupClose}
                 />
               )}
-              {popupData.type === 'prestador' && (
-                <PrestadorPopup
-                  ocorrencia={[...ocorrenciasEmAndamento, ...ocorrenciasFinalizadas].find(o => o.id === popupData.id)!}
-                  onUpdate={(dados) => handleUpdate(popupData.id, dados)}
-                  onClose={handlePopupClose}
-                  open={popupData.type === 'prestador'}
-                  onOpenChange={(open) => {
-                    if (!open) handlePopupClose();
-                  }}
-                />
-              )}
-              {popupData.type === 'prestador-adicional' && (
-                <PrestadorAdicionalPopup
-                  ocorrencia={[...ocorrenciasEmAndamento, ...ocorrenciasFinalizadas].find(o => o.id === popupData.id)!}
-                  onUpdate={(dados) => handleUpdate(popupData.id, dados)}
-                  onClose={handlePopupClose}
-                  isOpen={popupData.type === 'prestador-adicional'}
-                  onOpenChange={(open) => {
-                    if (!open) handlePopupClose();
-                  }}
-                />
-              )}
-              {popupData.type === 'despesas' && (
-                <DespesasPopup
-                  ocorrencia={[...ocorrenciasEmAndamento, ...ocorrenciasFinalizadas].find(o => o.id === popupData.id)!}
-                  onUpdate={(dados) => handleUpdate(popupData.id, dados)}
-                  onClose={handlePopupClose}
-                  open={popupData.type === 'despesas'}
-                  onOpenChange={(open) => {
-                    if (!open) handlePopupClose();
-                  }}
-                />
-              )}
+              {/* Removido: prestador, prestador-adicional e despesas (cada um possui seu próprio Dialog) */}
               {popupData.type === 'fotos' && (
                 <FotosPopup
                   ocorrencia={[...ocorrenciasEmAndamento, ...ocorrenciasFinalizadas].find(o => o.id === popupData.id)!}
@@ -1735,6 +1703,40 @@ const OcorrenciasDashboard: React.FC = () => {
               })()}
             </DialogContent>
           </Dialog>
+        )}
+        {/* Popups que possuem Dialog próprio (sem Dialog externo) */}
+        {popupData?.type === 'prestador' && (
+          <PrestadorPopup
+            ocorrencia={[...ocorrenciasEmAndamento, ...ocorrenciasFinalizadas].find(o => o.id === popupData.id)!}
+            onUpdate={(dados) => handleUpdate(popupData.id, dados)}
+            onClose={handlePopupClose}
+            open={true}
+            onOpenChange={(open) => {
+              if (!open) handlePopupClose();
+            }}
+          />
+        )}
+        {popupData?.type === 'prestador-adicional' && (
+          <PrestadorAdicionalPopup
+            ocorrencia={[...ocorrenciasEmAndamento, ...ocorrenciasFinalizadas].find(o => o.id === popupData.id)!}
+            onUpdate={(dados) => handleUpdate(popupData.id, dados)}
+            onClose={handlePopupClose}
+            isOpen={true}
+            onOpenChange={(open) => {
+              if (!open) handlePopupClose();
+            }}
+          />
+        )}
+        {popupData?.type === 'despesas' && (
+          <DespesasPopup
+            ocorrencia={[...ocorrenciasEmAndamento, ...ocorrenciasFinalizadas].find(o => o.id === popupData.id)!}
+            onUpdate={(dados) => handleUpdate(popupData.id, dados)}
+            onClose={handlePopupClose}
+            open={true}
+            onOpenChange={(open) => {
+              if (!open) handlePopupClose();
+            }}
+          />
         )}
         </div>
       </div>

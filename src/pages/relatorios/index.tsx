@@ -733,39 +733,7 @@ export default function RelatoriosPage() {
                   onClose={handlePopupClose}
                 />
               )}
-              {popupData.type === 'prestador' && (
-                <PrestadorPopup
-                  ocorrencia={ocorrencias.find(o => o.id === popupData.id)!}
-                  onUpdate={(dados) => atualizarOcorrencia({ ...ocorrencias.find(o => o.id === popupData.id)!, ...dados })}
-                  onClose={handlePopupClose}
-                  open={popupData.type === 'prestador'}
-                  onOpenChange={(open) => {
-                    if (!open) handlePopupClose();
-                  }}
-                />
-              )}
-              {popupData.type === 'prestador-adicional' && (
-                <PrestadorAdicionalPopup
-                  ocorrencia={ocorrencias.find(o => o.id === popupData.id)!}
-                  onUpdate={(dados) => atualizarOcorrencia({ ...ocorrencias.find(o => o.id === popupData.id)!, ...dados })}
-                  onClose={handlePopupClose}
-                  isOpen={popupData.type === 'prestador-adicional'}
-                  onOpenChange={(open) => {
-                    if (!open) handlePopupClose();
-                  }}
-                />
-              )}
-              {popupData.type === 'despesas' && (
-                <DespesasPopup
-                  ocorrencia={ocorrencias.find(o => o.id === popupData.id)!}
-                  onUpdate={(dados) => atualizarOcorrencia({ ...ocorrencias.find(o => o.id === popupData.id)!, ...dados })}
-                  onClose={handlePopupClose}
-                  open={popupData.type === 'despesas'}
-                  onOpenChange={(open) => {
-                    if (!open) handlePopupClose();
-                  }}
-                />
-              )}
+              {/* Removido: prestador, prestador-adicional e despesas (cada um possui seu próprio Dialog) */}
               {popupData.type === 'fotos' && (
                 <FotosPopup
                   ocorrencia={ocorrencias.find(o => o.id === popupData.id)!}
@@ -810,6 +778,40 @@ export default function RelatoriosPage() {
               )}
             </DialogContent>
           </Dialog>
+        )}
+        {/* Popups que possuem Dialog próprio (sem Dialog externo) */}
+        {popupData?.type === 'prestador' && (
+          <PrestadorPopup
+            ocorrencia={ocorrencias.find(o => o.id === popupData.id)!}
+            onUpdate={(dados) => atualizarOcorrencia({ ...ocorrencias.find(o => o.id === popupData.id)!, ...dados })}
+            onClose={handlePopupClose}
+            open={true}
+            onOpenChange={(open) => {
+              if (!open) handlePopupClose();
+            }}
+          />
+        )}
+        {popupData?.type === 'prestador-adicional' && (
+          <PrestadorAdicionalPopup
+            ocorrencia={ocorrencias.find(o => o.id === popupData.id)!}
+            onUpdate={(dados) => atualizarOcorrencia({ ...ocorrencias.find(o => o.id === popupData.id)!, ...dados })}
+            onClose={handlePopupClose}
+            isOpen={true}
+            onOpenChange={(open) => {
+              if (!open) handlePopupClose();
+            }}
+          />
+        )}
+        {popupData?.type === 'despesas' && (
+          <DespesasPopup
+            ocorrencia={ocorrencias.find(o => o.id === popupData.id)!}
+            onUpdate={(dados) => atualizarOcorrencia({ ...ocorrencias.find(o => o.id === popupData.id)!, ...dados })}
+            onClose={handlePopupClose}
+            open={true}
+            onOpenChange={(open) => {
+              if (!open) handlePopupClose();
+            }}
+          />
         )}
       </div>
     </div>
