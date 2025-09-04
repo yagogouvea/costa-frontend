@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDebounce } from '@/hooks/useDebounce';
-import api from '@/services/api';
+import api, { cepApi } from '@/services/api';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -62,6 +62,7 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
   const [modelos, setModelos] = useState<string[]>(['', '', '']);
   const [cores, setCores] = useState<string[]>(['', '', '']);
   const [coordenadas, setCoordenadas] = useState('');
+  const [cep, setCep] = useState('');
   const [enderecoInfo, setEnderecoInfo] = useState({ endereco: '', bairro: '', cidade: '', estado: '' });
   const [dataAcionamento, setDataAcionamento] = useState('');
   const [loading, setLoading] = useState(false);
@@ -194,6 +195,7 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
         tipo: tipoOcorrencia,
         tipo_veiculo: tipoVeiculo || undefined,
         coordenadas: coordenadas || undefined,
+        cep: cep ? cep.replace(/\D/g, '') : undefined,
         endereco: enderecoInfo.endereco || undefined,
         bairro: enderecoInfo.bairro || undefined,
         cidade: enderecoInfo.cidade || undefined,
@@ -419,6 +421,33 @@ const AdicionarOcorrenciaPopup: React.FC<Props> = ({ onClose, onSave, clientes }
           Localização
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+          <div>
+            <Label>
+              CEP (opcional)
+            </Label>
+            <Input 
+              value={cep} 
+              onChange={e => setCep(e.target.value)} 
+              onBlur={async () => {
+                const apenasNumeros = cep.replace(/\D/g, '');
+                if (apenasNumeros.length === 8) {
+                  try {
+                    const data = await cepApi.get(apenasNumeros);
+                    setEnderecoInfo(prev => ({
+                      ...prev,
+                      endereco: data.logradouro || prev.endereco,
+                      bairro: data.bairro || prev.bairro,
+                      cidade: data.localidade || prev.cidade,
+                      estado: data.uf || prev.estado
+                    }));
+                  } catch (err) {
+                    console.error('❌ Erro ao buscar CEP:', err);
+                  }
+                }
+              }}
+              placeholder="03502000 ou 03502-000"
+            />
+          </div>
 
               <div className="col-span-full">
                 <Label >

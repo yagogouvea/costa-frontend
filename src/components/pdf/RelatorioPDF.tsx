@@ -21,6 +21,7 @@ interface RelatorioDados {
   cidade?: string;
   estado?: string;
   coordenadas?: string;
+  cep?: string;
   inicio?: string;
   chegada?: string;
   termino?: string;
@@ -81,20 +82,23 @@ const formatarDataHora = (data: string | undefined): string => {
 };
 
 // Função para gerar link do Google Maps
-const gerarLinkGoogleMaps = (coordenadas: string): string => {
-  if (!coordenadas) return '';
+const gerarLinkGoogleMaps = (coordenadasOrCep: string, isCep?: boolean): string => {
+  if (!coordenadasOrCep) return '';
   
   try {
+    if (isCep) {
+      const cepLimpo = coordenadasOrCep.replace(/\D/g, '');
+      return `https://www.google.com/maps?q=${cepLimpo}`;
+    }
     // Tentar extrair coordenadas no formato "latitude,longitude"
-    const match = coordenadas.match(/(-?\d+\.\d+),\s*(-?\d+\.\d+)/);
+    const match = coordenadasOrCep.match(/(-?\d+\.\d+),\s*(-?\d+\.\d+)/);
     if (match) {
       const lat = match[1];
       const lng = match[2];
       return `https://www.google.com/maps?q=${lat},${lng}`;
     }
-    
-    // Se não conseguir extrair, retornar coordenadas como estão
-    return `https://www.google.com/maps?q=${coordenadas}`;
+    // Se não conseguir extrair, retornar string como está
+    return `https://www.google.com/maps?q=${encodeURIComponent(coordenadasOrCep)}`;
   } catch (error) {
     console.warn('Erro ao gerar link do Google Maps:', error);
     return '';
@@ -531,10 +535,10 @@ const RelatorioPDF = ({ dados }: { dados: RelatorioDados }) => {
                 </Text>
               </View>
               
-              {coordenadas && (
+              {(coordenadas || dados.cep) && (
                 <View style={styles.linhaQuadrante}>
                   <Text style={styles.rotulo}>Link Google Maps:</Text>
-                  <Link src={gerarLinkGoogleMaps(coordenadas)} style={styles.linkMaps}>
+                  <Link src={gerarLinkGoogleMaps(coordenadas || dados.cep || '', !!dados.cep)} style={styles.linkMaps}>
                     Ver no Google Maps
                   </Link>
                 </View>

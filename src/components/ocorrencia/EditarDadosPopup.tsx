@@ -1,4 +1,4 @@
-import api from '@/services/api';
+import api, { cepApi } from '@/services/api';
 import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -64,6 +64,7 @@ const EditarDadosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) =>
   const [modelo1, setModelo1] = useState(ocorrencia.modelo1 || '');
   const [cor1, setCor1] = useState(ocorrencia.cor1 || '');
   const [coordenadas, setCoordenadas] = useState(ocorrencia.coordenadas || '');
+  const [cep, setCep] = useState(ocorrencia.cep || '');
   const [endereco, setEndereco] = useState(ocorrencia.endereco || '');
   const [bairro, setBairro] = useState(ocorrencia.bairro || '');
   const [cidade, setCidade] = useState(ocorrencia.cidade || '');
@@ -171,6 +172,7 @@ const EditarDadosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) =>
         modelo1,
         cor1,
         coordenadas,
+        cep: cep ? cep.replace(/\D/g, '') : undefined,
         endereco,
         bairro,
         cidade,
@@ -367,6 +369,28 @@ const EditarDadosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) =>
           Localização
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+          <div>
+            <Label>CEP (opcional)</Label>
+            <Input 
+              value={cep}
+              onChange={e => setCep(e.target.value)}
+              onBlur={async () => {
+                const apenasNumeros = cep.replace(/\D/g, '');
+                if (apenasNumeros.length === 8) {
+                  try {
+                    const data = await cepApi.get(apenasNumeros);
+                    setEndereco(data.logradouro || endereco);
+                    setBairro(data.bairro || bairro);
+                    setCidade(data.localidade || cidade);
+                    setEstado(data.uf || estado);
+                  } catch (err) {
+                    console.error('❌ Erro ao buscar CEP:', err);
+                  }
+                }
+              }}
+              placeholder="03502000 ou 03502-000"
+            />
+          </div>
           <div className="col-span-full">
             <Label>Local da abordagem (latitude, longitude)</Label>
             <Input value={coordenadas} onChange={e => setCoordenadas(e.target.value)} placeholder="Ex: -23.550520, -46.633308" />

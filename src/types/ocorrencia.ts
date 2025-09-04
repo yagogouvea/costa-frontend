@@ -29,6 +29,7 @@ export interface CreateOcorrenciaDTO {
   modelo1?: string | null;
   cor1?: string | null;
   coordenadas?: string | null;
+  cep?: string | null;
   endereco?: string | null;
   bairro?: string | null;
   cidade?: string | null;

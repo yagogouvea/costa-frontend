@@ -716,8 +716,8 @@ export default function RelatoriosPage() {
           <Dialog open={!!popupData} onOpenChange={() => handlePopupClose()}>
             <DialogContent className={`bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 ${
               popupData.type === 'fotos' 
-                ? 'max-w-7xl w-[95vw] h-[90vh]' 
-                : 'max-w-4xl'
+                ? 'max-w-7xl w-[95vw] h-[90vh] overflow-y-auto' 
+                : 'max-w-[95vw] md:max-w-4xl max-h-[90vh] overflow-y-auto'
             }`}>
               {popupData.type === 'horarios' && (
                 <HorariosPopup

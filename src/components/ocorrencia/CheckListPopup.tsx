@@ -302,12 +302,10 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
       // Atualizar o estado local para refletir que agora existe um checklist
       setChecklistExistente(response.data);
       
-      // ✅ CORREÇÃO: Não passar os dados do checklist para onUpdate
-      // pois isso estava sobrescrevendo o ID da ocorrência
-      // Se necessário, passar apenas dados relevantes da ocorrência
+      // ✅ SINALIZAR AO CHAMADOR QUE O CHECKLIST FOI ATUALIZADO
+      // Envia apenas uma flag para evitar sobrescrita de dados da ocorrência
       if (onUpdate) {
-        // onUpdate(response.data); // ❌ Removido - causava confusão de IDs
-        console.log('🔧 Checklist salvo - não atualizando dados da ocorrência para evitar confusão de IDs');
+        onUpdate({ checklist: true });
       }
       
       onClose();
