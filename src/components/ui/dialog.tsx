@@ -44,7 +44,7 @@ export const DialogTrigger: React.FC<{
 
 export const DialogContent: React.FC<DialogContentProps> = ({ children, className = '' }) => {
   return (
-    <div className={`p-6 ${className}`}>
+    <div className={`p-6 w-[95vw] max-w-[95vw] sm:max-w-[90vw] md:max-w-[80vw] lg:max-w-[70vw] max-h-[90vh] overflow-y-auto rounded-lg ${className}`}>
       {children}
     </div>
   );

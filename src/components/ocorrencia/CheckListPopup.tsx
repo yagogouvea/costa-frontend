@@ -215,7 +215,6 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
       novosErros.justificativaFotos = 'Justificativa é obrigatória quando fotos não foram realizadas';
     }
     
-    // Observação da abordagem apenas quando "terceiros"
     if (posseVeiculo === 'terceiros' && !observacaoPosse.trim()) {
       novosErros.observacaoPosse = 'Observação da abordagem é obrigatória';
     }
@@ -279,8 +278,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
         // Outros campos
         recuperado_com_chave: recuperadoComChave || undefined,
         posse_veiculo: posseVeiculo || undefined,
-        // Observação da abordagem somente quando terceiros
-        observacao_posse: posseVeiculo === 'terceiros' ? observacaoPosse : undefined,
+        observacao_posse: observacaoPosse,
         avarias: avarias || undefined,
         detalhes_avarias: (avarias === 'sim') ? detalhesAvarias : undefined,
         fotos_realizadas: fotosRealizadas || undefined,

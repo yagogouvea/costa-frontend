@@ -112,7 +112,7 @@ const DespesasPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, o
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="w-[95vw] max-w-[95vw] sm:max-w-[90vw] md:max-w-[70vw] lg:max-w-[60vw] max-h-[90vh] overflow-y-auto">
         <DialogTitle>Despesas da Ocorrência</DialogTitle>
         <DialogDescription>
           Formulário para editar despesas vinculadas à ocorrência
