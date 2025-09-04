@@ -62,6 +62,7 @@ const HorariosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
   // Campos removidos: tipoRemocao, enderecoLoja, nomeLoja, nomeGuincho, enderecoBase, detalhesLocal
 
   // const isMobile = useMediaQuery({ maxWidth: 767 });
+  const isMobile = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
 
   useEffect(() => {
     // Campos originais
@@ -70,6 +71,35 @@ const HorariosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
     setTermino(ocorrencia.termino ? toInputLocal(ocorrencia.termino) : '');
 
   }, [ocorrencia]);
+
+  // Formata sequência de dígitos em yyyy-MM-ddTHH:mm de forma progressiva
+  const formatDigitsToDateTimeLocal = (digits: string): string => {
+    const d = digits.replace(/\D/g, '').slice(0, 12); // YYYY MM DD HH mm
+    const y = d.slice(0, 4);
+    const m = d.slice(4, 6);
+    const day = d.slice(6, 8);
+    const hh = d.slice(8, 10);
+    const mi = d.slice(10, 12);
+    let out = '';
+    if (y) out += y;
+    if (m) out += `-${m}`;
+    if (day) out += `-${day}`;
+    if (hh) out += `T${hh}`;
+    if (mi) out += `:${mi}`;
+    return out;
+  };
+
+  // Handler genérico para autoformatação no mobile
+  const handleDateTimeInput = (next: string, setFn: (v: string) => void) => {
+    if (isMobile) {
+      const onlyDigits = next.replace(/\D/g, '');
+      if (onlyDigits.length > 0 && onlyDigits.length <= 12) {
+        setFn(formatDigitsToDateTimeLocal(onlyDigits));
+        return;
+      }
+    }
+    setFn(next);
+  };
 
   const salvar = async () => {
     try {
@@ -127,7 +157,9 @@ const HorariosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                 type="datetime-local"
                 className="w-full border border-gray-300 p-2 md:p-2 rounded focus:ring focus:ring-blue-500 text-sm"
                 value={inicio}
-                onChange={(e) => setInicio(e.target.value)}
+                inputMode="numeric"
+                placeholder="aaaa-mm-ddThh:mm"
+                onChange={(e) => handleDateTimeInput(e.target.value, setInicio)}
               />
             </div>
             <div>
@@ -136,7 +168,9 @@ const HorariosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                 type="datetime-local"
                 className="w-full border border-gray-300 p-2 md:p-2 rounded focus:ring focus:ring-blue-500 text-sm"
                 value={chegada}
-                onChange={(e) => setChegada(e.target.value)}
+                inputMode="numeric"
+                placeholder="aaaa-mm-ddThh:mm"
+                onChange={(e) => handleDateTimeInput(e.target.value, setChegada)}
               />
             </div>
             <div>
@@ -145,7 +179,9 @@ const HorariosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                 type="datetime-local"
                 className="w-full border border-gray-300 p-2 md:p-2 rounded focus:ring focus:ring-blue-500 text-sm"
                 value={termino}
-                onChange={(e) => setTermino(e.target.value)}
+                inputMode="numeric"
+                placeholder="aaaa-mm-ddThh:mm"
+                onChange={(e) => handleDateTimeInput(e.target.value, setTermino)}
               />
             </div>
           </div>
