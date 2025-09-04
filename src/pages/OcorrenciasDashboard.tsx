@@ -719,6 +719,10 @@ const OcorrenciasDashboard: React.FC = () => {
       // Verificar se a ocorrência está finalizada (tem resultado)
       const isFinalizada = ocorrencia.resultado && ['RECUPERADO', 'NAO_RECUPERADO', 'CANCELADO', 'LOCALIZADO'].includes(ocorrencia.resultado);
       const buttonText = isFinalizada ? 'Alterar Resultado' : 'Encerrar Ocorrência';
+      const isRecuperado = ocorrencia.resultado === 'RECUPERADO';
+      const subTextoNormalizado = (ocorrencia.sub_resultado || '').replace(/_/g, ' ').toLowerCase();
+      const usarAbreviacaoRecuperado = Boolean(isFinalizada && isRecuperado && subTextoNormalizado.includes('sem rastreio') && subTextoNormalizado.includes('consulta apoio'));
+      const resultadoDisplay = usarAbreviacaoRecuperado ? 'Recuperado s/rastreio cons apoio' : String(ocorrencia.resultado || '');
 
       return (
     <div key={ocorrencia.id} className={`bg-gradient-to-br ${cardColor} backdrop-blur-sm rounded-xl md:rounded-2xl shadow-lg border p-4 md:p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden`}>
@@ -726,7 +730,7 @@ const OcorrenciasDashboard: React.FC = () => {
       <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-gradient-to-bl from-white/20 to-transparent rounded-full -translate-y-12 md:-translate-y-16 translate-x-12 md:translate-x-16"></div>
       
       <div className="relative z-10">
-        <div className="flex justify-between items-start mb-3 md:mb-4">
+        <div className="flex flex-wrap justify-between items-start gap-2 mb-3 md:mb-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 md:gap-2 sm:gap-3 mb-2">
               <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-2 md:px-3 py-1 rounded-full text-xs md:text-xs sm:text-sm font-bold">
@@ -738,13 +742,12 @@ const OcorrenciasDashboard: React.FC = () => {
             <p className="text-slate-500 text-xs flex flex-wrap items-center gap-x-2 gap-y-1">
               <span className="inline-flex items-center gap-1 min-w-0">
                 <User className="w-3 h-3" />
-                <span className="truncate max-w-[140px] sm:max-w-[200px]">{String(ocorrencia.operador || '–')}</span>
+                <span className="truncate max-w-[120px] sm:max-w-[200px]">{String(ocorrencia.operador || '–')}</span>
               </span>
-              <span className="hidden sm:inline">•</span>
-              <span className="truncate max-w-[140px] sm:max-w-[200px]">{String(ocorrencia.tipo || '–')}</span>
+              <span className="truncate max-w-[140px] sm:max-w-[220px] pl-2 ml-2 border-l border-slate-300">{String(ocorrencia.tipo || '–')}</span>
             </p>
           </div>
-          <div className="flex-shrink-0 ml-2 md:ml-4 hidden sm:block">
+          <div className="hidden">
             {(() => {
               if ((ocorrencia.status || '').toLowerCase() === 'em_andamento') {
                 return (
@@ -756,11 +759,10 @@ const OcorrenciasDashboard: React.FC = () => {
                 );
               }
                     if (ocorrencia.resultado && ['RECUPERADO', 'NAO_RECUPERADO', 'CANCELADO', 'LOCALIZADO'].includes(ocorrencia.resultado)) {
-        const isRecuperado = ocorrencia.resultado === 'RECUPERADO';
         const isCancelado = ocorrencia.resultado === 'CANCELADO';
         const isLocalizado = ocorrencia.resultado === 'LOCALIZADO';
                 return (
-                  <span className={`inline-flex items-center px-2 md:px-3 py-1 rounded-full text-xs font-medium shadow-sm ${
+                  <span className={`inline-flex items-start px-2 md:px-3 py-1 rounded-full text-xs font-medium shadow-sm w-full whitespace-normal break-words text-left leading-snug ${
                     isRecuperado ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white' : 
                     isCancelado ? 'bg-gradient-to-r from-red-500 to-pink-500 text-white' : 
                     isLocalizado ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white' :
@@ -769,9 +771,9 @@ const OcorrenciasDashboard: React.FC = () => {
                     {isRecuperado && <CheckCircle className="w-3 h-3 mr-1" />}
                     {isCancelado && <XCircle className="w-3 h-3 mr-1" />}
                     {isLocalizado && <MapPin className="w-3 h-3 mr-1" />}
-                    <span className="truncate">{String(ocorrencia.resultado)}</span>
-                    {ocorrencia.sub_resultado && isRecuperado && (
-                      <span className="ml-1 text-xs opacity-90">({ocorrencia.sub_resultado.replace(/_/g, ' ').toLowerCase()})</span>
+                    <span className="whitespace-normal break-words">{resultadoDisplay}</span>
+                    {ocorrencia.sub_resultado && isRecuperado && !usarAbreviacaoRecuperado && (
+                      <span className="ml-1 text-xs opacity-90 hidden lg:inline">({ocorrencia.sub_resultado.replace(/_/g, ' ').toLowerCase()})</span>
                     )}
                   </span>
                 );
@@ -785,8 +787,8 @@ const OcorrenciasDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Badge de resultado em linha separada no mobile para evitar sobreposição */}
-        <div className="sm:hidden mb-3 -mt-2">
+        {/* Badge de resultado em linha separada para todas as resoluções */}
+        <div className="mb-3 mt-1">
           {(() => {
             if ((ocorrencia.status || '').toLowerCase() === 'em_andamento') {
               return (
@@ -797,11 +799,10 @@ const OcorrenciasDashboard: React.FC = () => {
               );
             }
             if (ocorrencia.resultado && ['RECUPERADO', 'NAO_RECUPERADO', 'CANCELADO', 'LOCALIZADO'].includes(ocorrencia.resultado)) {
-              const isRecuperado = ocorrencia.resultado === 'RECUPERADO';
               const isCancelado = ocorrencia.resultado === 'CANCELADO';
               const isLocalizado = ocorrencia.resultado === 'LOCALIZADO';
               return (
-                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium shadow-sm ${
+                <span className={`inline-flex items-start px-2 py-1 rounded-full text-xs font-medium shadow-sm w-full whitespace-normal break-words text-left leading-snug ${
                   isRecuperado ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white' : 
                   isCancelado ? 'bg-gradient-to-r from-red-500 to-pink-500 text-white' : 
                   isLocalizado ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white' :
@@ -810,8 +811,8 @@ const OcorrenciasDashboard: React.FC = () => {
                   {isRecuperado && <CheckCircle className="w-3 h-3 mr-1" />}
                   {isCancelado && <XCircle className="w-3 h-3 mr-1" />}
                   {isLocalizado && <MapPin className="w-3 h-3 mr-1" />}
-                  <span className="truncate max-w-[220px]">{String(ocorrencia.resultado)}</span>
-                  {ocorrencia.sub_resultado && isRecuperado && (
+                  <span className="whitespace-normal break-words">{resultadoDisplay}</span>
+                  {ocorrencia.sub_resultado && isRecuperado && !usarAbreviacaoRecuperado && (
                     <span className="ml-1 text-xs opacity-90">({ocorrencia.sub_resultado.replace(/_/g, ' ').toLowerCase()})</span>
                   )}
                 </span>
@@ -1255,7 +1256,7 @@ const OcorrenciasDashboard: React.FC = () => {
               ) : (
                 <div className="p-4 md:p-3 sm:p-6">
                   {layout === 'cards' ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 p-3 sm:p-4 lg:p-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 p-3 sm:p-4 lg:p-6">
                       {ocorrenciasEmAndamento.map((ocorrencia, index) => {
                         try {
                           // ✅ OTIMIZAÇÃO: Lazy loading - renderizar apenas cards visíveis
@@ -1486,7 +1487,7 @@ const OcorrenciasDashboard: React.FC = () => {
                 ) : (
                   <div className="p-4 sm:p-6">
                     {layout === 'cards' ? (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 p-3 sm:p-4 lg:p-6">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 p-3 sm:p-4 lg:p-6">
                         {ocorrenciasFinalizadasUltimas24h.map((ocorrencia, index) => {
                           try {
                             // ✅ OTIMIZAÇÃO: Lazy loading - renderizar apenas cards visíveis
