@@ -588,13 +588,18 @@ const OcorrenciasDashboard: React.FC = () => {
     }
   };
 
-  // ✅ OTIMIZAÇÃO: Memoizar formatação de data/hora para melhor performance
+  // ✅ OTIMIZAÇÃO: Memoizar formatação de data/hora curta (dd/MM/yy HH:mm)
   const formatarDataHora = useCallback((iso?: string | null) => {
     if (!iso || typeof iso !== 'string') return '';
     try {
       const d = new Date(iso);
       if (isNaN(d.getTime())) return '';
-      return `${d.toLocaleDateString()} ${d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+      const dia = String(d.getDate()).padStart(2, '0');
+      const mes = String(d.getMonth() + 1).padStart(2, '0');
+      const ano2 = String(d.getFullYear()).slice(-2);
+      const hora = String(d.getHours()).padStart(2, '0');
+      const minuto = String(d.getMinutes()).padStart(2, '0');
+      return `${dia}/${mes}/${ano2} ${hora}:${minuto}`;
     } catch (error) {
       console.error('Erro ao formatar data/hora:', error, 'valor:', iso);
       return '';
@@ -691,7 +696,14 @@ const OcorrenciasDashboard: React.FC = () => {
 
   // Função para lidar com o clique no botão de status
   const handleStatusClick = (ocorrencia: Ocorrencia) => {
-    // Sempre abre o popup; validação será feita dentro do popup ao salvar
+    const validacao = podeFinalizarOcorrencia(ocorrencia);
+    
+    if (!validacao.podeFinalizar) {
+      alert(`❌ Não é possível finalizar a ocorrência.\n\nOs seguintes campos precisam ser preenchidos:\n\n${validacao.erros.join('\n')}\n\nPor favor, complete todos os campos obrigatórios antes de finalizar.`);
+      return;
+    }
+    
+    // Se tudo estiver válido, abre o popup de status
     handlePopupOpen(ocorrencia.id, 'status');
   };
 
@@ -719,10 +731,6 @@ const OcorrenciasDashboard: React.FC = () => {
       // Verificar se a ocorrência está finalizada (tem resultado)
       const isFinalizada = ocorrencia.resultado && ['RECUPERADO', 'NAO_RECUPERADO', 'CANCELADO', 'LOCALIZADO'].includes(ocorrencia.resultado);
       const buttonText = isFinalizada ? 'Alterar Resultado' : 'Encerrar Ocorrência';
-      const isRecuperado = ocorrencia.resultado === 'RECUPERADO';
-      const subTextoNormalizado = (ocorrencia.sub_resultado || '').replace(/_/g, ' ').toLowerCase();
-      const usarAbreviacaoRecuperado = Boolean(isFinalizada && isRecuperado && subTextoNormalizado.includes('sem rastreio') && subTextoNormalizado.includes('consulta apoio'));
-      const resultadoDisplay = usarAbreviacaoRecuperado ? 'Recuperado s/rastreio cons apoio' : String(ocorrencia.resultado || '');
 
       return (
     <div key={ocorrencia.id} className={`bg-gradient-to-br ${cardColor} backdrop-blur-sm rounded-xl md:rounded-2xl shadow-lg border p-4 md:p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden`}>
@@ -738,53 +746,17 @@ const OcorrenciasDashboard: React.FC = () => {
               </div>
               <span className="text-slate-500 text-xs md:text-xs sm:text-xs font-medium">#{ocorrencia.id}</span>
             </div>
-            <p className="text-slate-700 text-xs md:text-xs sm:text-sm mb-1 font-medium truncate">{getNomeCliente(String(ocorrencia.cliente || '')) || '–'}</p>
-            <p className="text-slate-500 text-xs flex flex-wrap items-center gap-x-2 gap-y-1">
+            <p className="text-slate-700 text-[11px] md:text-xs sm:text-sm mb-1 font-medium truncate">{getNomeCliente(String(ocorrencia.cliente || '')) || '–'}</p>
+            <p className="text-slate-500 text-[11px] md:text-xs flex flex-wrap items-center gap-x-2 gap-y-1 min-w-0">
               <span className="inline-flex items-center gap-1 min-w-0">
                 <User className="w-3 h-3" />
                 <span className="truncate max-w-[120px] sm:max-w-[200px]">{String(ocorrencia.operador || '–')}</span>
               </span>
-              <span className="truncate max-w-[140px] sm:max-w-[220px] pl-2 ml-2 border-l border-slate-300">{String(ocorrencia.tipo || '–')}</span>
+              <span className="hidden sm:inline">•</span>
+              <span className="truncate max-w-[120px] sm:max-w-[200px]">{String(ocorrencia.tipo || '–')}</span>
             </p>
           </div>
-          <div className="hidden">
-            {(() => {
-              if ((ocorrencia.status || '').toLowerCase() === 'em_andamento') {
-                return (
-                  <span className="inline-flex items-center px-2 md:px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-sm">
-                    <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-white rounded-full mr-1 md:mr-1.5 animate-pulse"></div>
-                    <span className="hidden sm:inline">Em Andamento</span>
-                    <span className="sm:hidden">Ativo</span>
-                  </span>
-                );
-              }
-                    if (ocorrencia.resultado && ['RECUPERADO', 'NAO_RECUPERADO', 'CANCELADO', 'LOCALIZADO'].includes(ocorrencia.resultado)) {
-        const isCancelado = ocorrencia.resultado === 'CANCELADO';
-        const isLocalizado = ocorrencia.resultado === 'LOCALIZADO';
-                return (
-                  <span className={`inline-flex items-start px-2 md:px-3 py-1 rounded-full text-xs font-medium shadow-sm w-full whitespace-normal break-words text-left leading-snug ${
-                    isRecuperado ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white' : 
-                    isCancelado ? 'bg-gradient-to-r from-red-500 to-pink-500 text-white' : 
-                    isLocalizado ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white' :
-                    'bg-gradient-to-r from-yellow-500 to-orange-500 text-white'
-                  }`}>
-                    {isRecuperado && <CheckCircle className="w-3 h-3 mr-1" />}
-                    {isCancelado && <XCircle className="w-3 h-3 mr-1" />}
-                    {isLocalizado && <MapPin className="w-3 h-3 mr-1" />}
-                    <span className="whitespace-normal break-words">{resultadoDisplay}</span>
-                    {ocorrencia.sub_resultado && isRecuperado && !usarAbreviacaoRecuperado && (
-                      <span className="ml-1 text-xs opacity-90 hidden lg:inline">({ocorrencia.sub_resultado.replace(/_/g, ' ').toLowerCase()})</span>
-                    )}
-                  </span>
-                );
-              }
-              return (
-                <span className="inline-flex items-center px-2 md:px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-slate-500 to-gray-500 text-white shadow-sm">
-                  <span className="truncate">{String(ocorrencia.status || '–')}</span>
-                </span>
-              );
-            })()}
-          </div>
+          <div className="hidden"></div>
         </div>
 
         {/* Badge de resultado em linha separada para todas as resoluções */}
@@ -799,6 +771,7 @@ const OcorrenciasDashboard: React.FC = () => {
               );
             }
             if (ocorrencia.resultado && ['RECUPERADO', 'NAO_RECUPERADO', 'CANCELADO', 'LOCALIZADO'].includes(ocorrencia.resultado)) {
+              const isRecuperado = ocorrencia.resultado === 'RECUPERADO';
               const isCancelado = ocorrencia.resultado === 'CANCELADO';
               const isLocalizado = ocorrencia.resultado === 'LOCALIZADO';
               return (
@@ -811,8 +784,8 @@ const OcorrenciasDashboard: React.FC = () => {
                   {isRecuperado && <CheckCircle className="w-3 h-3 mr-1" />}
                   {isCancelado && <XCircle className="w-3 h-3 mr-1" />}
                   {isLocalizado && <MapPin className="w-3 h-3 mr-1" />}
-                  <span className="whitespace-normal break-words">{resultadoDisplay}</span>
-                  {ocorrencia.sub_resultado && isRecuperado && !usarAbreviacaoRecuperado && (
+                  <span className="whitespace-normal break-words">{String(ocorrencia.resultado)}</span>
+                  {ocorrencia.sub_resultado && isRecuperado && (
                     <span className="ml-1 text-xs opacity-90">({ocorrencia.sub_resultado.replace(/_/g, ' ').toLowerCase()})</span>
                   )}
                 </span>
@@ -829,24 +802,24 @@ const OcorrenciasDashboard: React.FC = () => {
         {/* Informações em destaque - Prestador e Horários para todos os dispositivos */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 lg:gap-4 mb-3 sm:mb-4">
           {/* Prestador */}
-          <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-lg p-2 sm:p-3 border border-indigo-200 shadow-sm col-span-full sm:col-span-1">
+          <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-lg p-2 sm:p-3 border border-indigo-200 shadow-sm col-span-full sm:col-span-1 min-h-[100px]">
             <div className="flex items-center gap-2 mb-1">
               <User className="w-3 h-3 sm:w-4 sm:h-4 text-indigo-600" />
               <span className="text-indigo-800 font-semibold text-xs sm:text-sm">Prestador</span>
             </div>
-            <p className="text-indigo-900 font-bold text-xs sm:text-sm truncate max-w-full">{String(ocorrencia.prestador || '–')}</p>
+            <p className="text-indigo-900 font-bold text-[11px] sm:text-xs truncate max-w-full">{String(ocorrencia.prestador || '–')}</p>
           </div>
           
           {/* Horários */}
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-2 sm:p-3 border border-purple-200 shadow-sm">
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-2 sm:p-3 border border-purple-200 shadow-sm min-h-[100px] md:min-w-[240px] lg:min-w-[260px] xl:min-w-[280px]">
             <div className="flex items-center gap-2 mb-1">
               <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-purple-600" />
               <span className="text-purple-800 font-semibold text-xs sm:text-sm">Horários</span>
             </div>
-            <div className="text-xs text-purple-700 space-y-0.5">
-              {ocorrencia.inicio ? <div className="truncate">Início: {formatarDataHora(ocorrencia.inicio)}</div> : null}
-              {ocorrencia.chegada ? <div className="truncate">Chegada: {formatarDataHora(ocorrencia.chegada)}</div> : null}
-              {ocorrencia.termino ? <div className="truncate">Término: {formatarDataHora(ocorrencia.termino)}</div> : null}
+            <div className="text-[11px] sm:text-xs text-purple-700 space-y-0.5 leading-tight tracking-tight">
+              {ocorrencia.inicio ? <div className="truncate" title={formatarDataHora(ocorrencia.inicio)}>Início: {formatarDataHora(ocorrencia.inicio)}</div> : null}
+              {ocorrencia.chegada ? <div className="truncate" title={formatarDataHora(ocorrencia.chegada)}>Local: {formatarDataHora(ocorrencia.chegada)}</div> : null}
+              {ocorrencia.termino ? <div className="truncate" title={formatarDataHora(ocorrencia.termino)}>Final: {formatarDataHora(ocorrencia.termino)}</div> : null}
               {!ocorrencia.inicio && !ocorrencia.chegada && !ocorrencia.termino && <div>–</div>}
             </div>
           </div>
@@ -891,7 +864,7 @@ const OcorrenciasDashboard: React.FC = () => {
             }`}
           >
             <User className={`w-4 h-4 sm:w-5 sm:h-5 ${ocorrencia.prestador ? 'text-green-600' : 'text-blue-600'}`} />
-            <span className="text-xs font-semibold leading-tight text-center px-1 leading-tight">Prestador</span>
+            <span className="text-[11px] sm:text-xs font-semibold leading-tight text-center px-1">Prestador</span>
           </Button>
           <Button 
             variant="ghost" 
@@ -904,7 +877,7 @@ const OcorrenciasDashboard: React.FC = () => {
             }`}
           >
             <Users className={`w-4 h-4 sm:w-5 sm:h-5 ${segundoApoioStatus[ocorrencia.id] ? 'text-green-600' : 'text-purple-600'}`} />
-            <span className="text-xs font-semibold leading-tight text-center px-1 leading-tight">2º Apoio</span>
+            <span className="text-[11px] sm:text-xs font-semibold leading-tight text-center px-1">2º Apoio</span>
           </Button>
           <Button 
             variant="ghost" 
@@ -917,7 +890,7 @@ const OcorrenciasDashboard: React.FC = () => {
             }`}
           >
             <DollarSign className={`w-4 h-4 sm:w-5 sm:h-5 ${temDespesasPreenchidas(ocorrencia) ? 'text-green-600' : 'text-blue-600'}`} />
-            <span className="text-xs font-semibold leading-tight text-center px-1">Despesas</span>
+            <span className="text-[11px] sm:text-xs font-semibold leading-tight text-center px-1">Despesas</span>
           </Button>
           <Button 
             variant="ghost" 
@@ -930,7 +903,7 @@ const OcorrenciasDashboard: React.FC = () => {
             }`}
           >
             <Image className={`w-4 h-4 sm:w-5 sm:h-5 ${ocorrencia.fotos && ocorrencia.fotos.length > 0 ? 'text-green-600' : 'text-blue-600'}`} />
-            <span className="text-xs font-semibold leading-tight text-center px-1">Fotos</span>
+            <span className="text-[11px] sm:text-xs font-semibold leading-tight text-center px-1">Fotos</span>
           </Button>
           <Button 
             variant="ghost" 
@@ -943,7 +916,7 @@ const OcorrenciasDashboard: React.FC = () => {
             }`}
           >
             <FileText className={`w-4 h-4 sm:w-5 sm:h-5 ${ocorrencia.descricao ? 'text-green-600' : 'text-blue-600'}`} />
-            <span className="text-xs font-semibold leading-tight text-center px-1">Descrição</span>
+            <span className="text-[11px] sm:text-xs font-semibold leading-tight text-center px-1">Descrição</span>
           </Button>
           <Button 
             variant="ghost" 
@@ -952,7 +925,7 @@ const OcorrenciasDashboard: React.FC = () => {
             className="flex flex-col items-center gap-2 p-3 transition-all duration-200 rounded-xl text-xs font-medium min-h-[70px] sm:min-h-[60px] shadow-sm hover:shadow-md bg-gray-50 border border-gray-200 text-gray-700 hover:bg-gray-100"
           >
             <Edit className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
-            <span className="text-xs font-semibold leading-tight text-center px-1">Editar</span>
+            <span className="text-[11px] sm:text-xs font-semibold leading-tight text-center px-1">Editar</span>
           </Button>
           <Button 
             variant="ghost" 
@@ -965,7 +938,7 @@ const OcorrenciasDashboard: React.FC = () => {
             }`}
           >
             <ClipboardCopy className={`w-4 h-4 sm:w-5 sm:h-5 ${ocorrencia.passagem_servico ? 'text-green-600' : 'text-blue-600'}`} />
-            <span className="text-xs font-semibold leading-tight text-center px-1">Passagem</span>
+            <span className="text-[11px] sm:text-xs font-semibold leading-tight text-center px-1">Passagem</span>
           </Button>
           <Button 
             variant="ghost" 
@@ -981,7 +954,7 @@ const OcorrenciasDashboard: React.FC = () => {
             }`}
           >
             <CheckSquare className={`w-4 h-4 sm:w-5 sm:h-5 ${checklistStatus[ocorrencia.id] ? 'text-green-600' : 'text-blue-600'}`} />
-            <span className="text-xs font-semibold leading-tight text-center px-1">Check-list</span>
+            <span className="text-[11px] sm:text-xs font-semibold leading-tight text-center px-1">Check-list</span>
           </Button>
         </div>
         
@@ -1256,7 +1229,7 @@ const OcorrenciasDashboard: React.FC = () => {
               ) : (
                 <div className="p-4 md:p-3 sm:p-6">
                   {layout === 'cards' ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 p-3 sm:p-4 lg:p-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 p-3 sm:p-4 lg:p-6">
                       {ocorrenciasEmAndamento.map((ocorrencia, index) => {
                         try {
                           // ✅ OTIMIZAÇÃO: Lazy loading - renderizar apenas cards visíveis
@@ -1318,8 +1291,8 @@ const OcorrenciasDashboard: React.FC = () => {
                               <td className="px-2 md:px-3 py-2 text-xs">
                                 <div className="space-y-0.5">
                                   {o.inicio ? <div className="truncate" title={formatarDataHora(o.inicio)}>Início: {formatarDataHora(o.inicio)}</div> : null}
-                                  {o.chegada ? <div className="truncate" title={formatarDataHora(o.chegada)}>Chegada: {formatarDataHora(o.chegada)}</div> : null}
-                                  {o.termino ? <div className="truncate" title={formatarDataHora(o.termino)}>Término: {formatarDataHora(o.termino)}</div> : null}
+                                  {o.chegada ? <div className="truncate" title={formatarDataHora(o.chegada)}>Local: {formatarDataHora(o.chegada)}</div> : null}
+                                  {o.termino ? <div className="truncate" title={formatarDataHora(o.termino)}>Final: {formatarDataHora(o.termino)}</div> : null}
                                   {!o.inicio && !o.chegada && !o.termino && <div>–</div>}
                                 </div>
                               </td>
@@ -1487,7 +1460,7 @@ const OcorrenciasDashboard: React.FC = () => {
                 ) : (
                   <div className="p-4 sm:p-6">
                     {layout === 'cards' ? (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 p-3 sm:p-4 lg:p-6">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 p-3 sm:p-4 lg:p-6">
                         {ocorrenciasFinalizadasUltimas24h.map((ocorrencia, index) => {
                           try {
                             // ✅ OTIMIZAÇÃO: Lazy loading - renderizar apenas cards visíveis
@@ -1549,8 +1522,8 @@ const OcorrenciasDashboard: React.FC = () => {
                                 <td className="px-2 md:px-3 py-2 text-xs">
                                   <div className="space-y-0.5">
                                     {o.inicio ? <div className="truncate" title={formatarDataHora(o.inicio)}>Início: {formatarDataHora(o.inicio)}</div> : null}
-                                    {o.chegada ? <div className="truncate" title={formatarDataHora(o.chegada)}>Chegada: {formatarDataHora(o.chegada)}</div> : null}
-                                    {o.termino ? <div className="truncate" title={formatarDataHora(o.termino)}>Término: {formatarDataHora(o.termino)}</div> : null}
+                                    {o.chegada ? <div className="truncate" title={formatarDataHora(o.chegada)}>Local: {formatarDataHora(o.chegada)}</div> : null}
+                                    {o.termino ? <div className="truncate" title={formatarDataHora(o.termino)}>Final: {formatarDataHora(o.termino)}</div> : null}
                                     {!o.inicio && !o.chegada && !o.termino && <div>–</div>}
                                   </div>
                                 </td>
@@ -1620,11 +1593,9 @@ const OcorrenciasDashboard: React.FC = () => {
         {popupData && (
           <Dialog open={!!popupData} onOpenChange={() => handlePopupClose()}>
             <DialogContent className={`bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 ${
-              popupData.type === 'fotos'
-                ? 'max-w-7xl w-[95vw] h-[90vh] overflow-y-auto'
-                : (popupData.type === 'horarios' || popupData.type === 'km')
-                  ? 'max-w-[95vw] md:max-w-xl lg:max-w-lg xl:max-w-[720px] max-h-[90vh] overflow-y-auto'
-                  : 'max-w-[95vw] md:max-w-4xl max-h-[90vh] overflow-y-auto'
+              popupData.type === 'fotos' 
+                ? 'max-w-7xl w-[95vw] h-[90vh] overflow-y-auto' 
+                : 'max-w-[95vw] md:max-w-4xl max-h-[90vh] overflow-y-auto'
             }`}>
               {popupData.type === 'horarios' && (
                 <HorariosPopup
@@ -1640,7 +1611,39 @@ const OcorrenciasDashboard: React.FC = () => {
                   onClose={handlePopupClose}
                 />
               )}
-              {/* Removido: prestador, prestador-adicional e despesas (cada um possui seu próprio Dialog) */}
+              {popupData.type === 'prestador' && (
+                <PrestadorPopup
+                  ocorrencia={[...ocorrenciasEmAndamento, ...ocorrenciasFinalizadas].find(o => o.id === popupData.id)!}
+                  onUpdate={(dados) => handleUpdate(popupData.id, dados)}
+                  onClose={handlePopupClose}
+                  open={popupData.type === 'prestador'}
+                  onOpenChange={(open) => {
+                    if (!open) handlePopupClose();
+                  }}
+                />
+              )}
+              {popupData.type === 'prestador-adicional' && (
+                <PrestadorAdicionalPopup
+                  ocorrencia={[...ocorrenciasEmAndamento, ...ocorrenciasFinalizadas].find(o => o.id === popupData.id)!}
+                  onUpdate={(dados) => handleUpdate(popupData.id, dados)}
+                  onClose={handlePopupClose}
+                  isOpen={popupData.type === 'prestador-adicional'}
+                  onOpenChange={(open) => {
+                    if (!open) handlePopupClose();
+                  }}
+                />
+              )}
+              {popupData.type === 'despesas' && (
+                <DespesasPopup
+                  ocorrencia={[...ocorrenciasEmAndamento, ...ocorrenciasFinalizadas].find(o => o.id === popupData.id)!}
+                  onUpdate={(dados) => handleUpdate(popupData.id, dados)}
+                  onClose={handlePopupClose}
+                  open={popupData.type === 'despesas'}
+                  onOpenChange={(open) => {
+                    if (!open) handlePopupClose();
+                  }}
+                />
+              )}
               {popupData.type === 'fotos' && (
                 <FotosPopup
                   ocorrencia={[...ocorrenciasEmAndamento, ...ocorrenciasFinalizadas].find(o => o.id === popupData.id)!}
@@ -1669,22 +1672,17 @@ const OcorrenciasDashboard: React.FC = () => {
                   onClose={handlePopupClose}
                 />
               )}
-              {popupData.type === 'status' && (() => {
-                const occ = [...ocorrenciasEmAndamento, ...ocorrenciasFinalizadas].find(o => o.id === popupData.id)!;
-                const validacao = podeFinalizarOcorrencia(occ);
-                return (
-                  <StatusRecuperacaoPopup
-                    ocorrencia={occ}
-                    onUpdate={(dados) => {
-                      console.log('🔄 [StatusRecuperacaoPopup] Dados recebidos:', dados);
-                      handleUpdate(popupData.id, dados);
-                    }}
-                    onClose={handlePopupClose}
-                    restritoCancelar={false}
-                    pendencias={validacao.podeFinalizar ? [] : validacao.erros}
-                  />
-                );
-              })()}
+              {popupData.type === 'status' && (
+                <StatusRecuperacaoPopup
+                  ocorrencia={[...ocorrenciasEmAndamento, ...ocorrenciasFinalizadas].find(o => o.id === popupData.id)!}
+                  onUpdate={(dados) => {
+                    console.log('🔄 [StatusRecuperacaoPopup] Dados recebidos:', dados);
+                    // ✅ CORREÇÃO: Sempre usar handleUpdate para manter consistência
+                    handleUpdate(popupData.id, dados);
+                  }}
+                  onClose={handlePopupClose}
+                />
+              )}
               {popupData.type === 'checklist' && (() => {
                 const todasOcorrencias = [...ocorrenciasEmAndamento, ...ocorrenciasFinalizadas];
                 const ocorrenciaEncontrada = todasOcorrencias.find(o => o.id === popupData.id);
@@ -1704,40 +1702,6 @@ const OcorrenciasDashboard: React.FC = () => {
               })()}
             </DialogContent>
           </Dialog>
-        )}
-        {/* Popups que possuem Dialog próprio (sem Dialog externo) */}
-        {popupData?.type === 'prestador' && (
-          <PrestadorPopup
-            ocorrencia={[...ocorrenciasEmAndamento, ...ocorrenciasFinalizadas].find(o => o.id === popupData.id)!}
-            onUpdate={(dados) => handleUpdate(popupData.id, dados)}
-            onClose={handlePopupClose}
-            open={true}
-            onOpenChange={(open) => {
-              if (!open) handlePopupClose();
-            }}
-          />
-        )}
-        {popupData?.type === 'prestador-adicional' && (
-          <PrestadorAdicionalPopup
-            ocorrencia={[...ocorrenciasEmAndamento, ...ocorrenciasFinalizadas].find(o => o.id === popupData.id)!}
-            onUpdate={(dados) => handleUpdate(popupData.id, dados)}
-            onClose={handlePopupClose}
-            isOpen={true}
-            onOpenChange={(open) => {
-              if (!open) handlePopupClose();
-            }}
-          />
-        )}
-        {popupData?.type === 'despesas' && (
-          <DespesasPopup
-            ocorrencia={[...ocorrenciasEmAndamento, ...ocorrenciasFinalizadas].find(o => o.id === popupData.id)!}
-            onUpdate={(dados) => handleUpdate(popupData.id, dados)}
-            onClose={handlePopupClose}
-            open={true}
-            onOpenChange={(open) => {
-              if (!open) handlePopupClose();
-            }}
-          />
         )}
         </div>
       </div>

@@ -81,7 +81,7 @@ const DashboardLayout: React.FC<Props> = ({ sidebarButtons, children }) => {
       {/* Sidebar Desktop */}
       <aside 
         className={`${
-          isSidebarCollapsed ? "w-20" : "w-72"
+          isSidebarCollapsed ? "w-20" : "w-56"
         } transition-all duration-300 ease-in-out flex flex-col relative hidden lg:flex`}
         style={{ 
           background: COSTA_THEME.gradients.sidebar,
@@ -437,7 +437,7 @@ const DashboardLayout: React.FC<Props> = ({ sidebarButtons, children }) => {
 
         {/* Main Content Area */}
         <main className="flex-1 p-4 lg:p-8 overflow-auto">
-          <div className="max-w-[1920px] mx-auto">
+          <div className="max-w-none mx-auto">
             {children}
           </div>
         </main>
