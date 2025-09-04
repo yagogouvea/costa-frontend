@@ -158,10 +158,10 @@ const KMPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
   const kmTotal = calculateTotal();
 
   return (
-    <div className="p-3 sm:p-6 w-96 max-w-full">
+    <div className="p-3 sm:p-6 w-full md:max-w-xl lg:max-w-lg xl:max-w-[720px] max-w-full">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-200 pb-4 mb-4">
-        <DialogTitle className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-200 pb-3 md:pb-4 mb-3 md:mb-4">
+        <DialogTitle className="text-base md:text-lg font-semibold text-gray-900 flex items-center gap-2">
           <Calculator size={20} className="text-blue-600" />
           Editar Quilometragem
         </DialogTitle>
@@ -173,22 +173,22 @@ const KMPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
         </button>
       </div>
 
-      <DialogDescription className="text-gray-600 mb-4">
+      <DialogDescription className="text-gray-600 mb-3 md:mb-4 text-sm">
         Informe o KM inicial e/ou final para registrar a quilometragem. 
         Você pode salvar apenas o KM inicial e completar com o KM final posteriormente.
         KM inicial e final podem ser 0.
       </DialogDescription>
 
-      <div className="space-y-4">
+      <div className="space-y-3 md:space-y-4">
         {/* KM Inicial */}
         <div>
           <label className="text-xs sm:text-sm font-medium text-gray-700 block mb-2">
             KM Inicial
           </label>
-                     <input
+          <input
              type="number"
              step="0.1"
-             className={`w-full border-2 p-3 rounded-lg transition-colors ${
+             className={`w-full border-2 p-2 md:p-3 rounded-lg transition-colors text-sm ${
                errors.inicial 
                  ? 'border-red-300 focus:border-red-500 focus:ring-red-200' 
                  : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200'
@@ -210,10 +210,10 @@ const KMPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
           <label className="text-xs sm:text-sm font-medium text-gray-700 block mb-2">
             KM Final <span className="text-gray-500 text-xs">(opcional)</span>
           </label>
-                     <input
+          <input
              type="number"
              step="0.1"
-             className={`w-full border-2 p-3 rounded-lg transition-colors ${
+             className={`w-full border-2 p-2 md:p-3 rounded-lg transition-colors text-sm ${
                errors.final 
                  ? 'border-red-300 focus:border-red-500 focus:ring-red-200' 
                  : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200'
@@ -238,18 +238,18 @@ const KMPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
 
         {/* Resultado do cálculo */}
         {inicial !== '' && (
-          <div className={`p-4 rounded-lg border-2 ${
+          <div className={`p-3 md:p-4 rounded-lg border-2 ${
             kmTotal !== null
               ? kmTotal === 0 || kmTotal <= 50
                 ? 'bg-yellow-50 border-yellow-200'
                 : 'bg-green-50 border-green-200'
               : 'bg-blue-50 border-blue-200'
           }`}>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 md:gap-3">
               <span className="text-xs sm:text-sm font-medium text-gray-700">
                 Status do KM:
               </span>
-              <span className={`text-base sm:text-lg font-bold ${
+              <span className={`text-sm md:text-base font-bold ${
                 kmTotal !== null
                   ? kmTotal === 0 || kmTotal <= 50
                     ? 'text-yellow-600'
@@ -314,10 +314,10 @@ const KMPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
       </div>
 
       {/* Botões de ação */}
-      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-end pt-4 border-t border-gray-200 mt-6">
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-end pt-4 border-t border-gray-200 mt-4 md:mt-6">
         <Button
           onClick={cancelar}
-          className="flex items-center justify-center gap-2 px-6 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700"
+          className="flex items-center justify-center gap-2 px-4 md:px-6 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700"
         >
           <X size={16} />
           Cancelar
@@ -326,7 +326,7 @@ const KMPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
         <Button
           onClick={salvar}
           disabled={!canSave() || isCalculating}
-          className={`flex items-center justify-center gap-2 px-6 py-2 ${
+          className={`flex items-center justify-center gap-2 px-4 md:px-6 py-2 ${
             canSave() 
               ? 'bg-blue-600 hover:bg-blue-700' 
               : 'bg-gray-400 cursor-not-allowed'

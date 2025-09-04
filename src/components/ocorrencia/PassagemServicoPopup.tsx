@@ -131,7 +131,10 @@ const gerarTextoPassagem = async (o: Ocorrencia): Promise<string> => {
 
   // Gerar texto das despesas dinamicamente
   const textoDespesas = despesas && Array.isArray(despesas) && despesas.length > 0 
-    ? despesas.map((desp, index) => `• Despesa ${index + 1}: R$ ${desp.valor?.toFixed(2)} (${desp.tipo})`).join('\n')
+    ? despesas.map((desp, index) => {
+        const obs = desp.descricao ? ` - ${desp.descricao}` : '';
+        return `• Despesa ${index + 1}: R$ ${desp.valor?.toFixed(2)} (${desp.tipo}${obs})`;
+      }).join('\n')
     : '';
 
   // Bloco extra para Marfrig + Simples Verificação

@@ -17,6 +17,7 @@ interface Props {
 const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [checklistExistente, setChecklistExistente] = useState<CheckList | null>(null);
+  const [dispensarChecklist, setDispensarChecklist] = useState<boolean>(false);
 
   // Removido: destinoVeiculo - agora é título do popup
 
@@ -74,6 +75,13 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
     console.log('🔒 CHECKLIST - ID da ocorrência protegido/fixo:', ocorrenciaIdFixo);
     carregarChecklistComId(ocorrenciaIdFixo);
   }, [ocorrenciaIdFixo]);
+
+  // Sincronizar estado local do toggle quando carregar/alterar o checklist existente
+  useEffect(() => {
+    if (checklistExistente) {
+      setDispensarChecklist(!!checklistExistente.dispensado_checklist);
+    }
+  }, [checklistExistente]);
 
   // Log para monitorar mudanças de estado
   useEffect(() => {
@@ -239,7 +247,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
 
   const salvar = async () => {
     // ✅ VALIDAR FORMULÁRIO ANTES DE SALVAR
-    if (!validarFormulario()) {
+    if (!dispensarChecklist && !validarFormulario()) {
       console.log('❌ Formulário com erros de validação:', erros);
       return; // Não prossegue se há erros
     }
@@ -251,16 +259,17 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
       
       const payload: CreateCheckListDTO = {
         ocorrencia_id: ocorrenciaIdFixo, // Usar ID fixo, não o mutável
+        dispensado_checklist: dispensarChecklist,
         
         // Loja
-        loja_selecionada: tipoDestino === 'loja',
+        loja_selecionada: dispensarChecklist ? false : (tipoDestino === 'loja'),
         nome_loja: (tipoDestino === 'loja') ? nomeLoja || undefined : undefined,
         endereco_loja: (tipoDestino === 'loja') ? enderecoLoja || undefined : undefined,
         nome_atendente: (tipoDestino === 'loja') ? nomeAtendente || undefined : undefined,
         matricula_atendente: (tipoDestino === 'loja') ? matriculaAtendente || undefined : undefined,
         
         // Guincho
-        guincho_selecionado: tipoDestino === 'guincho',
+        guincho_selecionado: dispensarChecklist ? false : (tipoDestino === 'guincho'),
         tipo_guincho: (tipoDestino === 'guincho') ? tipoGuincho || undefined : undefined,
         valor_guincho: (tipoDestino === 'guincho' && tipoGuincho === 'particular') ? valorGuincho || undefined : undefined,
         telefone_guincho: (tipoDestino === 'guincho' && tipoGuincho === 'particular') ? telefoneGuincho || undefined : undefined,
@@ -270,7 +279,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
         endereco_destino_guincho: (tipoDestino === 'guincho') ? enderecoDestinoGuincho || undefined : undefined,
         
         // Apreensão
-        apreensao_selecionada: tipoDestino === 'apreensao',
+        apreensao_selecionada: dispensarChecklist ? false : (tipoDestino === 'apreensao'),
         nome_dp_batalhao: (tipoDestino === 'apreensao') ? nomeDpBatalhao || undefined : undefined,
         endereco_apreensao: (tipoDestino === 'apreensao') ? enderecoApreensao || undefined : undefined,
         numero_bo_noc: (tipoDestino === 'apreensao') ? numeroBoNoc || undefined : undefined,
@@ -349,6 +358,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                 value="loja"
                 checked={tipoDestino === 'loja'}
                 onChange={(e) => {
+                  if (dispensarChecklist) return;
                   setTipoDestino(e.target.value);
                   limparErro('tipoDestino');
                 }}
@@ -364,6 +374,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                 value="guincho"
                 checked={tipoDestino === 'guincho'}
                 onChange={(e) => {
+                  if (dispensarChecklist) return;
                   setTipoDestino(e.target.value);
                   limparErro('tipoDestino');
                 }}
@@ -379,6 +390,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                 value="apreensao"
                 checked={tipoDestino === 'apreensao'}
                 onChange={(e) => {
+                  if (dispensarChecklist) return;
                   setTipoDestino(e.target.value);
                   limparErro('tipoDestino');
                 }}
@@ -393,8 +405,37 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
           )}
         </div>
 
+        {/* Dispensar Checklist */}
+        <div className="border-b pb-4">
+          <div
+            className={`flex items-start gap-3 p-3 rounded-lg cursor-pointer select-none ${dispensarChecklist ? 'bg-yellow-50 border border-yellow-300' : 'bg-gray-50 border border-gray-200'}`}
+            onClick={() => setDispensarChecklist((v) => !v)}
+          >
+            <input
+              type="checkbox"
+              id="dispensar_checklist"
+              checked={dispensarChecklist}
+              onChange={(e) => setDispensarChecklist(e.target.checked)}
+              className="mt-0.5 h-5 w-5 text-yellow-600 cursor-pointer"
+            />
+            <div>
+              <Label htmlFor="dispensar_checklist" className="font-semibold text-gray-800 cursor-pointer">
+                Dispensar Checklist
+              </Label>
+              <p className="text-sm mt-1 ${dispensarChecklist ? 'text-yellow-800' : 'text-gray-600'}">
+                {dispensarChecklist ? 'Checklist DISPENSADO para esta ocorrência.' : 'Marque esta opção quando não for necessário preencher o checklist completo.'}
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Seções Condicionais */}
-        <div className="space-y-6">
+        {dispensarChecklist && (
+          <div className="mt-3 mb-2 p-3 bg-yellow-50 border border-yellow-300 rounded text-yellow-900 text-sm">
+            Campos do checklist bloqueados porque a opção "Dispensar Checklist" está ativa.
+          </div>
+        )}
+        <div className={`space-y-6 ${dispensarChecklist ? 'pointer-events-none opacity-60' : ''}`}>
           {/* Loja */}
           {tipoDestino === 'loja' && (
             <div className="border p-4 rounded-lg bg-blue-50">
@@ -728,7 +769,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
         </div>
 
         {/* Seção: Informações Gerais */}
-        <div className="space-y-4 border-t pt-4">
+        <div className={`space-y-4 border-t pt-4 ${dispensarChecklist ? 'pointer-events-none opacity-60' : ''}`}>
           <h3 className="text-md font-semibold text-gray-800">Informações Gerais</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -916,6 +957,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                     value={opcao.value}
                     checked={posseVeiculo === opcao.value}
                     onChange={(e) => {
+                      if (dispensarChecklist) return;
                       setPosseVeiculo(e.target.value);
                       limparErro('posseVeiculo');
                     }}
@@ -937,6 +979,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                   placeholder="Adicione observações sobre a posse do veículo"
                   value={observacaoPosse}
                   onChange={(e) => {
+                    if (dispensarChecklist) return;
                     setObservacaoPosse(e.target.value);
                     limparErro('observacaoPosse');
                   }}
@@ -956,7 +999,10 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
             <Textarea
               placeholder="Adicione observações gerais sobre a ocorrência"
               value={observacaoOcorrencia}
-              onChange={(e) => setObservacaoOcorrencia(e.target.value)}
+              onChange={(e) => {
+                if (dispensarChecklist) return;
+                setObservacaoOcorrencia(e.target.value);
+              }}
               rows={4}
             />
           </div>

@@ -53,6 +53,8 @@ function toDateInputValue(dateStr: string | null | undefined) {
 const EditarDadosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
   // Estados para os campos básicos
   const [cliente, setCliente] = useState(ocorrencia.cliente || '');
+  const [clientes, setClientes] = useState<{ id: string; nome: string; nome_fantasia?: string | null }[]>([]);
+  const [clienteSelecionadoId, setClienteSelecionadoId] = useState<string>('');
   const [subCliente, setSubCliente] = useState(ocorrencia.sub_cliente || '');
   const [tipo, setTipo] = useState(ocorrencia.tipo || '');
   const [tipoVeiculo, setTipoVeiculo] = useState(ocorrencia.tipo_veiculo || '');
@@ -153,6 +155,64 @@ const EditarDadosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) =>
     setConta(ocorrencia.conta || '');
   }, [ocorrencia]);
 
+  // Carregar lista de clientes (igual ao popup de adicionar)
+  useEffect(() => {
+    const carregarClientes = async () => {
+      try {
+        const res = await api.get('/api/clientes');
+        const dados = res.data;
+        let clientesArray: any[];
+        if (dados && typeof dados === 'object' && 'data' in dados && 'total' in dados) {
+          clientesArray = (dados as any).data;
+        } else {
+          clientesArray = Array.isArray(dados) ? dados : [];
+        }
+        const lista = clientesArray.map((c: any) => ({
+          id: String(c.id ?? c.nome),
+          nome: c.nome,
+          nome_fantasia: c.nome_fantasia ?? null
+        }));
+        setClientes(lista);
+
+        // Selecionar o cliente atual da ocorrência se existir na lista
+        const atual = lista.find(c => (c.nome || '').toUpperCase() === (ocorrencia.cliente || '').toUpperCase());
+        if (atual) {
+          setClienteSelecionadoId(atual.id);
+        } else {
+          setClienteSelecionadoId('');
+        }
+      } catch (err) {
+        console.error('❌ Erro ao carregar clientes (EditarDadosPopup):', err);
+        setClientes([]);
+      }
+    };
+    carregarClientes();
+  }, [ocorrencia.cliente]);
+
+  // Renderiza o dropdown de clientes
+  const clientsDropdown = () => {
+    const clientesArray = Array.isArray(clientes) ? clientes : [];
+    return (
+      <Select
+        onValueChange={(val) => {
+          setClienteSelecionadoId(val);
+          const encontrado = clientesArray.find(c => c.id === val);
+          setCliente(encontrado?.nome || '');
+        }}
+        value={clienteSelecionadoId}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="Selecione um cliente" />
+        </SelectTrigger>
+        <SelectContent>
+          {clientesArray.map((c) => (
+            <SelectItem key={c.id} value={c.id}>{c.nome_fantasia || c.nome}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    );
+  };
+
   const salvar = async () => {
     if (!cliente || !tipo || !placas[0]) {
       alert('Preencha ao menos cliente, tipo e placa principal.');
@@ -195,10 +255,18 @@ const EditarDadosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) =>
         conta: conta || undefined
       };
 
-      console.log('Dados sendo enviados para atualização:', dados);
+      // Limpar campos vazios/indefinidos para evitar 500 no backend
+      const clean: Record<string, any> = {};
+      Object.entries(dados).forEach(([k, v]) => {
+        if (v === '' || v === null || v === undefined) return;
+        if (typeof v === 'number' && Number.isNaN(v)) return;
+        clean[k] = v;
+      });
+
+      console.log('Dados sendo enviados para atualização:', clean);
       console.log('ID da ocorrência:', ocorrencia.id);
 
-      const { data } = await api.put(`/api/v1/ocorrencias/${ocorrencia.id}`, dados);
+      const { data } = await api.put(`/api/v1/ocorrencias/${ocorrencia.id}`, clean);
       onUpdate(data);
       onClose();
     } catch (error) {
@@ -230,7 +298,7 @@ const EditarDadosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) =>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           <div>
             <Label>Cliente</Label>
-            <Input value={cliente} onChange={e => setCliente(e.target.value)} />
+            {clientsDropdown()}
           </div>
 
           <div>

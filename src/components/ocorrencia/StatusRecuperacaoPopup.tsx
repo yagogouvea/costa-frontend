@@ -14,11 +14,13 @@ interface Props {
   ocorrencia: Ocorrencia;
   onUpdate: (ocorrenciaAtualizada: Ocorrencia) => void;
   onClose: () => void;
+  restritoCancelar?: boolean;
+  pendencias?: string[];
 }
 
-const StatusRecuperacaoPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
+const StatusRecuperacaoPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, restritoCancelar, pendencias = [] }) => {
   const [resultado, setResultado] = useState<string>(
-    ocorrencia.resultado || 'RECUPERADO'
+    restritoCancelar ? 'CANCELADO' : (ocorrencia.resultado || 'RECUPERADO')
   );
   const [subResultado, setSubResultado] = useState<string | undefined>(
     ocorrencia.sub_resultado
@@ -113,14 +115,14 @@ const StatusRecuperacaoPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose
           }}>
             {opcoesResultado.map(opcao => (
               <div key={opcao.value} className="flex items-center space-x-2 mt-2">
-                <RadioGroupItem value={opcao.value} id={opcao.value} />
+                <RadioGroupItem value={opcao.value} id={opcao.value} disabled={!!restritoCancelar && opcao.value !== 'CANCELADO'} />
                 <Label htmlFor={opcao.value}>{opcao.label}</Label>
               </div>
             ))}
           </RadioGroup>
         </div>
 
-        {resultado === 'RECUPERADO' && (
+        {resultado === 'RECUPERADO' && !restritoCancelar && (
           <div>
             <Label className="text-xs sm:text-sm font-medium">Tipo de Recuperação:</Label>
             <RadioGroup value={subResultado || ''} onValueChange={value => setSubResultado(value)}>
@@ -142,13 +144,31 @@ const StatusRecuperacaoPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose
         <p>• Não Recuperado → Status: "Aguardando" (aparece como "Não Recuperada")</p>
         <p>• Cancelado → Status: "Cancelada" (aparece como "Cancelada")</p>
         <p>• Localizado → Status: "Concluída" (aparece como "Localizada")</p>
+        {restritoCancelar && (
+          <p className="mt-2 text-red-600">Somente a opção "Cancelado" está disponível até preencher os campos obrigatórios.</p>
+        )}
+        {!restritoCancelar && resultado !== 'CANCELADO' && pendencias.length > 0 && (
+          <div className="mt-3 p-2 bg-yellow-50 border border-yellow-200 rounded text-yellow-800">
+            <p className="font-semibold text-xs">Preencha antes de finalizar:</p>
+            <ul className="list-disc ml-4 text-xs">
+              {pendencias.map((p, i) => (
+                <li key={i}>{p}</li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
 
      <DialogFooter className="pt-4">
       <Button variant="destructive" onClick={onClose}>
         Cancelar
       </Button>
-      <Button onClick={salvarStatus} disabled={loading || (resultado === 'RECUPERADO' && !subResultado)}>
+      <Button onClick={salvarStatus} disabled={
+        loading ||
+        (resultado === 'RECUPERADO' && !subResultado) ||
+        (!!restritoCancelar && resultado !== 'CANCELADO') ||
+        (!restritoCancelar && resultado !== 'CANCELADO' && pendencias.length > 0)
+      }>
         {loading ? 'Salvando...' : 'Salvar'}
       </Button>
     </DialogFooter>

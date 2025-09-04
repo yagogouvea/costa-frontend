@@ -19,6 +19,7 @@ interface DespesaForm {
   id: string;
   tipo: string;
   valor: string;
+  observacao?: string;
 }
 
 const DespesasPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, onOpenChange }) => {
@@ -30,7 +31,8 @@ const DespesasPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, o
       const detalhadas = ocorrencia.despesas_detalhadas.map((d: DespesaDetalhada, idx: number) => ({
         id: `${Date.now()}-${idx}`,
         tipo: d.tipo,
-        valor: d.valor.toFixed(2).replace('.', ',')
+        valor: d.valor.toFixed(2).replace('.', ','),
+        observacao: d.descricao || ''
       }));
       setDespesas(detalhadas);
       setSemDespesas(false);
@@ -50,7 +52,7 @@ const DespesasPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, o
   };
 
   const adicionarDespesa = () => {
-    setDespesas([...despesas, { id: `${Date.now()}-${Math.random()}`, tipo: '', valor: '' }]);
+    setDespesas([...despesas, { id: `${Date.now()}-${Math.random()}`, tipo: '', valor: '', observacao: '' }]);
   };
 
   const removerDespesa = (id: string) => {
@@ -93,7 +95,8 @@ const DespesasPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, o
       const despesasDetalhadas = semDespesas ? [] : despesas.map(d => ({
         id: d.id,
         tipo: d.tipo,
-        valor: formatarParaNumero(d.valor)
+        valor: formatarParaNumero(d.valor),
+        descricao: d.tipo === 'Outros' && d.observacao ? d.observacao.trim() : undefined
       }));
 
       const { data } = await api.put(`/api/v1/ocorrencias/${ocorrencia.id}`, {
@@ -196,6 +199,19 @@ const DespesasPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, o
                         ×
                       </Button>
                     </div>
+
+                    {/* Observação para tipo Outros */}
+                    {despesa.tipo === 'Outros' && (
+                      <div className="md:col-span-3">
+                        <Input
+                          type="text"
+                          placeholder="Observação (ex.: pedágio, taxa, etc.)"
+                          value={despesa.observacao || ''}
+                          onChange={(e) => atualizarCampo(despesa.id, 'observacao', e.target.value)}
+                          className="w-full"
+                        />
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

@@ -118,22 +118,22 @@ const HorariosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
   };
 
   return (
-    <div className="p-3 sm:p-6 rounded-lg bg-white shadow-lg w-full max-w-2xl mx-auto my-auto border border-gray-200 max-min-h-[80vh] max-h-[95vh] overflow-y-auto">
-      <DialogTitle className="text-base sm:text-lg font-bold text-blue-700 text-center">Editar Horários</DialogTitle>
+    <div className="p-3 sm:p-6 rounded-lg bg-white shadow-lg w-full md:max-w-xl lg:max-w-lg xl:max-w-[720px] mx-auto my-auto border border-gray-200 max-min-h-[80vh] max-h-[95vh] overflow-y-auto">
+      <DialogTitle className="text-base sm:text-lg font-bold text-blue-700 text-center md:text-left">Editar Horários</DialogTitle>
       <DialogDescription className="sr-only">
         Informe os horários e informações complementares da ocorrência.
       </DialogDescription>
 
-      <div className="space-y-4 mt-4">
+      <div className="space-y-3 md:space-y-4 mt-3 md:mt-4">
         {/* Seção: Horários */}
         <div>
-          <h3 className="text-md font-semibold text-gray-800 mb-3">Horários da Ocorrência</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-4">
+          <h3 className="text-sm md:text-md font-semibold text-gray-800 mb-2 md:mb-3">Horários da Ocorrência</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-3">
             <div>
               <Label>Início da ocorrência</Label>
               <input
                 type="datetime-local"
-                className="w-full border border-gray-300 p-2 rounded focus:ring focus:ring-blue-500"
+                className="w-full border border-gray-300 p-2 md:p-2 rounded focus:ring focus:ring-blue-500 text-sm"
                 value={inicio}
                 onChange={(e) => setInicio(e.target.value)}
               />
@@ -142,7 +142,7 @@ const HorariosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
               <Label>Chegada ao Local</Label>
               <input
                 type="datetime-local"
-                className="w-full border border-gray-300 p-2 rounded focus:ring focus:ring-blue-500"
+                className="w-full border border-gray-300 p-2 md:p-2 rounded focus:ring focus:ring-blue-500 text-sm"
                 value={chegada}
                 onChange={(e) => setChegada(e.target.value)}
               />
@@ -151,7 +151,7 @@ const HorariosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
               <Label>Término</Label>
               <input
                 type="datetime-local"
-                className="w-full border border-gray-300 p-2 rounded focus:ring focus:ring-blue-500"
+                className="w-full border border-gray-300 p-2 md:p-2 rounded focus:ring focus:ring-blue-500 text-sm"
                 value={termino}
                 onChange={(e) => setTermino(e.target.value)}
               />
@@ -160,9 +160,9 @@ const HorariosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
         </div>
       </div>
 
-      <div className="mt-6 flex justify-end gap-2">
-        <Button variant="destructive" onClick={onClose}>Cancelar</Button>
-        <Button onClick={salvar}>Salvar</Button>
+      <div className="mt-4 md:mt-6 flex justify-end gap-2">
+        <Button variant="destructive" onClick={onClose} className="h-9 px-3 md:h-9 md:px-4">Cancelar</Button>
+        <Button onClick={salvar} className="h-9 px-3 md:h-9 md:px-4">Salvar</Button>
       </div>
     </div>
   );

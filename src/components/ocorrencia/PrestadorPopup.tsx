@@ -30,6 +30,7 @@ const PrestadorPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, 
   const [selecionado, setSelecionado] = useState(ocorrencia.prestador || '');
   const [prestadores, setPrestadores] = useState<Prestador[]>([]);
   const [filtro, setFiltro] = useState('');
+  const [filtroTelefone, setFiltroTelefone] = useState('');
   const [loading, setLoading] = useState(false);
   
   // ✅ NOVOS ESTADOS PARA PRESTADOR NÃO CADASTRADO
@@ -119,12 +120,22 @@ const PrestadorPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, 
   const normalize = (text: string) =>
     text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 
-  const filtrados =
-    filtro.trim().length >= 2
-      ? prestadores.filter(p =>
-          normalize(`${p.nome} ${p.cod_nome ?? ''} ${p.cidade ?? ''} ${p.estado ?? ''}`).includes(normalize(filtro))
-        )
-      : prestadores.slice(0, 10); // Mostrar apenas os primeiros 10 se não houver filtro
+  const filtrados = (() => {
+    const nomeAtivo = filtro.trim().length >= 2;
+    const telAtivo = filtroTelefone.trim().length >= 1;
+    const normalizaTel = (t: string) => (t || '').replace(/\D/g, '');
+    const alvo = normalizaTel(filtroTelefone);
+
+    return prestadores.filter(p => {
+      const okNome = nomeAtivo
+        ? normalize(`${p.nome} ${p.cod_nome ?? ''} ${p.cidade ?? ''} ${p.estado ?? ''}`).includes(normalize(filtro))
+        : true;
+      const okTel = telAtivo
+        ? normalizaTel(p.telefone || '').includes(alvo)
+        : true;
+      return okNome && okTel;
+    }).slice(0, 50);
+  })();
 
   const prestadorSelecionado = prestadores.find(p => p.nome === selecionado);
   
@@ -230,18 +241,29 @@ const PrestadorPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose, open, 
           {/* Barra de Busca */}
           {!usarPrestadorNaoCadastrado && (
             <div className="mb-8 md:mb-10 lg:mb-12">
-              <div className="relative">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div className="relative">
                   <Input
                     placeholder="Buscar por nome, codinome, cidade..."
                     value={filtro}
                     onChange={e => setFiltro(e.target.value)}
-                    className="w-full text-sm sm:text-base md:text-base sm:text-lg py-4 md:py-5 lg:py-6 px-4 md:px-5 lg:px-6 pl-12 md:pl-14 border-0 bg-white shadow-lg focus:ring-4 focus:ring-blue-200 focus:border-blue-500 rounded-xl md:rounded-2xl transition-all duration-300"
+                    className="w-full text-sm sm:text-base md:text-base sm:text-lg py-4 md:py-5 lg:py-6 px-4 md:px-5 lg:px-6 pl-12 sm:pl-12 md:pl-14 lg:pl-16 border-0 bg-white shadow-lg focus:ring-4 focus:ring-blue-200 focus:border-blue-500 rounded-xl md:rounded-2xl transition-all duration-300"
                   />
-                  <div className="absolute left-4 md:left-5 top-1/2 transform -translate-y-1/2">
+                  <div className="pointer-events-none absolute left-4 md:left-5 top-1/2 transform -translate-y-1/2">
                     <svg className="w-6 h-6 md:w-7 md:h-7 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
+                  </div>
+                </div>
+                <div className="relative">
+                  <Input
+                    placeholder="Buscar por telefone (qualquer parte)"
+                    value={filtroTelefone}
+                    onChange={e => setFiltroTelefone(e.target.value)}
+                    className="w-full text-sm sm:text-base md:text-base sm:text-lg py-4 md:py-5 lg:py-6 px-4 md:px-5 lg:px-6 pl-12 sm:pl-12 md:pl-14 lg:pl-16 border-0 bg-white shadow-lg focus:ring-4 focus:ring-green-200 focus:border-green-500 rounded-xl md:rounded-2xl transition-all duration-300"
+                  />
+                  <div className="pointer-events-none absolute left-4 md:left-5 top-1/2 transform -translate-y-1/2">
+                    <Phone className="w-5 h-5 md:w-6 md:h-6 text-green-500" />
                   </div>
                 </div>
               </div>

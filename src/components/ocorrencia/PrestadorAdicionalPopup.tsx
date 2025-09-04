@@ -236,16 +236,8 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
         novosErros.hora_inicial = 'Hora inicial é obrigatória quando há hora final';
         console.log('❌ Erro: Hora inicial é obrigatória quando há hora final');
       }
-
-      if (apoio.km_inicial !== undefined && apoio.km_final !== undefined && !apoio.km_final) {
-        novosErros.km_final = 'KM final é obrigatório quando há KM inicial';
-        console.log('❌ Erro: KM final é obrigatório quando há KM inicial');
-      }
-
-      if (apoio.km_final !== undefined && apoio.km_inicial !== undefined && !apoio.km_inicial) {
-        novosErros.km_inicial = 'KM inicial é obrigatório quando há KM final';
-        console.log('❌ Erro: KM inicial é obrigatório quando há KM final');
-      }
+      // ✅ KM não é obrigatório durante a edição do apoio adicional
+      // (mantemos KM totalmente opcional quando em modo de edição)
     }
 
     console.log('📋 Resultado da validação:', {
@@ -774,8 +766,12 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                     type="number"
                     step="0.1"
                     placeholder="0.0"
-                    value={novoApoio.km_inicial || ''}
-                    onChange={(e) => setNovoApoio({...novoApoio, km_inicial: parseFloat(e.target.value) || undefined})}
+                    value={novoApoio.franquia_km ? 0 : (novoApoio.km_inicial ?? '')}
+                    disabled={novoApoio.franquia_km}
+                    onChange={(e) => {
+                      if (novoApoio.franquia_km) return;
+                      setNovoApoio({...novoApoio, km_inicial: parseFloat(e.target.value) || undefined})
+                    }}
                     className={`h-12 text-sm sm:text-base ${erros.km_inicial ? 'border-red-500' : ''}`}
                   />
                   {erros.km_inicial && (
@@ -791,8 +787,12 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                     type="number"
                     step="0.1"
                     placeholder="0.0"
-                    value={novoApoio.km_final || ''}
-                    onChange={(e) => setNovoApoio({...novoApoio, km_final: parseFloat(e.target.value) || undefined})}
+                    value={novoApoio.franquia_km ? 0 : (novoApoio.km_final ?? '')}
+                    disabled={novoApoio.franquia_km}
+                    onChange={(e) => {
+                      if (novoApoio.franquia_km) return;
+                      setNovoApoio({...novoApoio, km_final: parseFloat(e.target.value) || undefined})
+                    }}
                     className={`h-12 text-sm sm:text-base ${erros.km_final ? 'border-red-500' : ''}`}
                   />
                   {erros.km_final && (
@@ -805,7 +805,15 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                   <Checkbox
                     id="franquiaKm"
                     checked={novoApoio.franquia_km}
-                    onCheckedChange={(checked) => setNovoApoio({...novoApoio, franquia_km: checked as boolean})}
+                    onCheckedChange={(checked) => {
+                      const isChecked = !!checked;
+                      setNovoApoio(prev => ({
+                        ...prev,
+                        franquia_km: isChecked,
+                        km_inicial: isChecked ? 0 : prev.km_inicial,
+                        km_final: isChecked ? 0 : prev.km_final
+                      }));
+                    }}
                     className="w-5 h-5 md:w-6 md:h-6"
                   />
                   <Label htmlFor="franquiaKm" className="text-sm sm:text-base md:text-base sm:text-lg font-medium text-blue-700 cursor-pointer">
@@ -971,6 +979,7 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                           <p className="text-sm sm:text-base md:text-base sm:text-lg text-gray-800 mt-2 flex items-center gap-2 sm:gap-3">
                             <Car className="w-5 h-5 text-purple-600" />
                             {apoio.km_inicial} → {apoio.km_final}
+                            <span className="text-xs text-gray-500">(total: {(Number(apoio.km_final) - Number(apoio.km_inicial)) || 0})</span>
                             {apoio.franquia_km && (
                               <BadgeComponent className="text-xs sm:text-sm bg-yellow-100 text-yellow-700">
                                 Franquia

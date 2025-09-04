@@ -644,9 +644,9 @@ const RelatorioPDF = ({ dados }: { dados: RelatorioDados }) => {
                 
                 {despesas_detalhadas && despesas_detalhadas.length > 0 && (
                   <>
-                    {despesas_detalhadas.map((despesa, index) => (
+                    {despesas_detalhadas.map((despesa: any, index: number) => (
                       <View key={index} style={styles.linhaQuadrante}>
-                        <Text style={styles.rotulo}>{despesa.tipo}:</Text>
+                        <Text style={styles.rotulo}>{despesa.tipo}{despesa.descricao ? ` - ${despesa.descricao}` : ''}:</Text>
                         <Text style={styles.valor}>R$ {despesa.valor.toFixed(2)}</Text>
                       </View>
                     ))}

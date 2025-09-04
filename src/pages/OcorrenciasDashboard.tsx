@@ -691,14 +691,7 @@ const OcorrenciasDashboard: React.FC = () => {
 
   // Função para lidar com o clique no botão de status
   const handleStatusClick = (ocorrencia: Ocorrencia) => {
-    const validacao = podeFinalizarOcorrencia(ocorrencia);
-    
-    if (!validacao.podeFinalizar) {
-      alert(`❌ Não é possível finalizar a ocorrência.\n\nOs seguintes campos precisam ser preenchidos:\n\n${validacao.erros.join('\n')}\n\nPor favor, complete todos os campos obrigatórios antes de finalizar.`);
-      return;
-    }
-    
-    // Se tudo estiver válido, abre o popup de status
+    // Sempre abre o popup; validação será feita dentro do popup ao salvar
     handlePopupOpen(ocorrencia.id, 'status');
   };
 
@@ -1626,9 +1619,11 @@ const OcorrenciasDashboard: React.FC = () => {
         {popupData && (
           <Dialog open={!!popupData} onOpenChange={() => handlePopupClose()}>
             <DialogContent className={`bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 ${
-              popupData.type === 'fotos' 
-                ? 'max-w-7xl w-[95vw] h-[90vh] overflow-y-auto' 
-                : 'max-w-[95vw] md:max-w-4xl max-h-[90vh] overflow-y-auto'
+              popupData.type === 'fotos'
+                ? 'max-w-7xl w-[95vw] h-[90vh] overflow-y-auto'
+                : (popupData.type === 'horarios' || popupData.type === 'km')
+                  ? 'max-w-[95vw] md:max-w-xl lg:max-w-lg xl:max-w-[720px] max-h-[90vh] overflow-y-auto'
+                  : 'max-w-[95vw] md:max-w-4xl max-h-[90vh] overflow-y-auto'
             }`}>
               {popupData.type === 'horarios' && (
                 <HorariosPopup
@@ -1673,17 +1668,22 @@ const OcorrenciasDashboard: React.FC = () => {
                   onClose={handlePopupClose}
                 />
               )}
-              {popupData.type === 'status' && (
-                <StatusRecuperacaoPopup
-                  ocorrencia={[...ocorrenciasEmAndamento, ...ocorrenciasFinalizadas].find(o => o.id === popupData.id)!}
-                  onUpdate={(dados) => {
-                    console.log('🔄 [StatusRecuperacaoPopup] Dados recebidos:', dados);
-                    // ✅ CORREÇÃO: Sempre usar handleUpdate para manter consistência
-                    handleUpdate(popupData.id, dados);
-                  }}
-                  onClose={handlePopupClose}
-                />
-              )}
+              {popupData.type === 'status' && (() => {
+                const occ = [...ocorrenciasEmAndamento, ...ocorrenciasFinalizadas].find(o => o.id === popupData.id)!;
+                const validacao = podeFinalizarOcorrencia(occ);
+                return (
+                  <StatusRecuperacaoPopup
+                    ocorrencia={occ}
+                    onUpdate={(dados) => {
+                      console.log('🔄 [StatusRecuperacaoPopup] Dados recebidos:', dados);
+                      handleUpdate(popupData.id, dados);
+                    }}
+                    onClose={handlePopupClose}
+                    restritoCancelar={false}
+                    pendencias={validacao.podeFinalizar ? [] : validacao.erros}
+                  />
+                );
+              })()}
               {popupData.type === 'checklist' && (() => {
                 const todasOcorrencias = [...ocorrenciasEmAndamento, ...ocorrenciasFinalizadas];
                 const ocorrenciaEncontrada = todasOcorrencias.find(o => o.id === popupData.id);
