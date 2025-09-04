@@ -180,20 +180,18 @@ const MapaPrestadores: React.FC = () => {
         console.log('✅ MapaPrestadores: Busca concluída com sucesso');
       } else {
         // Se não conseguir geocodificar, fazer busca por texto
-        const termoBusca = valor.toLowerCase();
+        const termoBusca = (valor || '').toLowerCase();
         const prestadoresFiltrados = prestadores.filter(prestador => {
           const campos = [
-            prestador.nome,
-            prestador.bairro,
-            prestador.cidade,
-            prestador.estado,
-            ...prestador.regioes,
-            ...(prestador.funcoes?.map(f => f.funcao) || [])
+            prestador.nome || '',
+            prestador.bairro || '',
+            prestador.cidade || '',
+            prestador.estado || '',
+            ...((prestador.regioes || []) as string[]),
+            ...((prestador.funcoes?.map(f => f.funcao) || []) as string[])
           ].filter(Boolean);
           
-          return campos.some(campo => 
-            campo && campo.toLowerCase().includes(termoBusca)
-          );
+          return campos.some(campo => String(campo).toLowerCase().includes(termoBusca));
         });
         
         setPrestadoresFiltrados(prestadoresFiltrados);
@@ -204,20 +202,18 @@ const MapaPrestadores: React.FC = () => {
     } catch (error) {
       console.error('Erro na busca:', error);
       // Em caso de erro, fazer busca por texto
-      const termoBusca = valor.toLowerCase();
+      const termoBusca = (valor || '').toLowerCase();
       const prestadoresFiltrados = prestadores.filter(prestador => {
         const campos = [
-          prestador.nome,
-          prestador.bairro,
-          prestador.cidade,
-          prestador.estado,
-          ...prestador.regioes,
-          ...(prestador.funcoes?.map(f => f.funcao) || [])
+          prestador.nome || '',
+          prestador.bairro || '',
+          prestador.cidade || '',
+          prestador.estado || '',
+          ...((prestador.regioes || []) as string[]),
+          ...((prestador.funcoes?.map(f => f.funcao) || []) as string[])
         ].filter(Boolean);
         
-        return campos.some(campo => 
-          campo && campo.toLowerCase().includes(termoBusca)
-        );
+        return campos.some(campo => String(campo).toLowerCase().includes(termoBusca));
       });
       
       setPrestadoresFiltrados(prestadoresFiltrados);

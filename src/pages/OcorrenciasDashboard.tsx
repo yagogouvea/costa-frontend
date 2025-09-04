@@ -152,6 +152,8 @@ const OcorrenciasDashboard: React.FC = () => {
   const [clientes, setClientes] = useState<ClienteResumo[]>([]);
   const [layout, setLayout] = useState<'cards' | 'list'>('cards');
   const [activeTab, setActiveTab] = useState<'em-andamento' | 'finalizadas'>('em-andamento');
+  // Mapa de nome do prestador -> cod_nome (para exibir codinome nos cards)
+  const [codNomePorNome, setCodNomePorNome] = useState<Record<string, string>>({});
 
   // ✅ FILTROS SEPARADOS: Estados para os filtros de cada grid
   // Filtros para ocorrências em andamento
@@ -197,6 +199,20 @@ const OcorrenciasDashboard: React.FC = () => {
   useEffect(() => {
     loadOcorrencias();
     carregarFiltrosPersistidos();
+    // Carregar codinomes dos prestadores para exibir nos cards
+    api.get('/api/v1/prestadores/popup')
+      .then(({ data }) => {
+        if (Array.isArray(data)) {
+          const mapa: Record<string, string> = {};
+          data.forEach((p: any) => {
+            if (p && p.nome && p.cod_nome) {
+              mapa[p.nome] = p.cod_nome as string;
+            }
+          });
+          setCodNomePorNome(mapa);
+        }
+      })
+      .catch((err) => console.debug('⚠️ Erro ao carregar codinomes de prestadores:', err));
     
     // ✅ ADICIONAR TRATAMENTO DE ERRO PARA CLIENTES
     getClientes()
@@ -648,6 +664,16 @@ const OcorrenciasDashboard: React.FC = () => {
     }
   }, []);
 
+  // Exibe codinome do prestador quando disponível; fallback para nome
+  const getPrestadorDisplay = (o: Ocorrencia): string => {
+    const possivelCod = (o as any).cod_nome as string | undefined;
+    if (possivelCod && possivelCod.trim()) return possivelCod;
+    const nome = o.prestador || '';
+    if (!nome) return '';
+    const cod = codNomePorNome[nome];
+    return cod || nome;
+  };
+
   const temDespesasPreenchidas = (ocorrencia: Ocorrencia) => {
     // Só fica verde se há despesas detalhadas OU se foi explicitamente salvo com "Sem despesas" (despesas = 0 e despesas_detalhadas = [])
     return (ocorrencia.despesas_detalhadas && Array.isArray(ocorrencia.despesas_detalhadas) && ocorrencia.despesas_detalhadas.length > 0) ||
@@ -709,35 +735,25 @@ const OcorrenciasDashboard: React.FC = () => {
 
   const renderOcorrenciaCard = (ocorrencia: Ocorrencia) => {
     try {
-      // Determinar cor base baseada no status
-      const getCardColor = () => {
-        if ((ocorrencia.status || '').toLowerCase() === 'em_andamento') {
-          return 'from-blue-500/10 to-indigo-500/10 border-blue-200/50';
-        }
-        if (ocorrencia.resultado === 'RECUPERADO') {
-          return 'from-green-500/10 to-emerald-500/10 border-green-200/50';
-        }
-        if (ocorrencia.resultado === 'CANCELADO') {
-          return 'from-red-500/10 to-pink-500/10 border-red-200/50';
-        }
-        if (ocorrencia.resultado === 'LOCALIZADO') {
-          return 'from-blue-500/10 to-cyan-500/10 border-blue-200/50';
-        }
-        return 'from-slate-500/10 to-gray-500/10 border-slate-200/50';
-      };
-
-      const cardColor = getCardColor();
+      // (removido gradiente antigo; agora usamos apenas acento lateral sutil)
       
       // Verificar se a ocorrência está finalizada (tem resultado)
       const isFinalizada = ocorrencia.resultado && ['RECUPERADO', 'NAO_RECUPERADO', 'CANCELADO', 'LOCALIZADO'].includes(ocorrencia.resultado);
       const buttonText = isFinalizada ? 'Alterar Resultado' : 'Encerrar Ocorrência';
 
+      // Classe de destaque sutil por status (borda esquerda colorida)
+      const getCardAccent = () => {
+        if ((ocorrencia.status || '').toLowerCase() === 'em_andamento') return 'border-l-blue-400';
+        if (ocorrencia.resultado === 'RECUPERADO') return 'border-l-green-400';
+        if (ocorrencia.resultado === 'CANCELADO') return 'border-l-red-400';
+        if (ocorrencia.resultado === 'LOCALIZADO') return 'border-l-cyan-400';
+        return 'border-l-slate-300';
+      };
+      const cardAccent = getCardAccent();
+
       return (
-    <div key={ocorrencia.id} className={`bg-gradient-to-br ${cardColor} backdrop-blur-sm rounded-xl md:rounded-2xl shadow-lg border p-4 md:p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden`}>
-      {/* Decorative background element */}
-      <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-gradient-to-bl from-white/20 to-transparent rounded-full -translate-y-12 md:-translate-y-16 translate-x-12 md:translate-x-16"></div>
-      
-      <div className="relative z-10">
+    <div key={ocorrencia.id} className={`bg-white/95 backdrop-blur-sm rounded-xl md:rounded-2xl shadow-md hover:shadow-lg border border-slate-200/60 border-l-4 ${cardAccent} p-4 md:p-5 transition-all duration-300 relative overflow-hidden h-full`}>
+      <div className="relative z-10 h-full">
         <div className="flex flex-wrap justify-between items-start gap-2 mb-3 md:mb-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 md:gap-2 sm:gap-3 mb-2">
@@ -802,24 +818,24 @@ const OcorrenciasDashboard: React.FC = () => {
         {/* Informações em destaque - Prestador e Horários para todos os dispositivos */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 lg:gap-4 mb-3 sm:mb-4">
           {/* Prestador */}
-          <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-lg p-2 sm:p-3 border border-indigo-200 shadow-sm col-span-full sm:col-span-1 min-h-[100px]">
+          <div className="bg-indigo-50 rounded-lg p-2 sm:p-3 shadow-sm col-span-full sm:col-span-1 min-h-[100px]">
             <div className="flex items-center gap-2 mb-1">
               <User className="w-3 h-3 sm:w-4 sm:h-4 text-indigo-600" />
               <span className="text-indigo-800 font-semibold text-xs sm:text-sm">Prestador</span>
             </div>
-            <p className="text-indigo-900 font-bold text-[11px] sm:text-xs truncate max-w-full">{String(ocorrencia.prestador || '–')}</p>
+            <p className="text-indigo-900 font-bold text-[11px] sm:text-xs truncate max-w-full">{String(getPrestadorDisplay(ocorrencia) || '–')}</p>
           </div>
           
           {/* Horários */}
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-2 sm:p-3 border border-purple-200 shadow-sm min-h-[100px] md:min-w-[240px] lg:min-w-[260px] xl:min-w-[280px]">
+          <div className="bg-purple-50 rounded-lg p-2 sm:p-3 shadow-sm min-h-[100px] min-w-0">
             <div className="flex items-center gap-2 mb-1">
               <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-purple-600" />
               <span className="text-purple-800 font-semibold text-xs sm:text-sm">Horários</span>
             </div>
-            <div className="text-[11px] sm:text-xs text-purple-700 space-y-0.5 leading-tight tracking-tight">
-              {ocorrencia.inicio ? <div className="truncate" title={formatarDataHora(ocorrencia.inicio)}>Início: {formatarDataHora(ocorrencia.inicio)}</div> : null}
-              {ocorrencia.chegada ? <div className="truncate" title={formatarDataHora(ocorrencia.chegada)}>Local: {formatarDataHora(ocorrencia.chegada)}</div> : null}
-              {ocorrencia.termino ? <div className="truncate" title={formatarDataHora(ocorrencia.termino)}>Final: {formatarDataHora(ocorrencia.termino)}</div> : null}
+            <div className="text-[11px] sm:text-xs text-purple-700 space-y-0.5 leading-tight tracking-tight break-words">
+              {ocorrencia.inicio ? <div className="min-w-0" title={formatarDataHora(ocorrencia.inicio)}>Início: {formatarDataHora(ocorrencia.inicio)}</div> : null}
+              {ocorrencia.chegada ? <div className="min-w-0" title={formatarDataHora(ocorrencia.chegada)}>Local: {formatarDataHora(ocorrencia.chegada)}</div> : null}
+              {ocorrencia.termino ? <div className="min-w-0" title={formatarDataHora(ocorrencia.termino)}>Final: {formatarDataHora(ocorrencia.termino)}</div> : null}
               {!ocorrencia.inicio && !ocorrencia.chegada && !ocorrencia.termino && <div>–</div>}
             </div>
           </div>
@@ -1286,7 +1302,7 @@ const OcorrenciasDashboard: React.FC = () => {
                               <td className="px-2 md:px-3 py-2 text-xs truncate max-w-[100px] md:max-w-[120px]">{getNomeCliente(String(o.cliente || ''))}</td>
                               <td className="px-2 md:px-3 py-2 text-xs truncate max-w-[80px] md:max-w-[100px]" title={o.operador}>{o.operador}</td>
                               <td className="px-2 md:px-3 py-2 text-xs truncate max-w-[70px] md:max-w-[90px]" title={o.tipo}>{o.tipo}</td>
-                              <td className="px-2 md:px-3 py-2 text-xs truncate max-w-[100px] md:max-w-[120px]" title={String(o.prestador || '')}>{o.prestador}</td>
+                              <td className="px-2 md:px-3 py-2 text-xs truncate max-w-[100px] md:max-w-[120px]" title={String(getPrestadorDisplay(o))}>{getPrestadorDisplay(o)}</td>
                               <td className="px-2 md:px-3 py-2 text-xs truncate max-w-[70px] md:max-w-[90px]" title={o.status}>{o.status}</td>
                               <td className="px-2 md:px-3 py-2 text-xs">
                                 <div className="space-y-0.5">
@@ -1517,7 +1533,7 @@ const OcorrenciasDashboard: React.FC = () => {
                                 <td className="px-2 md:px-3 py-2 text-xs truncate max-w-[100px] md:max-w-[120px]">{getNomeCliente(String(o.cliente || ''))}</td>
                                 <td className="px-2 md:px-3 py-2 text-xs truncate max-w-[80px] md:max-w-[100px]" title={o.operador}>{o.operador}</td>
                                 <td className="px-2 md:px-3 py-2 text-xs truncate max-w-[70px] md:max-w-[90px]" title={o.tipo}>{o.tipo}</td>
-                                <td className="px-2 md:px-3 py-2 text-xs truncate max-w-[100px] md:max-w-[120px]" title={String(o.prestador || '')}>{o.prestador}</td>
+                                <td className="px-2 md:px-3 py-2 text-xs truncate max-w-[100px] md:max-w-[120px]" title={String(getPrestadorDisplay(o))}>{getPrestadorDisplay(o)}</td>
                                 <td className="px-2 md:px-3 py-2 text-xs truncate max-w-[90px] md:max-w-[110px]" title={o.resultado}>{o.resultado ? o.resultado : '-'}</td>
                                 <td className="px-2 md:px-3 py-2 text-xs">
                                   <div className="space-y-0.5">
