@@ -81,10 +81,6 @@ export interface CreateCheckListDTO {
   liberado_local_selecionado?: boolean;
   liberado_nome_responsavel?: string;
   liberado_numero_referencia?: string;
-  // Liberado no local
-  liberado_local_selecionado?: boolean;
-  liberado_nome_responsavel?: string;
-  liberado_numero_referencia?: string;
   
   // Recuperado com chave
   recuperado_com_chave?: string;
