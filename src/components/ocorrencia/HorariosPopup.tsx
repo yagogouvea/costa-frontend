@@ -98,34 +98,7 @@ const HorariosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
     setTerminoBR(toBR(ocorrencia.termino || null));
   }, [ocorrencia]);
 
-  // Formata sequência de dígitos em yyyy-MM-ddTHH:mm de forma progressiva
-  const formatDigitsToDateTimeLocal = (digits: string): string => {
-    const d = digits.replace(/\D/g, '').slice(0, 12); // YYYY MM DD HH mm
-    const y = d.slice(0, 4);
-    const m = d.slice(4, 6);
-    const day = d.slice(6, 8);
-    const hh = d.slice(8, 10);
-    const mi = d.slice(10, 12);
-    let out = '';
-    if (y) out += y;
-    if (m) out += `-${m}`;
-    if (day) out += `-${day}`;
-    if (hh) out += `T${hh}`;
-    if (mi) out += `:${mi}`;
-    return out;
-  };
-
-  // Handler genérico para autoformatação no mobile
-  const handleDateTimeInput = (next: string, setFn: (v: string) => void) => {
-    if (isMobile) {
-      const onlyDigits = next.replace(/\D/g, '');
-      if (onlyDigits.length > 0 && onlyDigits.length <= 12) {
-        setFn(formatDigitsToDateTimeLocal(onlyDigits));
-        return;
-      }
-    }
-    setFn(next);
-  };
+  // (Removidos helpers de autoformatação direta no datetime-local; usamos máscara BR + picker no mobile)
 
   // Máscara BR dd/MM/aaaa HH:mm
   const maskBR = (value: string): string => {
