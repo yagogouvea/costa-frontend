@@ -185,7 +185,14 @@ const OcorrenciasDashboard: React.FC = () => {
   const [ocorrenciasOriginaisFinalizadas, setOcorrenciasOriginaisFinalizadas] = useState<Ocorrencia[]>([]);
 
   // Status considerados como encerrados
-  const STATUS_ENCERRADOS = ['concluida', 'finalizada', 'encerrada', 'finalizado', 'encerrado', 'recuperada', 'recuperado', 'nao_recuperado', 'cancelado', 'cancelada'];
+  const STATUS_ENCERRADOS = [
+    // Status antigos
+    'concluida', 'finalizada', 'encerrada', 'finalizado', 'encerrado', 
+    'recuperada', 'recuperado', 'nao_recuperado', 'cancelado', 'cancelada',
+    'simples verificação', 'simples verificacao', 'localizado', 'localizada',
+    // Novos status baseados nos resultados do popup
+    'recuperado', 'nao_recuperado', 'cancelado', 'localizado'
+  ];
 
   useEffect(() => {
     loadOcorrencias();
@@ -516,15 +523,64 @@ const OcorrenciasDashboard: React.FC = () => {
   };
 
   const handleUpdate = (id: number, dadosAtualizados: any) => {
-    // Atualizar ocorrências em andamento
-    setOcorrenciasEmAndamento(prev => 
-      prev.map(o => o.id === id ? { ...o, ...dadosAtualizados } : o)
-    );
+    console.log('🔄 [OcorrenciasDashboard] Atualizando ocorrência:', id, dadosAtualizados);
+    console.log('🔍 [OcorrenciasDashboard] Resultado recebido:', dadosAtualizados.resultado);
+    console.log('🔍 [OcorrenciasDashboard] STATUS_ENCERRADOS:', STATUS_ENCERRADOS);
     
-    // Atualizar ocorrências finalizadas
-    setOcorrenciasFinalizadas(prev => 
-      prev.map(o => o.id === id ? { ...o, ...dadosAtualizados } : o)
-    );
+    // ✅ VERIFICAÇÃO MAIS ROBUSTA: Verificar se a ocorrência foi finalizada
+    const resultadoLower = dadosAtualizados.resultado ? dadosAtualizados.resultado.toLowerCase() : '';
+    const isFinalizada = dadosAtualizados.resultado && STATUS_ENCERRADOS.includes(resultadoLower);
+    
+    console.log('🔍 [OcorrenciasDashboard] Resultado em lowercase:', resultadoLower);
+    console.log('🔍 [OcorrenciasDashboard] É finalizada?', isFinalizada);
+    
+    if (isFinalizada) {
+      console.log('✅ [OcorrenciasDashboard] Ocorrência finalizada, movendo para grid de finalizadas');
+      
+      // ✅ CORREÇÃO: Usar callback para garantir que temos o estado mais atual
+      setOcorrenciasEmAndamento(prev => {
+        const ocorrencia = prev.find(o => o.id === id);
+        if (ocorrencia) {
+          console.log('📦 [OcorrenciasDashboard] Ocorrência encontrada em andamento, movendo para finalizadas');
+          
+          // ✅ CORREÇÃO: Usar callback para adicionar à lista de finalizadas
+          setOcorrenciasFinalizadas(prevFinalizadas => {
+            // Verificar se já não está na lista de finalizadas
+            const jaExiste = prevFinalizadas.find(o => o.id === id);
+            if (jaExiste) {
+              console.log('🔄 [OcorrenciasDashboard] Ocorrência já existe em finalizadas, apenas atualizando');
+              return prevFinalizadas.map(o => o.id === id ? { ...o, ...dadosAtualizados, finalizada_em: dadosAtualizados.finalizada_em || new Date().toISOString() } : o);
+            } else {
+              console.log('➕ [OcorrenciasDashboard] Adicionando nova ocorrência às finalizadas');
+              return [{
+                ...ocorrencia,
+                ...dadosAtualizados,
+                // Adicionar timestamp de finalização se não existir
+                finalizada_em: dadosAtualizados.finalizada_em || new Date().toISOString()
+              }, ...prevFinalizadas];
+            }
+          });
+        } else {
+          console.log('⚠️ [OcorrenciasDashboard] Ocorrência não encontrada em andamento, pode já estar finalizada');
+          // Se não está em andamento, pode estar sendo editada nas finalizadas
+          setOcorrenciasFinalizadas(prev => 
+            prev.map(o => o.id === id ? { ...o, ...dadosAtualizados } : o)
+          );
+        }
+        return prev.filter(o => o.id !== id);
+      });
+    } else {
+      console.log('🔄 [OcorrenciasDashboard] Ocorrência não finalizada, apenas atualizando');
+      // Atualizar ocorrências em andamento
+      setOcorrenciasEmAndamento(prev => 
+        prev.map(o => o.id === id ? { ...o, ...dadosAtualizados } : o)
+      );
+      
+      // Atualizar ocorrências finalizadas (caso esteja sendo editada)
+      setOcorrenciasFinalizadas(prev => 
+        prev.map(o => o.id === id ? { ...o, ...dadosAtualizados } : o)
+      );
+    }
     
     // ✅ ATUALIZAR STATUS DOS POPUPS: Verificar se checklist ou segundo apoio foram modificados
     if (dadosAtualizados.checklist || dadosAtualizados.apoios_adicionais) {
@@ -550,15 +606,27 @@ const OcorrenciasDashboard: React.FC = () => {
     return c?.nome_fantasia || c?.nome || cliente;
   }
 
+
   // Filtro para mostrar apenas ocorrências finalizadas nas últimas 24 horas (excluindo canceladas)
   const agora = Date.now();
   const ha24h = agora - 24 * 60 * 60 * 1000;
-  const ocorrenciasFinalizadasUltimas24h = ocorrenciasFinalizadas.filter(o => {
-    const dataCriacao = o.criado_em ? new Date(o.criado_em).getTime() : null;
-    // Excluir ocorrências canceladas do grid de finalizadas
-    const isCancelada = String(o.resultado) === 'Cancelado';
-    return dataCriacao && dataCriacao >= ha24h && !isCancelada;
-  });
+  const ocorrenciasFinalizadasUltimas24h = ocorrenciasFinalizadas
+    .filter(o => {
+      const dataCriacao = o.criado_em ? new Date(o.criado_em).getTime() : null;
+      // Excluir ocorrências canceladas do grid de finalizadas
+      const isCancelada = String(o.resultado) === 'Cancelado';
+      return dataCriacao && dataCriacao >= ha24h && !isCancelada;
+    })
+    .sort((a, b) => {
+      // Ordenar por data de finalização (mais recente primeiro)
+      const dataA = (a as any).finalizada_em ? new Date((a as any).finalizada_em).getTime() : 
+                   a.termino ? new Date(a.termino).getTime() : 
+                   a.criado_em ? new Date(a.criado_em).getTime() : 0;
+      const dataB = (b as any).finalizada_em ? new Date((b as any).finalizada_em).getTime() : 
+                   b.termino ? new Date(b.termino).getTime() : 
+                   b.criado_em ? new Date(b.criado_em).getTime() : 0;
+      return dataB - dataA; // Ordem decrescente (mais recente primeiro)
+    });
 
   // ✅ OTIMIZAÇÃO: Memoizar formatação de despesas para melhor performance
   const formatarDespesas = useCallback((ocorrencia: Ocorrencia) => {
@@ -671,7 +739,7 @@ const OcorrenciasDashboard: React.FC = () => {
               <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-2 md:px-3 py-1 rounded-full text-xs md:text-xs sm:text-sm font-bold">
                 {String(ocorrencia.placa1 || '–')}
               </div>
-              <span className="text-slate-500 text-xs md:text-xs sm:text-sm font-medium">#{ocorrencia.id}</span>
+              <span className="text-slate-500 text-xs md:text-xs sm:text-xs font-medium">#{ocorrencia.id}</span>
             </div>
             <p className="text-slate-700 text-xs md:text-xs sm:text-sm mb-1 font-medium truncate">{getNomeCliente(String(ocorrencia.cliente || '')) || '–'}</p>
             <p className="text-slate-500 text-xs flex items-center gap-1 md:gap-2">
@@ -723,21 +791,21 @@ const OcorrenciasDashboard: React.FC = () => {
         </div>
         
         {/* Informações em destaque - Prestador e Horários para todos os dispositivos */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 mb-3 sm:mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 lg:gap-4 mb-3 sm:mb-4">
           {/* Prestador */}
-          <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-lg p-3 border border-indigo-200 shadow-sm">
+          <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-lg p-2 sm:p-3 border border-indigo-200 shadow-sm">
             <div className="flex items-center gap-2 mb-1">
-              <User className="w-4 h-4 text-indigo-600" />
-              <span className="text-indigo-800 font-semibold text-sm">Prestador</span>
+              <User className="w-3 h-3 sm:w-4 sm:h-4 text-indigo-600" />
+              <span className="text-indigo-800 font-semibold text-xs sm:text-sm">Prestador</span>
             </div>
-            <p className="text-indigo-900 font-bold text-sm truncate">{String(ocorrencia.prestador || '–')}</p>
+            <p className="text-indigo-900 font-bold text-xs sm:text-sm truncate">{String(ocorrencia.prestador || '–')}</p>
           </div>
           
           {/* Horários */}
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-3 border border-purple-200 shadow-sm">
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-2 sm:p-3 border border-purple-200 shadow-sm">
             <div className="flex items-center gap-2 mb-1">
-              <Clock className="w-4 h-4 text-purple-600" />
-              <span className="text-purple-800 font-semibold text-sm">Horários</span>
+              <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-purple-600" />
+              <span className="text-purple-800 font-semibold text-xs sm:text-sm">Horários</span>
             </div>
             <div className="text-xs text-purple-700 space-y-0.5">
               {ocorrencia.inicio ? <div className="truncate">Início: {formatarDataHora(ocorrencia.inicio)}</div> : null}
@@ -749,97 +817,97 @@ const OcorrenciasDashboard: React.FC = () => {
         </div>
 
         {/* Botões de ação uniformes - Responsivo */}
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1.5 sm:gap-2 lg:gap-3">
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={() => handlePopupOpen(ocorrencia.id, 'horarios')} 
-            className={`flex flex-col items-center gap-2 p-3 transition-all duration-200 rounded-xl text-xs font-medium min-h-[70px] sm:min-h-[60px] shadow-sm hover:shadow-md ${
+            className={`flex flex-col items-center justify-center gap-1 sm:gap-1.5 p-2 sm:p-3 transition-all duration-200 rounded-lg text-xs font-medium min-h-[70px] sm:min-h-[80px] w-full shadow-sm hover:shadow-md ${
               ocorrencia.inicio && ocorrencia.chegada && ocorrencia.termino 
                 ? 'bg-green-50 border border-green-200 text-green-700 hover:bg-green-100' 
                 : 'bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100'
             }`}
           >
-            <Clock className={`w-5 h-5 ${ocorrencia.inicio && ocorrencia.chegada && ocorrencia.termino ? 'text-green-600' : 'text-blue-600'}`} />
-            <span className="text-xs font-semibold">Horários</span>
+            <Clock className={`w-4 h-4 sm:w-5 sm:h-5 ${ocorrencia.inicio && ocorrencia.chegada && ocorrencia.termino ? 'text-green-600' : 'text-blue-600'}`} />
+            <span className="text-xs font-semibold leading-tight text-center px-1 leading-tight">Horários</span>
           </Button>
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={() => handlePopupOpen(ocorrencia.id, 'km')} 
-            className={`flex flex-col items-center gap-2 p-3 transition-all duration-200 rounded-xl text-xs font-medium min-h-[70px] sm:min-h-[60px] shadow-sm hover:shadow-md ${
+            className={`flex flex-col items-center justify-center gap-1 sm:gap-1.5 p-2 sm:p-3 transition-all duration-200 rounded-lg text-xs font-medium min-h-[70px] sm:min-h-[80px] w-full shadow-sm hover:shadow-md ${
               (ocorrencia.km_inicial != null || ocorrencia.km_final != null)
                 ? 'bg-green-50 border border-green-200 text-green-700 hover:bg-green-100' 
                 : 'bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100'
             }`}
           >
-            <MapPin className={`w-5 h-5 ${(ocorrencia.km_inicial != null || ocorrencia.km_final != null) ? 'text-green-600' : 'text-blue-600'}`} />
-            <span className="text-xs font-semibold">KM</span>
+            <MapPin className={`w-4 h-4 sm:w-5 sm:h-5 ${(ocorrencia.km_inicial != null || ocorrencia.km_final != null) ? 'text-green-600' : 'text-blue-600'}`} />
+            <span className="text-xs font-semibold leading-tight text-center px-1 leading-tight">KM</span>
           </Button>
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={() => handlePopupOpen(ocorrencia.id, 'prestador')} 
-            className={`flex flex-col items-center gap-2 p-3 transition-all duration-200 rounded-xl text-xs font-medium min-h-[70px] sm:min-h-[60px] shadow-sm hover:shadow-md ${
+            className={`flex flex-col items-center justify-center gap-1 sm:gap-1.5 p-2 sm:p-3 transition-all duration-200 rounded-lg text-xs font-medium min-h-[70px] sm:min-h-[80px] w-full shadow-sm hover:shadow-md ${
               ocorrencia.prestador
                 ? 'bg-green-50 border border-green-200 text-green-700 hover:bg-green-100' 
                 : 'bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100'
             }`}
           >
-            <User className={`w-5 h-5 ${ocorrencia.prestador ? 'text-green-600' : 'text-blue-600'}`} />
-            <span className="text-xs font-semibold">Prestador</span>
+            <User className={`w-4 h-4 sm:w-5 sm:h-5 ${ocorrencia.prestador ? 'text-green-600' : 'text-blue-600'}`} />
+            <span className="text-xs font-semibold leading-tight text-center px-1 leading-tight">Prestador</span>
           </Button>
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={() => handlePopupOpen(ocorrencia.id, 'prestador-adicional')} 
-            className={`flex flex-col items-center gap-2 p-3 transition-all duration-200 rounded-xl text-xs font-medium min-h-[70px] sm:min-h-[60px] shadow-sm hover:shadow-md ${
+            className={`flex flex-col items-center justify-center gap-1 sm:gap-1.5 p-2 sm:p-3 transition-all duration-200 rounded-lg text-xs font-medium min-h-[70px] sm:min-h-[80px] w-full shadow-sm hover:shadow-md ${
               segundoApoioStatus[ocorrencia.id]
                 ? 'bg-green-50 border border-green-200 text-green-700 hover:bg-green-100' 
                 : 'bg-purple-50 border border-purple-200 text-purple-700 hover:bg-purple-100'
             }`}
           >
-            <Users className={`w-5 h-5 ${segundoApoioStatus[ocorrencia.id] ? 'text-green-600' : 'text-purple-600'}`} />
-            <span className="text-xs font-semibold">2º Apoio</span>
+            <Users className={`w-4 h-4 sm:w-5 sm:h-5 ${segundoApoioStatus[ocorrencia.id] ? 'text-green-600' : 'text-purple-600'}`} />
+            <span className="text-xs font-semibold leading-tight text-center px-1 leading-tight">2º Apoio</span>
           </Button>
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={() => handlePopupOpen(ocorrencia.id, 'despesas')} 
-            className={`flex flex-col items-center gap-2 p-3 transition-all duration-200 rounded-xl text-xs font-medium min-h-[70px] sm:min-h-[60px] shadow-sm hover:shadow-md ${
+            className={`flex flex-col items-center justify-center gap-1 sm:gap-1.5 p-2 sm:p-3 transition-all duration-200 rounded-lg text-xs font-medium min-h-[70px] sm:min-h-[80px] w-full shadow-sm hover:shadow-md ${
               temDespesasPreenchidas(ocorrencia)
                 ? 'bg-green-50 border border-green-200 text-green-700 hover:bg-green-100' 
                 : 'bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100'
             }`}
           >
-            <DollarSign className={`w-5 h-5 ${temDespesasPreenchidas(ocorrencia) ? 'text-green-600' : 'text-blue-600'}`} />
-            <span className="text-xs font-semibold">Despesas</span>
+            <DollarSign className={`w-4 h-4 sm:w-5 sm:h-5 ${temDespesasPreenchidas(ocorrencia) ? 'text-green-600' : 'text-blue-600'}`} />
+            <span className="text-xs font-semibold leading-tight text-center px-1">Despesas</span>
           </Button>
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={() => handlePopupOpen(ocorrencia.id, 'fotos')} 
-            className={`flex flex-col items-center gap-2 p-3 transition-all duration-200 rounded-xl text-xs font-medium min-h-[70px] sm:min-h-[60px] shadow-sm hover:shadow-md ${
+            className={`flex flex-col items-center justify-center gap-1 sm:gap-1.5 p-2 sm:p-3 transition-all duration-200 rounded-lg text-xs font-medium min-h-[70px] sm:min-h-[80px] w-full shadow-sm hover:shadow-md ${
               ocorrencia.fotos && ocorrencia.fotos.length > 0
                 ? 'bg-green-50 border border-green-200 text-green-700 hover:bg-green-100' 
                 : 'bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100'
             }`}
           >
-            <Image className={`w-5 h-5 ${ocorrencia.fotos && ocorrencia.fotos.length > 0 ? 'text-green-600' : 'text-blue-600'}`} />
-            <span className="text-xs font-semibold">Fotos</span>
+            <Image className={`w-4 h-4 sm:w-5 sm:h-5 ${ocorrencia.fotos && ocorrencia.fotos.length > 0 ? 'text-green-600' : 'text-blue-600'}`} />
+            <span className="text-xs font-semibold leading-tight text-center px-1">Fotos</span>
           </Button>
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={() => handlePopupOpen(ocorrencia.id, 'descricao')} 
-            className={`flex flex-col items-center gap-2 p-3 transition-all duration-200 rounded-xl text-xs font-medium min-h-[70px] sm:min-h-[60px] shadow-sm hover:shadow-md ${
+            className={`flex flex-col items-center justify-center gap-1 sm:gap-1.5 p-2 sm:p-3 transition-all duration-200 rounded-lg text-xs font-medium min-h-[70px] sm:min-h-[80px] w-full shadow-sm hover:shadow-md ${
               ocorrencia.descricao
                 ? 'bg-green-50 border border-green-200 text-green-700 hover:bg-green-100' 
                 : 'bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100'
             }`}
           >
-            <FileText className={`w-5 h-5 ${ocorrencia.descricao ? 'text-green-600' : 'text-blue-600'}`} />
-            <span className="text-xs font-semibold">Descrição</span>
+            <FileText className={`w-4 h-4 sm:w-5 sm:h-5 ${ocorrencia.descricao ? 'text-green-600' : 'text-blue-600'}`} />
+            <span className="text-xs font-semibold leading-tight text-center px-1">Descrição</span>
           </Button>
           <Button 
             variant="ghost" 
@@ -847,21 +915,21 @@ const OcorrenciasDashboard: React.FC = () => {
             onClick={() => handlePopupOpen(ocorrencia.id, 'editar')} 
             className="flex flex-col items-center gap-2 p-3 transition-all duration-200 rounded-xl text-xs font-medium min-h-[70px] sm:min-h-[60px] shadow-sm hover:shadow-md bg-gray-50 border border-gray-200 text-gray-700 hover:bg-gray-100"
           >
-            <Edit className="w-5 h-5 text-gray-600" />
-            <span className="text-xs font-semibold">Editar</span>
+            <Edit className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+            <span className="text-xs font-semibold leading-tight text-center px-1">Editar</span>
           </Button>
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={() => handlePopupOpen(ocorrencia.id, 'passagem')} 
-            className={`flex flex-col items-center gap-2 p-3 transition-all duration-200 rounded-xl text-xs font-medium min-h-[70px] sm:min-h-[60px] shadow-sm hover:shadow-md ${
+            className={`flex flex-col items-center justify-center gap-1 sm:gap-1.5 p-2 sm:p-3 transition-all duration-200 rounded-lg text-xs font-medium min-h-[70px] sm:min-h-[80px] w-full shadow-sm hover:shadow-md ${
               ocorrencia.passagem_servico
                 ? 'bg-green-50 border border-green-200 text-green-700 hover:bg-green-100' 
                 : 'bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100'
             }`}
           >
-            <ClipboardCopy className={`w-5 h-5 ${ocorrencia.passagem_servico ? 'text-green-600' : 'text-blue-600'}`} />
-            <span className="text-xs font-semibold">Passagem</span>
+            <ClipboardCopy className={`w-4 h-4 sm:w-5 sm:h-5 ${ocorrencia.passagem_servico ? 'text-green-600' : 'text-blue-600'}`} />
+            <span className="text-xs font-semibold leading-tight text-center px-1">Passagem</span>
           </Button>
           <Button 
             variant="ghost" 
@@ -870,14 +938,14 @@ const OcorrenciasDashboard: React.FC = () => {
               console.log(`🎯 BOTÃO CHECKLIST CLICADO - Card ocorrência ID: ${ocorrencia.id}, Placa: ${ocorrencia.placa1}`);
               handlePopupOpen(ocorrencia.id, 'checklist');
             }} 
-            className={`flex flex-col items-center gap-2 p-3 transition-all duration-200 rounded-xl text-xs font-medium min-h-[70px] sm:min-h-[60px] shadow-sm hover:shadow-md ${
+            className={`flex flex-col items-center justify-center gap-1 sm:gap-1.5 p-2 sm:p-3 transition-all duration-200 rounded-lg text-xs font-medium min-h-[70px] sm:min-h-[80px] w-full shadow-sm hover:shadow-md ${
               checklistStatus[ocorrencia.id]
                 ? 'bg-green-50 border border-green-200 text-green-700 hover:bg-green-100' 
                 : 'bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100'
             }`}
           >
-            <CheckSquare className={`w-5 h-5 ${checklistStatus[ocorrencia.id] ? 'text-green-600' : 'text-blue-600'}`} />
-            <span className="text-xs font-semibold">Check-list</span>
+            <CheckSquare className={`w-4 h-4 sm:w-5 sm:h-5 ${checklistStatus[ocorrencia.id] ? 'text-green-600' : 'text-blue-600'}`} />
+            <span className="text-xs font-semibold leading-tight text-center px-1">Check-list</span>
           </Button>
         </div>
         
@@ -939,14 +1007,14 @@ const OcorrenciasDashboard: React.FC = () => {
                   onClick={() => setLayout(layout === 'cards' ? 'list' : 'cards')}
                   title={layout === 'cards' ? 'Ver como lista' : 'Ver como cards'}
                 >
-                  {layout === 'cards' ? <List className="w-5 h-5" /> : <LayoutGrid className="w-5 h-5" />}
+                  {layout === 'cards' ? <List className="w-4 h-4 sm:w-5 sm:h-5" /> : <LayoutGrid className="w-4 h-4 sm:w-5 sm:h-5" />}
                   <span className="hidden md:inline">{layout === 'cards' ? 'Lista' : 'Cards'}</span>
                 </Button>
                 <Button 
                   className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
                   onClick={() => setShowAddPopup(true)}
                 >
-                  <Plus className="w-5 h-5 mr-2" />
+                  <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   Nova Ocorrência
                 </Button>
               </div>
@@ -960,7 +1028,7 @@ const OcorrenciasDashboard: React.FC = () => {
             <div className="bg-gradient-to-br from-blue-500/90 to-blue-600/90 backdrop-blur-sm text-white rounded-2xl p-3 sm:p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-white/20">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
                 <div>
-                  <p className="text-blue-100 text-xs sm:text-sm font-medium mb-1">Em Andamento</p>
+                  <p className="text-blue-100 text-xs sm:text-xs font-medium mb-1">Em Andamento</p>
                   <p className="text-3xl font-bold">{ocorrenciasEmAndamento.length}</p>
                   <p className="text-blue-200 text-xs mt-1">Ocorrências ativas</p>
                 </div>
@@ -971,7 +1039,7 @@ const OcorrenciasDashboard: React.FC = () => {
             <div className="bg-gradient-to-br from-green-500/90 to-emerald-600/90 backdrop-blur-sm text-white rounded-2xl p-3 sm:p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-white/20">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
                 <div>
-                  <p className="text-green-100 text-xs sm:text-sm font-medium mb-1">Finalizadas (24h)</p>
+                  <p className="text-green-100 text-xs sm:text-xs font-medium mb-1">Finalizadas (24h)</p>
                   <p className="text-3xl font-bold">{ocorrenciasFinalizadasUltimas24h.length}</p>
                   <p className="text-green-200 text-xs mt-1">Últimas 24 horas</p>
                 </div>
@@ -1014,7 +1082,7 @@ const OcorrenciasDashboard: React.FC = () => {
                       : 'text-slate-600 hover:text-blue-600 hover:bg-blue-50/50'
                   }`}
                 >
-                  <PlayCircle className="w-5 h-5" />
+                  <PlayCircle className="w-4 h-4 sm:w-5 sm:h-5" />
                   <span>Em Andamento</span>
                   <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
                     {ocorrenciasEmAndamento.length}
@@ -1028,7 +1096,7 @@ const OcorrenciasDashboard: React.FC = () => {
                       : 'text-slate-600 hover:text-green-600 hover:bg-green-50/50'
                   }`}
                 >
-                  <CheckCircle2 className="w-5 h-5" />
+                  <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" />
                   <span>Finalizadas</span>
                   <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
                     {ocorrenciasFinalizadasUltimas24h.length}
@@ -1045,7 +1113,7 @@ const OcorrenciasDashboard: React.FC = () => {
                   <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-2 sm:gap-3">
                     <Clock className="w-6 h-6 text-blue-600" />
                     Ocorrências em Andamento
-                    <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
+                    <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs sm:text-xs font-medium">
                       {ocorrenciasEmAndamento.length}
                     </span>
                   </h2>
@@ -1081,7 +1149,7 @@ const OcorrenciasDashboard: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-end">
                       {/* Filtro por Operador */}
                       <div className="space-y-2">
-                        <label className="text-xs sm:text-sm font-medium text-slate-700">
+                        <label className="text-xs sm:text-xs font-medium text-slate-700">
                           Operador
                         </label>
                         <Select value={filtroOperadorEmAndamento} onValueChange={handleFiltroOperadorEmAndamentoChange}>
@@ -1101,7 +1169,7 @@ const OcorrenciasDashboard: React.FC = () => {
 
                       {/* Filtro por Placa */}
                       <div className="space-y-2">
-                        <label className="text-xs sm:text-sm font-medium text-slate-700">
+                        <label className="text-xs sm:text-xs font-medium text-slate-700">
                           Placa
                         </label>
                         <div className="relative">
@@ -1152,7 +1220,7 @@ const OcorrenciasDashboard: React.FC = () => {
               ) : (
                 <div className="p-4 md:p-3 sm:p-6">
                   {layout === 'cards' ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 p-4 sm:p-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 p-3 sm:p-4 lg:p-6">
                       {ocorrenciasEmAndamento.map((ocorrencia, index) => {
                         try {
                           // ✅ OTIMIZAÇÃO: Lazy loading - renderizar apenas cards visíveis
@@ -1188,17 +1256,17 @@ const OcorrenciasDashboard: React.FC = () => {
                       <table className="min-w-[800px] md:min-w-[1100px] w-full divide-y divide-slate-200 text-slate-800 bg-transparent">
                         <thead>
                           <tr>
-                            <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold whitespace-nowrap min-w-[30px] md:min-w-[40px]">#</th>
-                            <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold whitespace-nowrap min-w-[70px] md:min-w-[90px]">Placa</th>
-                            <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold whitespace-nowrap min-w-[100px] md:min-w-[120px]">Cliente</th>
-                            <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold whitespace-nowrap min-w-[80px] md:min-w-[100px]">Operador</th>
-                            <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold whitespace-nowrap min-w-[70px] md:min-w-[90px]">Tipo</th>
-                            <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold whitespace-nowrap min-w-[100px] md:min-w-[120px]">Prestador</th>
-                            <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold whitespace-nowrap min-w-[70px] md:min-w-[90px]">Status</th>
-                            <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold whitespace-nowrap min-w-[100px] md:min-w-[120px]">Horários</th>
-                            <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold whitespace-nowrap min-w-[50px] md:min-w-[70px]">KM</th>
-                            <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold whitespace-nowrap min-w-[80px] md:min-w-[100px]">Despesas</th>
-                            <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold whitespace-nowrap min-w-[100px] md:min-w-[120px]">Ações</th>
+                            <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold leading-tight text-center px-1 whitespace-nowrap min-w-[30px] md:min-w-[40px]">#</th>
+                            <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold leading-tight text-center px-1 whitespace-nowrap min-w-[70px] md:min-w-[90px]">Placa</th>
+                            <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold leading-tight text-center px-1 whitespace-nowrap min-w-[100px] md:min-w-[120px]">Cliente</th>
+                            <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold leading-tight text-center px-1 whitespace-nowrap min-w-[80px] md:min-w-[100px]">Operador</th>
+                            <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold leading-tight text-center px-1 whitespace-nowrap min-w-[70px] md:min-w-[90px]">Tipo</th>
+                            <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold leading-tight text-center px-1 whitespace-nowrap min-w-[100px] md:min-w-[120px]">Prestador</th>
+                            <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold leading-tight text-center px-1 whitespace-nowrap min-w-[70px] md:min-w-[90px]">Status</th>
+                            <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold leading-tight text-center px-1 whitespace-nowrap min-w-[100px] md:min-w-[120px]">Horários</th>
+                            <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold leading-tight text-center px-1 whitespace-nowrap min-w-[50px] md:min-w-[70px]">KM</th>
+                            <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold leading-tight text-center px-1 whitespace-nowrap min-w-[80px] md:min-w-[100px]">Despesas</th>
+                            <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold leading-tight text-center px-1 whitespace-nowrap min-w-[100px] md:min-w-[120px]">Ações</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -1263,7 +1331,7 @@ const OcorrenciasDashboard: React.FC = () => {
                   <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-2 sm:gap-3">
                     <CheckCircle className="w-6 h-6 text-green-600" />
                     Finalizadas (últimas 24h)
-                    <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
+                    <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs sm:text-xs font-medium">
                       {ocorrenciasFinalizadasUltimas24h.length}
                     </span>
                   </h2>
@@ -1310,7 +1378,7 @@ const OcorrenciasDashboard: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-end">
                       {/* Filtro por Operador */}
                       <div className="space-y-2">
-                        <label className="text-xs sm:text-sm font-medium text-slate-700">
+                        <label className="text-xs sm:text-xs font-medium text-slate-700">
                           Operador
                         </label>
                         <Select value={filtroOperadorFinalizadas} onValueChange={handleFiltroOperadorFinalizadasChange}>
@@ -1330,7 +1398,7 @@ const OcorrenciasDashboard: React.FC = () => {
 
                       {/* Filtro por Placa */}
                       <div className="space-y-2">
-                        <label className="text-xs sm:text-sm font-medium text-slate-700">
+                        <label className="text-xs sm:text-xs font-medium text-slate-700">
                           Placa
                         </label>
                         <div className="relative">
@@ -1383,7 +1451,7 @@ const OcorrenciasDashboard: React.FC = () => {
                 ) : (
                   <div className="p-4 sm:p-6">
                     {layout === 'cards' ? (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 p-4 sm:p-6">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 p-3 sm:p-4 lg:p-6">
                         {ocorrenciasFinalizadasUltimas24h.map((ocorrencia, index) => {
                           try {
                             // ✅ OTIMIZAÇÃO: Lazy loading - renderizar apenas cards visíveis
@@ -1419,17 +1487,17 @@ const OcorrenciasDashboard: React.FC = () => {
                         <table className="min-w-[800px] md:min-w-[1100px] w-full divide-y divide-slate-200 text-slate-800 bg-transparent">
                           <thead>
                             <tr>
-                              <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold whitespace-nowrap min-w-[30px] md:min-w-[40px]">#</th>
-                              <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold whitespace-nowrap min-w-[70px] md:min-w-[90px]">Placa</th>
-                              <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold whitespace-nowrap min-w-[100px] md:min-w-[120px]">Cliente</th>
-                              <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold whitespace-nowrap min-w-[80px] md:min-w-[100px]">Operador</th>
-                              <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold whitespace-nowrap min-w-[70px] md:min-w-[90px]">Tipo</th>
-                              <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold whitespace-nowrap min-w-[100px] md:min-w-[120px]">Prestador</th>
-                              <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold whitespace-nowrap min-w-[90px] md:min-w-[110px]">Resultado</th>
-                              <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold whitespace-nowrap min-w-[100px] md:min-w-[120px]">Horários</th>
-                              <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold whitespace-nowrap min-w-[50px] md:min-w-[70px]">KM</th>
-                              <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold whitespace-nowrap min-w-[80px] md:min-w-[100px]">Despesas</th>
-                              <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold whitespace-nowrap min-w-[100px] md:min-w-[120px]">Ações</th>
+                              <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold leading-tight text-center px-1 whitespace-nowrap min-w-[30px] md:min-w-[40px]">#</th>
+                              <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold leading-tight text-center px-1 whitespace-nowrap min-w-[70px] md:min-w-[90px]">Placa</th>
+                              <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold leading-tight text-center px-1 whitespace-nowrap min-w-[100px] md:min-w-[120px]">Cliente</th>
+                              <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold leading-tight text-center px-1 whitespace-nowrap min-w-[80px] md:min-w-[100px]">Operador</th>
+                              <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold leading-tight text-center px-1 whitespace-nowrap min-w-[70px] md:min-w-[90px]">Tipo</th>
+                              <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold leading-tight text-center px-1 whitespace-nowrap min-w-[100px] md:min-w-[120px]">Prestador</th>
+                              <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold leading-tight text-center px-1 whitespace-nowrap min-w-[90px] md:min-w-[110px]">Resultado</th>
+                              <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold leading-tight text-center px-1 whitespace-nowrap min-w-[100px] md:min-w-[120px]">Horários</th>
+                              <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold leading-tight text-center px-1 whitespace-nowrap min-w-[50px] md:min-w-[70px]">KM</th>
+                              <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold leading-tight text-center px-1 whitespace-nowrap min-w-[80px] md:min-w-[100px]">Despesas</th>
+                              <th className="px-2 md:px-3 py-2 text-left text-xs font-semibold leading-tight text-center px-1 whitespace-nowrap min-w-[100px] md:min-w-[120px]">Ações</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -1487,8 +1555,8 @@ const OcorrenciasDashboard: React.FC = () => {
                 /* ✅ RECOLHIMENTO: Estado recolhido - mostrar apenas resumo */
                 <div className="text-center py-8 bg-slate-50/50">
                   <div className="flex items-center justify-center gap-2 sm:gap-3 text-slate-600">
-                    <Minimize2 className="w-5 h-5" />
-                    <span className="text-xs sm:text-sm font-medium">
+                    <Minimize2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span className="text-xs sm:text-xs font-medium">
                       Grid recolhido - {ocorrenciasFinalizadasUltimas24h.length} ocorrência{ocorrenciasFinalizadasUltimas24h.length !== 1 ? 's' : ''} finalizada{ocorrenciasFinalizadasUltimas24h.length !== 1 ? 's' : ''}
                     </span>
                   </div>
@@ -1599,12 +1667,9 @@ const OcorrenciasDashboard: React.FC = () => {
                 <StatusRecuperacaoPopup
                   ocorrencia={[...ocorrenciasEmAndamento, ...ocorrenciasFinalizadas].find(o => o.id === popupData.id)!}
                   onUpdate={(dados) => {
-                    if (["RECUPERADO", "NAO_RECUPERADO", "CANCELADO", "LOCALIZADO"].includes(String(dados.resultado))) {
-                      setOcorrenciasEmAndamento(prev => prev.filter(o => o.id !== popupData.id));
-                      setOcorrenciasFinalizadas(prev => prev.map(o => o.id === popupData.id ? { ...o, ...dados } : o));
-                    } else {
-                      handleUpdate(popupData.id, dados);
-                    }
+                    console.log('🔄 [StatusRecuperacaoPopup] Dados recebidos:', dados);
+                    // ✅ CORREÇÃO: Sempre usar handleUpdate para manter consistência
+                    handleUpdate(popupData.id, dados);
                   }}
                   onClose={handlePopupClose}
                 />

@@ -61,9 +61,6 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
   // Observação geral
   const [observacaoOcorrencia, setObservacaoOcorrencia] = useState('');
 
-  // ✅ NOVO: Controle de tratamento - dispensado o checklist
-  const [dispensadoChecklist, setDispensadoChecklist] = useState(false);
-
   // ✅ VALIDAÇÕES: Estados para controlar erros de campos obrigatórios
   const [erros, setErros] = useState<Record<string, string>>({});
 
@@ -93,21 +90,14 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
 
   const carregarChecklistComId = async (idFixo: number) => {
     try {
-      console.log(`🔍 [CheckListPopup] Carregando checklist para ocorrência ID: ${idFixo}`);
       const response = await api.get(`/api/v1/checklist/ocorrencia/${idFixo}`);
-      console.log(`📋 [CheckListPopup] Response completa:`, response);
-      console.log(`📋 [CheckListPopup] CheckList ID ${idFixo}:`, response.data ? 'ENCONTRADO' : 'NÃO EXISTE');
-      
+      console.log(`📋 CheckList ID ${idFixo}:`, response.data ? 'ENCONTRADO' : 'NÃO EXISTE');
       if (response.data) {
         const checklist = response.data;
-        console.log(`📋 [CheckListPopup] Dados recebidos do backend:`, checklist);
         setChecklistExistente(checklist);
         
         // Carregar dados existentes
         // Removido: setDestinoVeiculo - agora é título
-        
-        // ✅ NOVO: Carregar controle de dispensado checklist
-        setDispensadoChecklist(checklist.dispensado_checklist || false);
         
         // Determinar tipo de destino baseado nos dados existentes
         console.log('🎯 Determinando tipo de destino:', {
@@ -128,7 +118,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
         }
         
         // Loja
-        console.log('🏪 [CheckListPopup] Carregando dados da loja:', {
+        console.log('🏪 Carregando dados da loja:', {
           nome_loja: checklist.nome_loja,
           endereco_loja: checklist.endereco_loja,
           nome_atendente: checklist.nome_atendente,
@@ -138,13 +128,6 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
         setEnderecoLoja(checklist.endereco_loja || '');
         setNomeAtendente(checklist.nome_atendente || '');
         setMatriculaAtendente(checklist.matricula_atendente || '');
-        
-        console.log('✅ [CheckListPopup] Estados da loja definidos:', {
-          nomeLoja: checklist.nome_loja || '',
-          enderecoLoja: checklist.endereco_loja || '',
-          nomeAtendente: checklist.nome_atendente || '',
-          matriculaAtendente: checklist.matricula_atendente || ''
-        });
         
         // Guincho
         setTipoGuincho(checklist.tipo_guincho || '');
@@ -179,12 +162,6 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
   // ✅ FUNÇÃO DE VALIDAÇÃO: Verifica campos obrigatórios baseado na opção selecionada
   const validarFormulario = (): boolean => {
     const novosErros: Record<string, string> = {};
-    
-    // ✅ NOVA LÓGICA: Se o checklist for dispensado, não validar campos obrigatórios
-    if (dispensadoChecklist) {
-      console.log('✅ Checklist dispensado - pulando validações obrigatórias');
-      return true;
-    }
     
     // 1. VALIDAÇÃO OBRIGATÓRIA: Deve selecionar uma das três opções
     if (!tipoDestino) {
@@ -238,8 +215,8 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
       novosErros.justificativaFotos = 'Justificativa é obrigatória quando fotos não foram realizadas';
     }
     
-    if (posseVeiculo === 'terceiros' && !observacaoPosse.trim()) {
-      novosErros.observacaoPosse = 'Observação da abordagem é obrigatória quando posse é de terceiros';
+    if (posseVeiculo && !observacaoPosse.trim()) {
+      novosErros.observacaoPosse = 'Observação da abordagem é obrigatória';
     }
     
     // Atualizar estado de erros
@@ -301,14 +278,12 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
         // Outros campos
         recuperado_com_chave: recuperadoComChave || undefined,
         posse_veiculo: posseVeiculo || undefined,
-        // ✅ NOVA LÓGICA: Observação da posse só é salva quando "Terceiros" é selecionado
-        observacao_posse: (posseVeiculo === 'terceiros') ? observacaoPosse || undefined : undefined,
+        observacao_posse: observacaoPosse,
         avarias: avarias || undefined,
-        detalhes_avarias: (avarias === 'sim') ? detalhesAvarias || undefined : undefined,
+        detalhes_avarias: (avarias === 'sim') ? detalhesAvarias : undefined,
         fotos_realizadas: fotosRealizadas || undefined,
-        justificativa_fotos: (fotosRealizadas === 'nao') ? justificativaFotos || undefined : undefined,
-        observacao_ocorrencia: observacaoOcorrencia || undefined,
-        dispensado_checklist: dispensadoChecklist || undefined
+        justificativa_fotos: (fotosRealizadas === 'nao') ? justificativaFotos : undefined,
+        observacao_ocorrencia: observacaoOcorrencia
       };
 
       console.log('🔍 Payload checklist:', payload);
@@ -327,11 +302,12 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
       // Atualizar o estado local para refletir que agora existe um checklist
       setChecklistExistente(response.data);
       
-      // ✅ CORREÇÃO: Chamar onUpdate para notificar o dashboard sobre a mudança
-      // Passar um objeto indicando que o checklist foi modificado
+      // ✅ CORREÇÃO: Não passar os dados do checklist para onUpdate
+      // pois isso estava sobrescrevendo o ID da ocorrência
+      // Se necessário, passar apenas dados relevantes da ocorrência
       if (onUpdate) {
-        onUpdate({ checklist: response.data });
-        console.log('🔧 Checklist salvo - notificando dashboard sobre a mudança');
+        // onUpdate(response.data); // ❌ Removido - causava confusão de IDs
+        console.log('🔧 Checklist salvo - não atualizando dados da ocorrência para evitar confusão de IDs');
       }
       
       onClose();
@@ -352,16 +328,9 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
   };
 
   return (
-    <div className={`p-6 rounded-lg shadow-lg w-full max-w-4xl mx-auto my-auto border max-min-h-[80vh] max-h-[95vh] overflow-y-auto transition-all duration-300 ${
-      dispensadoChecklist 
-        ? 'bg-green-50 border-green-300' 
-        : 'bg-white border-gray-200'
-    }`}>
-      <DialogTitle className={`text-lg font-bold text-center ${
-        dispensadoChecklist ? 'text-green-700' : 'text-blue-700'
-      }`}>
+    <div className="p-6 rounded-lg bg-white shadow-lg w-full max-w-4xl mx-auto my-auto border border-gray-200 max-h-[90vh] overflow-y-auto">
+      <DialogTitle className="text-lg font-bold text-blue-700 text-center">
         Check-list - ID: {ocorrenciaFixa.id} | Placa: {ocorrenciaFixa.placa1}
-        {dispensadoChecklist && ' ✅ DISPENSADO'}
       </DialogTitle>
       <DialogDescription className="sr-only">
         Preencha o checklist com as informações da ocorrência.
@@ -422,7 +391,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
           </div>
           {/* ✅ MENSAGEM DE ERRO PARA TIPO DE DESTINO */}
           {erros.tipoDestino && (
-            <p className="text-red-500 text-xs sm:text-sm mt-2">{erros.tipoDestino}</p>
+            <p className="text-red-500 text-sm mt-2">{erros.tipoDestino}</p>
           )}
         </div>
 
@@ -448,7 +417,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                     className={erros.nomeLoja ? 'border-red-500' : ''}
                   />
                   {erros.nomeLoja && (
-                    <p className="text-red-500 text-xs sm:text-sm mt-1">{erros.nomeLoja}</p>
+                    <p className="text-red-500 text-sm mt-1">{erros.nomeLoja}</p>
                   )}
                 </div>
                 <div>
@@ -466,7 +435,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                     className={erros.enderecoLoja ? 'border-red-500' : ''}
                   />
                   {erros.enderecoLoja && (
-                    <p className="text-red-500 text-xs sm:text-sm mt-1">{erros.enderecoLoja}</p>
+                    <p className="text-red-500 text-sm mt-1">{erros.enderecoLoja}</p>
                   )}
                 </div>
                 <div>
@@ -484,7 +453,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                     className={erros.nomeAtendente ? 'border-red-500' : ''}
                   />
                   {erros.nomeAtendente && (
-                    <p className="text-red-500 text-xs sm:text-sm mt-1">{erros.nomeAtendente}</p>
+                    <p className="text-red-500 text-sm mt-1">{erros.nomeAtendente}</p>
                   )}
                 </div>
                 <div>
@@ -502,7 +471,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                     className={erros.matriculaAtendente ? 'border-red-500' : ''}
                   />
                   {erros.matriculaAtendente && (
-                    <p className="text-red-500 text-xs sm:text-sm mt-1">{erros.matriculaAtendente}</p>
+                    <p className="text-red-500 text-sm mt-1">{erros.matriculaAtendente}</p>
                   )}
                 </div>
               </div>
@@ -549,7 +518,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                     </div>
                   </div>
                   {erros.tipoGuincho && (
-                    <p className="text-red-500 text-xs sm:text-sm mt-1">{erros.tipoGuincho}</p>
+                    <p className="text-red-500 text-sm mt-1">{erros.tipoGuincho}</p>
                   )}
                 </div>
                 
@@ -571,7 +540,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                           className={erros.valorGuincho ? 'border-red-500' : ''}
                         />
                         {erros.valorGuincho && (
-                          <p className="text-red-500 text-xs sm:text-sm mt-1">{erros.valorGuincho}</p>
+                          <p className="text-red-500 text-sm mt-1">{erros.valorGuincho}</p>
                         )}
                       </div>
                       <div>
@@ -589,7 +558,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                           className={erros.telefoneGuincho ? 'border-red-500' : ''}
                         />
                         {erros.telefoneGuincho && (
-                          <p className="text-red-500 text-xs sm:text-sm mt-1">{erros.telefoneGuincho}</p>
+                          <p className="text-red-500 text-sm mt-1">{erros.telefoneGuincho}</p>
                         )}
                       </div>
                     </>
@@ -610,7 +579,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                       className={erros.nomeEmpresaGuincho ? 'border-red-500' : ''}
                     />
                     {erros.nomeEmpresaGuincho && (
-                      <p className="text-red-500 text-xs sm:text-sm mt-1">{erros.nomeEmpresaGuincho}</p>
+                      <p className="text-red-500 text-sm mt-1">{erros.nomeEmpresaGuincho}</p>
                     )}
                   </div>
                   <div>
@@ -628,7 +597,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                       className={erros.nomeMotoristaGuincho ? 'border-red-500' : ''}
                     />
                     {erros.nomeMotoristaGuincho && (
-                      <p className="text-red-500 text-xs sm:text-sm mt-1">{erros.nomeMotoristaGuincho}</p>
+                      <p className="text-red-500 text-sm mt-1">{erros.nomeMotoristaGuincho}</p>
                     )}
                   </div>
                 </div>
@@ -668,7 +637,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                     </div>
                   </div>
                   {erros.destinoGuincho && (
-                    <p className="text-red-500 text-xs sm:text-sm mt-1">{erros.destinoGuincho}</p>
+                    <p className="text-red-500 text-sm mt-1">{erros.destinoGuincho}</p>
                   )}
                   
                   {destinoGuincho && (
@@ -687,7 +656,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                         className={erros.enderecoDestinoGuincho ? 'border-red-500' : ''}
                       />
                       {erros.enderecoDestinoGuincho && (
-                        <p className="text-red-500 text-xs sm:text-sm mt-1">{erros.enderecoDestinoGuincho}</p>
+                        <p className="text-red-500 text-sm mt-1">{erros.enderecoDestinoGuincho}</p>
                       )}
                     </div>
                   )}
@@ -716,7 +685,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                     className={erros.nomeDpBatalhao ? 'border-red-500' : ''}
                   />
                   {erros.nomeDpBatalhao && (
-                    <p className="text-red-500 text-xs sm:text-sm mt-1">{erros.nomeDpBatalhao}</p>
+                    <p className="text-red-500 text-sm mt-1">{erros.nomeDpBatalhao}</p>
                   )}
                 </div>
                 <div>
@@ -734,7 +703,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                     className={erros.enderecoApreensao ? 'border-red-500' : ''}
                   />
                   {erros.enderecoApreensao && (
-                    <p className="text-red-500 text-xs sm:text-sm mt-1">{erros.enderecoApreensao}</p>
+                    <p className="text-red-500 text-sm mt-1">{erros.enderecoApreensao}</p>
                   )}
                 </div>
                 <div>
@@ -752,7 +721,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                     className={erros.numeroBoNoc ? 'border-red-500' : ''}
                   />
                   {erros.numeroBoNoc && (
-                    <p className="text-red-500 text-xs sm:text-sm mt-1">{erros.numeroBoNoc}</p>
+                    <p className="text-red-500 text-sm mt-1">{erros.numeroBoNoc}</p>
                   )}
                 </div>
               </div>
@@ -801,7 +770,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                 </div>
               </div>
               {erros.recuperadoComChave && (
-                <p className="text-red-500 text-xs sm:text-sm mt-1">{erros.recuperadoComChave}</p>
+                <p className="text-red-500 text-sm mt-1">{erros.recuperadoComChave}</p>
               )}
             </div>
 
@@ -841,7 +810,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                 </div>
               </div>
               {erros.avarias && (
-                <p className="text-red-500 text-xs sm:text-sm mt-1">{erros.avarias}</p>
+                <p className="text-red-500 text-sm mt-1">{erros.avarias}</p>
               )}
               
               {avarias === 'sim' && (
@@ -860,7 +829,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                     rows={3}
                   />
                   {erros.detalhesAvarias && (
-                    <p className="text-red-500 text-xs sm:text-sm mt-1">{erros.detalhesAvarias}</p>
+                    <p className="text-red-500 text-sm mt-1">{erros.detalhesAvarias}</p>
                   )}
                 </div>
               )}
@@ -902,7 +871,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                 </div>
               </div>
               {erros.fotosRealizadas && (
-                <p className="text-red-500 text-xs sm:text-sm mt-1">{erros.fotosRealizadas}</p>
+                <p className="text-red-500 text-sm mt-1">{erros.fotosRealizadas}</p>
               )}
               
               {fotosRealizadas === 'nao' && (
@@ -921,7 +890,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                     rows={3}
                   />
                   {erros.justificativaFotos && (
-                    <p className="text-red-500 text-xs sm:text-sm mt-1">{erros.justificativaFotos}</p>
+                    <p className="text-red-500 text-sm mt-1">{erros.justificativaFotos}</p>
                   )}
                 </div>
               )}
@@ -953,16 +922,15 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                       limparErro('posseVeiculo');
                     }}
                   />
-                  <Label htmlFor={opcao.value} className="text-xs sm:text-sm">{opcao.label}</Label>
+                  <Label htmlFor={opcao.value} className="text-sm">{opcao.label}</Label>
                 </div>
               ))}
             </div>
             {erros.posseVeiculo && (
-              <p className="text-red-500 text-xs sm:text-sm mt-1">{erros.posseVeiculo}</p>
+              <p className="text-red-500 text-sm mt-1">{erros.posseVeiculo}</p>
             )}
             
-            {/* ✅ NOVA LÓGICA: Observação da abordagem só aparece quando "Terceiros" é selecionado */}
-            {posseVeiculo === 'terceiros' && (
+            {posseVeiculo && (
               <div className="mt-3">
                 <Label>
                   Observação da abordagem <span className="text-red-500">*</span>
@@ -978,7 +946,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                   rows={2}
                 />
                 {erros.observacaoPosse && (
-                  <p className="text-red-500 text-xs sm:text-sm mt-1">{erros.observacaoPosse}</p>
+                  <p className="text-red-500 text-sm mt-1">{erros.observacaoPosse}</p>
                 )}
               </div>
             )}
@@ -994,36 +962,6 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
               rows={4}
             />
           </div>
-
-          {/* ✅ NOVO: Botão de controle de tratamento - dispensado o checklist */}
-          <div className={`border-t pt-4 ${dispensadoChecklist ? 'bg-green-100 p-3 rounded-lg border-green-200' : ''}`}>
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="dispensado_checklist"
-                checked={dispensadoChecklist}
-                onChange={(e) => setDispensadoChecklist(e.target.checked)}
-                className={`w-5 h-5 rounded focus:ring-2 focus:ring-offset-2 transition-all duration-200 ${
-                  dispensadoChecklist 
-                    ? 'text-green-600 bg-green-100 border-green-500 focus:ring-green-500' 
-                    : 'text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500'
-                }`}
-              />
-              <Label htmlFor="dispensado_checklist" className={`text-sm font-medium transition-colors duration-200 ${
-                dispensadoChecklist ? 'text-green-700' : 'text-gray-700'
-              }`}>
-                {dispensadoChecklist ? '✅ Checklist Dispensado' : 'Dispensado o checklist'}
-              </Label>
-            </div>
-            <p className={`text-xs mt-1 transition-colors duration-200 ${
-              dispensadoChecklist ? 'text-green-600' : 'text-gray-500'
-            }`}>
-              {dispensadoChecklist 
-                ? 'Checklist foi dispensado para esta ocorrência - não é necessário preencher campos obrigatórios'
-                : 'Marque esta opção quando o checklist não for necessário para esta ocorrência'
-              }
-            </p>
-          </div>
         </div>
       </div>
 
@@ -1031,16 +969,8 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
         <Button variant="destructive" onClick={onClose} disabled={loading}>
           Cancelar
         </Button>
-        <Button 
-          onClick={salvar} 
-          disabled={loading}
-          className={`transition-all duration-200 ${
-            dispensadoChecklist 
-              ? 'bg-green-600 hover:bg-green-700 text-white' 
-              : ''
-          }`}
-        >
-          {loading ? 'Salvando...' : dispensadoChecklist ? '✅ Salvar Checklist Dispensado' : 'Salvar'}
+        <Button onClick={salvar} disabled={loading}>
+          {loading ? 'Salvando...' : 'Salvar'}
         </Button>
       </div>
     </div>

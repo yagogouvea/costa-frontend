@@ -224,9 +224,9 @@ const DescricaoPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
           </div>
 
           {/* Text Area - Melhor scroll e responsividade */}
-          <div className="flex-1 relative min-h-0">
+          <div className="flex-1 flex flex-col min-h-0">
             <textarea
-              className="w-full h-full border-2 border-gray-200 rounded-lg p-3 sm:p-6 text-sm sm:text-base resize-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 overflow-y-auto"
+              className="flex-1 w-full border-2 border-gray-200 rounded-lg p-3 sm:p-6 text-sm sm:text-base resize-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 overflow-y-auto"
               placeholder="Digite aqui a descrição detalhada da ocorrência..."
               value={descricao}
               onChange={handleDescricaoChange}
@@ -246,9 +246,11 @@ const DescricaoPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
               }}
             />
             
-            {/* Character count - Responsivo */}
-            <div className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 text-xs text-gray-400 bg-white px-2 py-1 rounded shadow-sm border border-gray-200">
-              {descricao.length} chars
+            {/* Character count - Movido para fora da textarea */}
+            <div className="mt-2 flex justify-end">
+              <div className="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded border border-gray-200">
+                {descricao.length} caracteres
+              </div>
             </div>
           </div>
         </div>

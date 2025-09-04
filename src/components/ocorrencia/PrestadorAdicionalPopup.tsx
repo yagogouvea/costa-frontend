@@ -120,6 +120,35 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
     }
   }, [filtro, prestadores]);
 
+  // ✅ BUSCAR PRESTADOR POR TELEFONE
+  useEffect(() => {
+    const buscarPrestadorPorTelefone = async () => {
+      // Só busca se o telefone tiver pelo menos 8 dígitos e não estiver editando
+      if (novoApoio.telefone && novoApoio.telefone.replace(/\D/g, '').length >= 8 && !editando) {
+        try {
+          console.log('🔍 Buscando prestador por telefone:', novoApoio.telefone);
+          const response = await api.get(`/api/v1/prestadores/buscar-por-telefone/${encodeURIComponent(novoApoio.telefone)}`);
+          
+          if (response.data && response.data.nome) {
+            console.log('✅ Prestador encontrado:', response.data.nome);
+            setNovoApoio(prev => ({
+              ...prev,
+              nome_prestador: response.data.nome,
+              is_prestador_cadastrado: true
+            }));
+          }
+        } catch (error) {
+          // Prestador não encontrado - não é erro, apenas não existe
+          console.log('ℹ️ Prestador não encontrado para o telefone:', novoApoio.telefone);
+        }
+      }
+    };
+
+    // Debounce para evitar muitas requisições
+    const timeoutId = setTimeout(buscarPrestadorPorTelefone, 500);
+    return () => clearTimeout(timeoutId);
+  }, [novoApoio.telefone, editando]);
+
   const carregarPrestadores = async () => {
     try {
       // Usar a API correta para buscar prestadores cadastrados
@@ -177,25 +206,52 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
   const validarApoio = (apoio: ApoioAdicional): boolean => {
     const novosErros: Record<string, string> = {};
 
+    console.log('🔍 Validando apoio:', {
+      editando,
+      nome_prestador: apoio.nome_prestador,
+      hora_inicial: apoio.hora_inicial,
+      hora_final: apoio.hora_final,
+      km_inicial: apoio.km_inicial,
+      km_final: apoio.km_final
+    });
+
+    // ✅ APENAS NOME DO PRESTADOR É OBRIGATÓRIO
     if (!apoio.nome_prestador.trim()) {
       novosErros.nome_prestador = 'Nome do prestador é obrigatório';
+      console.log('❌ Erro: Nome do prestador é obrigatório');
     }
 
-    if (apoio.hora_inicial && !apoio.hora_final) {
-      novosErros.hora_final = 'Hora final é obrigatória quando há hora inicial';
+    // ✅ VALIDAÇÕES CONDICIONAIS - apenas se campos relacionados forem preenchidos
+    // Durante a adição inicial, permitir campos parciais
+    if (!editando) {
+      console.log('ℹ️ Modo de adição - validações condicionais desabilitadas para permitir campos parciais');
+    } else {
+      // Durante a edição, aplicar validações condicionais apenas se ambos os campos estiverem preenchidos
+      if (apoio.hora_inicial && apoio.hora_final && !apoio.hora_final.trim()) {
+        novosErros.hora_final = 'Hora final é obrigatória quando há hora inicial';
+        console.log('❌ Erro: Hora final é obrigatória quando há hora inicial');
+      }
+
+      if (apoio.hora_final && apoio.hora_inicial && !apoio.hora_inicial.trim()) {
+        novosErros.hora_inicial = 'Hora inicial é obrigatória quando há hora final';
+        console.log('❌ Erro: Hora inicial é obrigatória quando há hora final');
+      }
+
+      if (apoio.km_inicial !== undefined && apoio.km_final !== undefined && !apoio.km_final) {
+        novosErros.km_final = 'KM final é obrigatório quando há KM inicial';
+        console.log('❌ Erro: KM final é obrigatório quando há KM inicial');
+      }
+
+      if (apoio.km_final !== undefined && apoio.km_inicial !== undefined && !apoio.km_inicial) {
+        novosErros.km_inicial = 'KM inicial é obrigatório quando há KM final';
+        console.log('❌ Erro: KM inicial é obrigatório quando há KM final');
+      }
     }
 
-    if (apoio.hora_final && !apoio.hora_inicial) {
-      novosErros.hora_inicial = 'Hora inicial é obrigatória quando há hora final';
-    }
-
-    if (apoio.km_inicial !== undefined && !apoio.km_final) {
-      novosErros.km_final = 'KM final é obrigatório quando há KM inicial';
-    }
-
-    if (apoio.km_final !== undefined && !apoio.km_inicial) {
-      novosErros.km_inicial = 'KM inicial é obrigatório quando há KM final';
-    }
+    console.log('📋 Resultado da validação:', {
+      erros: novosErros,
+      valido: Object.keys(novosErros).length === 0
+    });
 
     setErros(novosErros);
     return Object.keys(novosErros).length === 0;
@@ -504,10 +560,44 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
           {/* Formulário para adicionar novo apoio */}
           <div className="mb-8 md:mb-10 lg:mb-12">
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-3 sm:p-6 md:p-4 sm:p-8 lg:p-10">
-              <h3 className="text-xl md:text-2xl font-semibold text-blue-800 mb-6 md:mb-8 flex items-center gap-2 sm:gap-3">
+              <h3 className="text-xl md:text-2xl font-semibold text-blue-800 mb-4 md:mb-6 flex items-center gap-2 sm:gap-3">
                 <Plus className="w-6 h-6 md:w-7 md:h-7" />
                 {editando ? 'Editar Apoio Existente' : 'Adicionar Novo Apoio'}
               </h3>
+              
+              {/* ✅ MENSAGEM INFORMATIVA */}
+              {!editando && (
+                <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <div className="w-5 h-5 bg-blue-500 rounded-full flex-shrink-0 mt-0.5"></div>
+                    <div>
+                      <p className="text-sm font-medium text-blue-800 mb-1">
+                        💡 Adicione o apoio agora e complete as informações depois
+                      </p>
+                      <p className="text-xs text-blue-700">
+                        Você pode adicionar o segundo apoio apenas com o nome do prestador. Horários e KM podem ser preenchidos parcialmente durante a adição inicial.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* ✅ MENSAGEM INFORMATIVA PARA EDIÇÃO */}
+              {editando && (
+                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <div className="w-5 h-5 bg-green-500 rounded-full flex-shrink-0 mt-0.5"></div>
+                    <div>
+                      <p className="text-sm font-medium text-green-800 mb-1">
+                        ✏️ Editando apoio - apenas nome é obrigatório
+                      </p>
+                      <p className="text-xs text-green-700">
+                        Você pode salvar as alterações mesmo com campos parciais. Apenas o nome do prestador é obrigatório.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 sm:p-6 md:gap-2 sm:gap-4 sm:p-8">
                 {/* Seleção de prestador */}
@@ -571,6 +661,34 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                           <p className="text-gray-400 text-xs mt-1">Tente outros termos de busca</p>
                         </div>
                       )}
+                      
+                      {/* ✅ PRESTADOR SELECIONADO */}
+                      {novoApoio.nome_prestador && novoApoio.is_prestador_cadastrado && (
+                        <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <span className="text-sm font-medium text-green-800">Prestador Selecionado:</span>
+                          </div>
+                          <div className="text-lg font-semibold text-green-900">{novoApoio.nome_prestador}</div>
+                          {novoApoio.telefone && (
+                            <div className="text-sm text-green-700 mt-1">
+                              📞 {novoApoio.telefone}
+                            </div>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => setNovoApoio(prev => ({
+                              ...prev,
+                              nome_prestador: '',
+                              telefone: '',
+                              prestador_id: undefined
+                            }))}
+                            className="mt-2 text-xs text-green-600 hover:text-green-800 underline"
+                          >
+                            Limpar seleção
+                          </button>
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <div className="space-y-4">
@@ -593,7 +711,7 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                 {/* Telefone */}
                 <div>
                   <Label className="text-sm sm:text-base md:text-base sm:text-lg font-medium text-blue-700 mb-3 block">
-                    Telefone
+                    Telefone <span className="text-gray-500 text-xs">(opcional)</span>
                   </Label>
                   <Input
                     type="tel"
@@ -607,7 +725,7 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                 {/* Horários */}
                 <div>
                   <Label className="text-sm sm:text-base md:text-base sm:text-lg font-medium text-blue-700 mb-3 block">
-                    Data e hora inicial
+                    Data e hora inicial <span className="text-gray-500 text-xs">(opcional)</span>
                   </Label>
                   <Input
                     type="datetime-local"
@@ -622,7 +740,7 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
 
                 <div>
                   <Label className="text-sm sm:text-base md:text-base sm:text-lg font-medium text-blue-700 mb-3 block">
-                    Data e hora local
+                    Data e hora local <span className="text-gray-500 text-xs">(opcional)</span>
                   </Label>
                   <Input
                     type="datetime-local"
@@ -634,7 +752,7 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
 
                 <div>
                   <Label className="text-sm sm:text-base md:text-base sm:text-lg font-medium text-blue-700 mb-3 block">
-                    Data e hora final
+                    Data e hora final <span className="text-gray-500 text-xs">(opcional)</span>
                   </Label>
                   <Input
                     type="datetime-local"
@@ -650,7 +768,7 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                 {/* KM */}
                 <div>
                   <Label className="text-sm sm:text-base md:text-base sm:text-lg font-medium text-blue-700 mb-3 block">
-                    KM inicial
+                    KM inicial <span className="text-gray-500 text-xs">(opcional)</span>
                   </Label>
                   <Input
                     type="number"
@@ -667,7 +785,7 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
 
                 <div>
                   <Label className="text-sm sm:text-base md:text-base sm:text-lg font-medium text-blue-700 mb-3 block">
-                    KM final
+                    KM final <span className="text-gray-500 text-xs">(opcional)</span>
                   </Label>
                   <Input
                     type="number"
@@ -698,7 +816,7 @@ const PrestadorAdicionalPopup: React.FC<PrestadorAdicionalPopupProps> = ({
                 {/* Observações */}
                 <div className="md:col-span-2 lg:col-span-3">
                   <Label className="text-sm sm:text-base md:text-base sm:text-lg font-medium text-blue-700 mb-3 block">
-                    Observações
+                    Observações <span className="text-gray-500 text-xs">(opcional)</span>
                   </Label>
                   <Textarea
                     placeholder="Observações adicionais..."

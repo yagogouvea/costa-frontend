@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Clock, MapPin, User, DollarSign, Image, Edit, FileText, Check, FileDown, BarChart3, Search } from 'lucide-react';
+import { Clock, MapPin, User, DollarSign, Image, Edit, FileText, Check, FileDown, BarChart3, Search, Users, CheckSquare } from 'lucide-react';
 import { Ocorrencia } from '@/types/ocorrencia';
 import api from '@/services/api';
 import { pdf } from '@react-pdf/renderer';
@@ -16,13 +16,15 @@ import DescricaoPopup from '@/components/ocorrencia/DescricaoPopup';
 import EditarDadosPopup from '@/components/ocorrencia/EditarDadosPopup';
 import StatusRecuperacaoPopup from '@/components/ocorrencia/StatusRecuperacaoPopup';
 import PassagemServicoPopup from '@/components/ocorrencia/PassagemServicoPopup';
+import PrestadorAdicionalPopup from '@/components/ocorrencia/PrestadorAdicionalPopup';
+import CheckListPopup from '@/components/ocorrencia/CheckListPopup';
 import PermissionButton from '@/components/PermissionButton';
 import PageAccessControl from '@/components/PageAccessControl';
 
 // Interface para gerenciar popups de forma unificada
 interface PopupData {
   id: number;
-  type: 'horarios' | 'km' | 'prestador' | 'despesas' | 'fotos' | 'descricao' | 'editar' | 'passagem' | 'status';
+  type: 'horarios' | 'km' | 'prestador' | 'prestador-adicional' | 'despesas' | 'fotos' | 'descricao' | 'editar' | 'passagem' | 'status' | 'checklist';
 }
 
 // Interface para cliente resumo
@@ -533,15 +535,19 @@ export default function RelatoriosPage() {
                           return `R$ ${valor.toFixed(2)}`;
                         })()}
                       </td>
-                      <td className="p-2 md:p-3 align-middle" style={{width: '400px'}}>
-                        <div className="flex flex-wrap gap-1 justify-start items-center" style={{minWidth: '380px'}}>
+                      <td className="p-2 md:p-3 align-middle" style={{width: '600px'}}>
+                        <div className="flex flex-wrap gap-1 justify-start items-center" style={{minWidth: '580px'}}>
                         
-                        {/* Botões com controle de permissões */}
+                        {/* ✅ BOTÕES PEQUENOS EM UMA LINHA - MANTENDO FUNCIONALIDADES */}
                         <PermissionButton 
                           requiredPermission="update:relatorio"
                           variant="ghost" 
                           size="sm" 
-                          className="border border-blue-300 bg-blue-50 hover:bg-blue-100 text-blue-700 p-1 h-8 w-8 flex items-center justify-center"
+                          className={`border p-1 h-8 w-8 flex items-center justify-center transition-all duration-200 ${
+                            o.inicio && o.chegada && o.termino 
+                              ? 'border-green-300 bg-green-50 hover:bg-green-100 text-green-700' 
+                              : 'border-blue-300 bg-blue-50 hover:bg-blue-100 text-blue-700'
+                          }`}
                           onClick={() => handlePopupOpen(o.id, 'horarios')}
                           message="Você não tem permissão para editar horários de ocorrências."
                         >
@@ -552,7 +558,11 @@ export default function RelatoriosPage() {
                           requiredPermission="update:relatorio"
                           variant="ghost" 
                           size="sm" 
-                          className="border border-green-300 bg-green-50 hover:bg-green-100 text-green-700 p-1 h-8 w-8 flex items-center justify-center"
+                          className={`border p-1 h-8 w-8 flex items-center justify-center transition-all duration-200 ${
+                            (o.km_inicial != null || o.km_final != null)
+                              ? 'border-green-300 bg-green-50 hover:bg-green-100 text-green-700' 
+                              : 'border-blue-300 bg-blue-50 hover:bg-blue-100 text-blue-700'
+                          }`}
                           onClick={() => handlePopupOpen(o.id, 'km')}
                           message="Você não tem permissão para editar KM de ocorrências."
                         >
@@ -563,7 +573,11 @@ export default function RelatoriosPage() {
                           requiredPermission="update:relatorio"
                           variant="ghost" 
                           size="sm" 
-                          className="border border-purple-300 bg-purple-50 hover:bg-purple-100 text-purple-700 p-1 h-8 w-8 flex items-center justify-center"
+                          className={`border p-1 h-8 w-8 flex items-center justify-center transition-all duration-200 ${
+                            o.prestador
+                              ? 'border-green-300 bg-green-50 hover:bg-green-100 text-green-700' 
+                              : 'border-blue-300 bg-blue-50 hover:bg-blue-100 text-blue-700'
+                          }`}
                           onClick={() => handlePopupOpen(o.id, 'prestador')}
                           message="Você não tem permissão para editar prestadores de ocorrências."
                         >
@@ -574,7 +588,22 @@ export default function RelatoriosPage() {
                           requiredPermission="update:relatorio"
                           variant="ghost" 
                           size="sm" 
-                          className="border border-yellow-300 bg-yellow-50 hover:bg-yellow-100 text-yellow-700 p-1 h-8 w-8 flex items-center justify-center"
+                          className="border border-purple-300 bg-purple-50 hover:bg-purple-100 text-purple-700 p-1 h-8 w-8 flex items-center justify-center transition-all duration-200"
+                          onClick={() => handlePopupOpen(o.id, 'prestador-adicional')}
+                          message="Você não tem permissão para editar segundo apoio de ocorrências."
+                        >
+                          <Users size={14} />
+                        </PermissionButton>
+                        
+                        <PermissionButton 
+                          requiredPermission="update:relatorio"
+                          variant="ghost" 
+                          size="sm" 
+                          className={`border p-1 h-8 w-8 flex items-center justify-center transition-all duration-200 ${
+                            o.despesas && Number(o.despesas) > 0
+                              ? 'border-green-300 bg-green-50 hover:bg-green-100 text-green-700' 
+                              : 'border-blue-300 bg-blue-50 hover:bg-blue-100 text-blue-700'
+                          }`}
                           onClick={() => handlePopupOpen(o.id, 'despesas')}
                           message="Você não tem permissão para editar despesas de ocorrências."
                         >
@@ -585,7 +614,11 @@ export default function RelatoriosPage() {
                           requiredPermission="update:relatorio"
                           variant="ghost" 
                           size="sm" 
-                          className="border border-pink-300 bg-pink-50 hover:bg-pink-100 text-pink-700 p-1 h-8 w-8 flex items-center justify-center"
+                          className={`border p-1 h-8 w-8 flex items-center justify-center transition-all duration-200 ${
+                            o.fotos && o.fotos.length > 0
+                              ? 'border-green-300 bg-green-50 hover:bg-green-100 text-green-700' 
+                              : 'border-blue-300 bg-blue-50 hover:bg-blue-100 text-blue-700'
+                          }`}
                           onClick={() => handlePopupOpen(o.id, 'fotos')}
                           message="Você não tem permissão para editar fotos de ocorrências."
                         >
@@ -596,44 +629,67 @@ export default function RelatoriosPage() {
                           requiredPermission="update:relatorio"
                           variant="ghost" 
                           size="sm" 
-                          className="border border-orange-300 bg-orange-50 hover:bg-orange-100 text-orange-700 p-1 h-8 w-8 flex items-center justify-center"
+                          className={`border p-1 h-8 w-8 flex items-center justify-center transition-all duration-200 ${
+                            o.descricao
+                              ? 'border-green-300 bg-green-50 hover:bg-green-100 text-green-700' 
+                              : 'border-blue-300 bg-blue-50 hover:bg-blue-100 text-blue-700'
+                          }`}
+                          onClick={() => handlePopupOpen(o.id, 'descricao')}
+                          message="Você não tem permissão para editar descrições de ocorrências."
+                        >
+                          <FileText size={14} />
+                        </PermissionButton>
+                        
+                        <PermissionButton 
+                          requiredPermission="update:relatorio"
+                          variant="ghost" 
+                          size="sm" 
+                          className="border border-gray-300 bg-gray-50 hover:bg-gray-100 text-gray-700 p-1 h-8 w-8 flex items-center justify-center transition-all duration-200"
                           onClick={() => handlePopupOpen(o.id, 'editar')}
                           message="Você não tem permissão para editar ocorrências."
                         >
                           <Edit size={14} />
                         </PermissionButton>
 
-                        <PermissionButton 
-                          requiredPermission="update:relatorio"
+                        <Button 
                           variant="ghost" 
                           size="sm" 
-                          className="border border-indigo-300 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 p-1 h-8 w-8 flex items-center justify-center"
-                          onClick={() => handlePopupOpen(o.id, 'descricao')}
-                          message="Você não tem permissão para editar descrições de ocorrências."
+                          className={`border p-1 h-8 w-8 flex items-center justify-center transition-all duration-200 ${
+                            o.passagem_servico
+                              ? 'border-green-300 bg-green-50 hover:bg-green-100 text-green-700' 
+                              : 'border-blue-300 bg-blue-50 hover:bg-blue-100 text-blue-700'
+                          }`}
+                          onClick={() => handlePopupOpen(o.id, 'passagem')}
+                          title="Passagem de Serviço"
                         >
                           <FileText size={14} />
-                        </PermissionButton>
+                        </Button>
 
                         <PermissionButton 
                           requiredPermission="update:relatorio"
                           variant="ghost" 
                           size="sm" 
-                          className="border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 p-1 h-8 w-8 flex items-center justify-center"
+                          className={`border p-1 h-8 w-8 flex items-center justify-center transition-all duration-200 ${
+                            o.resultado
+                              ? 'border-green-300 bg-green-50 hover:bg-green-100 text-green-700' 
+                              : 'border-blue-300 bg-blue-50 hover:bg-blue-100 text-blue-700'
+                          }`}
                           onClick={() => handlePopupOpen(o.id, 'status')}
                           message="Você não tem permissão para editar status de ocorrências."
                         >
                           <Check size={14} />
                         </PermissionButton>
-
-                        <Button 
+                        
+                        <PermissionButton 
+                          requiredPermission="update:relatorio"
                           variant="ghost" 
                           size="sm" 
-                          title="Passagem de Serviço"
-                          className="border border-teal-300 bg-teal-50 hover:bg-teal-100 text-teal-700 p-1 h-8 w-8 flex items-center justify-center"
-                          onClick={() => handlePopupOpen(o.id, 'passagem')}
+                          className="border border-blue-300 bg-blue-50 hover:bg-blue-100 text-blue-700 p-1 h-8 w-8 flex items-center justify-center transition-all duration-200"
+                          onClick={() => handlePopupOpen(o.id, 'checklist')}
+                          message="Você não tem permissão para editar checklist de ocorrências."
                         >
-                          <FileText size={14} />
-                        </Button>
+                          <CheckSquare size={14} />
+                        </PermissionButton>
 
                         <PermissionButton 
                           requiredPermission="read:relatorio"
@@ -688,6 +744,17 @@ export default function RelatoriosPage() {
                   }}
                 />
               )}
+              {popupData.type === 'prestador-adicional' && (
+                <PrestadorAdicionalPopup
+                  ocorrencia={ocorrencias.find(o => o.id === popupData.id)!}
+                  onUpdate={(dados) => atualizarOcorrencia({ ...ocorrencias.find(o => o.id === popupData.id)!, ...dados })}
+                  onClose={handlePopupClose}
+                  isOpen={popupData.type === 'prestador-adicional'}
+                  onOpenChange={(open) => {
+                    if (!open) handlePopupClose();
+                  }}
+                />
+              )}
               {popupData.type === 'despesas' && (
                 <DespesasPopup
                   ocorrencia={ocorrencias.find(o => o.id === popupData.id)!}
@@ -729,6 +796,13 @@ export default function RelatoriosPage() {
               )}
               {popupData.type === 'status' && (
                 <StatusRecuperacaoPopup
+                  ocorrencia={ocorrencias.find(o => o.id === popupData.id)!}
+                  onUpdate={(dados) => atualizarOcorrencia({ ...ocorrencias.find(o => o.id === popupData.id)!, ...dados })}
+                  onClose={handlePopupClose}
+                />
+              )}
+              {popupData.type === 'checklist' && (
+                <CheckListPopup
                   ocorrencia={ocorrencias.find(o => o.id === popupData.id)!}
                   onUpdate={(dados) => atualizarOcorrencia({ ...ocorrencias.find(o => o.id === popupData.id)!, ...dados })}
                   onClose={handlePopupClose}

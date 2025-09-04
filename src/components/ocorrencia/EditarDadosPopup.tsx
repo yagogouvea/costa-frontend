@@ -213,187 +213,217 @@ const EditarDadosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) =>
   const tiposOcorrenciaAtivos = TIPOS_OCORRENCIA_PADRAO;
 
   return (
-    <div className="space-y-6 max-h-[80vh] overflow-y-auto">
+    <div className="space-y-4 sm:space-y-6">
       <DialogTitle className="text-base sm:text-lg font-bold">Editar Dados da Ocorrência</DialogTitle>
       <DialogDescription className="text-xs sm:text-sm text-muted-foreground">
         Atualize os dados gerais lançados na abertura da ocorrência.
       </DialogDescription>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
-        <div>
-          <Label>Cliente</Label>
-          <Input value={cliente} onChange={e => setCliente(e.target.value)} />
-        </div>
-
-        <div>
-          <Label>Sub cliente</Label>
-          <Input 
-            value={subCliente} 
-            onChange={e => setSubCliente(e.target.value)} 
-            placeholder="Digite o sub cliente (opcional)"
-          />
-        </div>
-
-        <div>
-          <Label>Tipo</Label>
-          <Select value={tipo} onValueChange={setTipo}>
-            <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-            <SelectContent>
-              {tiposOcorrenciaAtivos.map(t => (
-                <SelectItem key={t} value={t}>{t}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <Label>Data do Acionamento</Label>
-          <Input
-            type="date"
-            value={toDateInputValue(dataAcionamento)}
-            onChange={e => setDataAcionamento(e.target.value)}
-          />
-        </div>
-
-        <div>
-          <Label>Tipo de Veículo</Label>
-          <Select value={tipoVeiculo} onValueChange={setTipoVeiculo}>
-            <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-            <SelectContent>
-              {TIPOS_VEICULO.map(v => (
-                <SelectItem key={v} value={v}>{v}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <Label>Placa Principal</Label>
-          <Input
-            value={placas[0]}
-            onChange={(e) => {
-              const novas = [...placas];
-              novas[0] = e.target.value;
-              setPlacas(novas);
-            }}
-          />
-        </div>
-
-        <div>
-          <Label>Modelo</Label>
-          <Input value={modelo1} onChange={(e) => setModelo1(e.target.value)} />
-        </div>
-
-        <div>
-          <Label>Cor</Label>
-          <Input value={cor1} onChange={(e) => setCor1(e.target.value)} />
-        </div>
-
-        <div>
-          <Label>Placa 2</Label>
-          <Input
-            value={placas[1]}
-            onChange={(e) => {
-              const novas = [...placas];
-              novas[1] = e.target.value;
-              setPlacas(novas);
-            }}
-          />
-        </div>
-
-        <div>
-          <Label>Placa 3</Label>
-          <Input
-            value={placas[2]}
-            onChange={(e) => {
-              const novas = [...placas];
-              novas[2] = e.target.value;
-              setPlacas(novas);
-            }}
-          />
-        </div>
-
-        <div className="col-span-3">
-          <Label>Coordenadas (latitude, longitude)</Label>
-          <Input value={coordenadas} onChange={e => setCoordenadas(e.target.value)} placeholder="Ex: -23.550520, -46.633308" />
-        </div>
-
-        <div className="col-span-3">
-          <Label>Endereço</Label>
-          <Input value={endereco} onChange={e => setEndereco(e.target.value)} />
-        </div>
-
-        <div>
-          <Label>Bairro</Label>
-          <Input value={bairro} onChange={e => setBairro(e.target.value)} />
-        </div>
-
-        <div>
-          <Label>Cidade</Label>
-          <Input value={cidade} onChange={e => setCidade(e.target.value)} />
-        </div>
-
-        <div>
-          <Label>Estado</Label>
-          <Input value={estado} onChange={e => setEstado(e.target.value)} />
-        </div>
-
-        {/* Campos específicos do Ituran removidos - cliente não utilizado neste sistema */}
-
-        {/* Campos específicos do Marfrig removidos - cliente não utilizado neste sistema */}
-
-        <div>
-          <Label>Operador</Label>
-          <Select onValueChange={setOperador} value={operador}>
-            <SelectTrigger>
-              <SelectValue placeholder="Selecione o operador" />
-            </SelectTrigger>
-            <SelectContent>
-              {OPERADORES.map(op => (
-                <SelectItem key={op} value={op}>{op}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Campos específicos para cliente Opentech */}
-        {isClienteOpentech(cliente) && (
+      {/* Seção 1: Informações Básicas */}
+      <div className="bg-blue-50/50 rounded-lg p-3 sm:p-4 border border-blue-200">
+        <h3 className="text-sm sm:text-base font-semibold text-blue-800 mb-3 flex items-center gap-2">
+          <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
+          Informações Básicas
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           <div>
-            <Label>Operação <span className="text-red-500">*</span></Label>
-            <Select onValueChange={setOperacao} value={operacao}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione a operação" />
-              </SelectTrigger>
+            <Label>Cliente</Label>
+            <Input value={cliente} onChange={e => setCliente(e.target.value)} />
+          </div>
+
+          <div>
+            <Label>Sub cliente</Label>
+            <Input 
+              value={subCliente} 
+              onChange={e => setSubCliente(e.target.value)} 
+              placeholder="Digite o sub cliente (opcional)"
+            />
+          </div>
+
+          <div>
+            <Label>Tipo de Ocorrência</Label>
+            <Select value={tipo} onValueChange={setTipo}>
+              <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
               <SelectContent>
-                {OPERACOES_OPENTECH.map(op => (
+                {tiposOcorrenciaAtivos.map(t => (
+                  <SelectItem key={t} value={t}>{t}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label>Data do Acionamento</Label>
+            <Input
+              type="date"
+              value={toDateInputValue(dataAcionamento)}
+              onChange={e => setDataAcionamento(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <Label>Tipo de Veículo</Label>
+            <Select value={tipoVeiculo} onValueChange={setTipoVeiculo}>
+              <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+              <SelectContent>
+                {TIPOS_VEICULO.map(v => (
+                  <SelectItem key={v} value={v}>{v}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label>Operador</Label>
+            <Select value={operador} onValueChange={setOperador}>
+              <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+              <SelectContent>
+                {OPERADORES.map(op => (
                   <SelectItem key={op} value={op}>{op}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
-        )}
 
-        {/* Campos específicos para cliente BRK */}
-        {isClienteBrk(cliente) && (
-          <div>
-            <Label>Conta <span className="text-red-500">*</span></Label>
-            <Input 
-              value={conta} 
-              onChange={e => setConta(e.target.value)} 
-              placeholder="Digite a conta"
-            />
-          </div>
-        )}
-
-        {/* Campos adicionais para múltiplos modelos e cores - não implementados no schema atual */}
-        {/* Futuro: adicionar modelo2, modelo3, cor2, cor3 ao schema se necessário */}
+          {isClienteOpentech(cliente) && (
+            <div>
+              <Label className="text-red-500">
+                Operação <span className="text-red-500">*</span>
+              </Label>
+              <Select onValueChange={setOperacao} value={operacao}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione a operação" />
+                </SelectTrigger>
+                <SelectContent>
+                  {OPERACOES_OPENTECH.map(operacao => (
+                    <SelectItem key={operacao} value={operacao}>{operacao}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+        </div>
       </div>
 
-      <div className="flex justify-end gap-2">
+      {/* Seção 2: Informações do Veículo */}
+      <div className="bg-green-50/50 rounded-lg p-3 sm:p-4 border border-green-200">
+        <h3 className="text-sm sm:text-base font-semibold text-green-800 mb-3 flex items-center gap-2">
+          <span className="w-2 h-2 bg-green-600 rounded-full"></span>
+          Informações do Veículo
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+          <div>
+            <Label>Placa Principal</Label>
+            <Input
+              value={placas[0]}
+              onChange={(e) => {
+                const novas = [...placas];
+                novas[0] = e.target.value;
+                setPlacas(novas);
+              }}
+            />
+          </div>
+
+          <div>
+            <Label>Placa 2 (opcional)</Label>
+            <Input
+              value={placas[1]}
+              onChange={(e) => {
+                const novas = [...placas];
+                novas[1] = e.target.value;
+                setPlacas(novas);
+              }}
+            />
+          </div>
+
+          <div>
+            <Label>Placa 3 (opcional)</Label>
+            <Input
+              value={placas[2]}
+              onChange={(e) => {
+                const novas = [...placas];
+                novas[2] = e.target.value;
+                setPlacas(novas);
+              }}
+            />
+          </div>
+
+          <div>
+            <Label>Modelo</Label>
+            <Input value={modelo1} onChange={(e) => setModelo1(e.target.value)} />
+          </div>
+
+          <div>
+            <Label>Cor</Label>
+            <Input value={cor1} onChange={(e) => setCor1(e.target.value)} />
+          </div>
+        </div>
+      </div>
+
+      {/* Seção 3: Localização */}
+      <div className="bg-purple-50/50 rounded-lg p-3 sm:p-4 border border-purple-200">
+        <h3 className="text-sm sm:text-base font-semibold text-purple-800 mb-3 flex items-center gap-2">
+          <span className="w-2 h-2 bg-purple-600 rounded-full"></span>
+          Localização
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+          <div className="col-span-full">
+            <Label>Local da abordagem (latitude, longitude)</Label>
+            <Input value={coordenadas} onChange={e => setCoordenadas(e.target.value)} placeholder="Ex: -23.550520, -46.633308" />
+          </div>
+
+          <div className="col-span-full">
+            <Label>Endereço</Label>
+            <Input value={endereco} onChange={e => setEndereco(e.target.value)} />
+          </div>
+
+          <div>
+            <Label>Bairro</Label>
+            <Input value={bairro} onChange={e => setBairro(e.target.value)} />
+          </div>
+
+          <div>
+            <Label>Cidade</Label>
+            <Input value={cidade} onChange={e => setCidade(e.target.value)} />
+          </div>
+
+          <div>
+            <Label>Estado</Label>
+            <Input value={estado} onChange={e => setEstado(e.target.value)} />
+          </div>
+        </div>
+      </div>
+
+      {/* Seção 4: Campos Específicos por Cliente */}
+      {(isClienteBrk(cliente)) && (
+        <div className="bg-orange-50/50 rounded-lg p-3 sm:p-4 border border-orange-200">
+          <h3 className="text-sm sm:text-base font-semibold text-orange-800 mb-3 flex items-center gap-2">
+            <span className="w-2 h-2 bg-orange-600 rounded-full"></span>
+            Campos Específicos - BRK
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            <div>
+              <Label>Conta <span className="text-red-500">*</span></Label>
+              <Input 
+                value={conta} 
+                onChange={e => setConta(e.target.value)} 
+                placeholder="Digite a conta"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Botões de ação */}
+      <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 pt-2 border-t border-gray-200">
         <DialogClose asChild>
-          <Button variant="ghost" onClick={cancelar}>Cancelar</Button>
+          <Button variant="ghost" onClick={cancelar} className="w-full sm:w-auto order-2">
+            Cancelar
+          </Button>
         </DialogClose>
-        <Button onClick={salvar}>Salvar</Button>
+        <Button onClick={salvar} className="w-full sm:w-auto order-1">
+          Salvar Alterações
+        </Button>
       </div>
     </div>
   );

@@ -96,38 +96,38 @@ const gerarTextoPassagem = async (o: Ocorrencia): Promise<string> => {
   const isBrk = (o.cliente || '').toLowerCase().includes('brk');
   const isSimplesVerificacao = (o.tipo || '').toLowerCase() === 'simples verificação';
   
-  // Determinar status com informações detalhadas
-  let statusRecuperacao = 'Em andamento';
-  
-  if (o.resultado?.trim()) {
-    switch (o.resultado.toUpperCase()) {
-      case 'RECUPERADO':
-        if (o.sub_resultado) {
-          // Mapear sub_resultado para texto legível
-          const subResultadoMap: Record<string, string> = {
-            'COM_RASTREIO': 'Com Rastreio',
-            'SEM_RASTREIO': 'Sem Rastreio',
-            'SEM_RASTREIO_COM_CONSULTA_APOIO': 'Sem Rastreio e com Consulta do Apoio'
-          };
-          const submotivo = subResultadoMap[o.sub_resultado] || o.sub_resultado;
-          statusRecuperacao = `Recuperado (${submotivo})`;
-        } else {
-          statusRecuperacao = 'Recuperado';
-        }
-        break;
-      case 'NAO_RECUPERADO':
-        statusRecuperacao = 'Não Recuperado';
-        break;
-      case 'CANCELADO':
-        statusRecuperacao = 'Cancelado';
-        break;
-      case 'LOCALIZADO':
-        statusRecuperacao = 'Localizado (simples verificação)';
-        break;
-      default:
-        statusRecuperacao = o.resultado;
+  // ✅ FUNÇÃO PARA FORMATAR STATUS CORRETAMENTE (mesma lógica do dashboard)
+  const formatarStatusOcorrencia = (ocorrencia: any): string => {
+    // Se não tem resultado, está em andamento
+    if (!ocorrencia.resultado || ocorrencia.resultado.trim() === '') {
+      return 'Em andamento';
     }
-  }
+
+    // Mapear resultado para texto legível
+    switch (ocorrencia.resultado.toUpperCase()) {
+      case 'RECUPERADO':
+        if (ocorrencia.sub_resultado) {
+          const subResultadoMap: Record<string, string> = {
+            'COM_RASTREIO': 'Recuperado (Com Rastreio)',
+            'SEM_RASTREIO': 'Recuperado (Sem Rastreio)',
+            'SEM_RASTREIO_COM_CONSULTA_APOIO': 'Recuperado (Sem Rastreio e com Consulta do Apoio)'
+          };
+          return subResultadoMap[ocorrencia.sub_resultado] || `Recuperado (${ocorrencia.sub_resultado})`;
+        }
+        return 'Recuperado';
+      case 'NAO_RECUPERADO':
+        return 'Não Recuperado';
+      case 'CANCELADO':
+        return 'Cancelado';
+      case 'LOCALIZADO':
+        return 'Localizado (simples verificação)';
+      default:
+        return ocorrencia.resultado;
+    }
+  };
+
+  // Determinar status com informações detalhadas
+  const statusRecuperacao = formatarStatusOcorrencia(o);
 
   // Gerar texto das despesas dinamicamente
   const textoDespesas = despesas && Array.isArray(despesas) && despesas.length > 0 
@@ -536,7 +536,19 @@ const PassagemServicoPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }
             </div>
             <div>
               <span className="font-medium text-gray-700">Status:</span>
-              <span className="ml-2 text-gray-900">{ocorrencia.resultado || 'Em andamento'}</span>
+              <span className="ml-2 text-gray-900">
+                {!ocorrencia.resultado || ocorrencia.resultado.trim() === '' 
+                  ? 'Em andamento' 
+                  : ocorrencia.resultado === 'RECUPERADO' && ocorrencia.sub_resultado
+                    ? `Recuperado (${ocorrencia.sub_resultado === 'COM_RASTREIO' ? 'Com Rastreio' : 
+                        ocorrencia.sub_resultado === 'SEM_RASTREIO' ? 'Sem Rastreio' : 
+                        ocorrencia.sub_resultado === 'SEM_RASTREIO_COM_CONSULTA_APOIO' ? 'Sem Rastreio e com Consulta do Apoio' : 
+                        ocorrencia.sub_resultado})`
+                    : ocorrencia.resultado === 'NAO_RECUPERADO' ? 'Não Recuperado' :
+                      ocorrencia.resultado === 'CANCELADO' ? 'Cancelado' :
+                      ocorrencia.resultado === 'LOCALIZADO' ? 'Localizado (simples verificação)' :
+                      ocorrencia.resultado}
+              </span>
             </div>
             <div>
               <span className="font-medium text-gray-700">Prestador:</span>
