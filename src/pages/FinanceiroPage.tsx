@@ -12,13 +12,10 @@ import {
   X,
   RefreshCw,
   TrendingUp,
-  TrendingDown,
   DollarSign,
   Clock,
   Target,
-  Percent,
   Activity,
-  Car,
   MapPin,
   UserCheck
 } from 'lucide-react';
@@ -273,10 +270,10 @@ const FinanceiroPage: React.FC = () => {
                   </Select>
                   
                   <Button 
-                    variant="outline" 
+                    variant="ghost" 
                     size="sm" 
                     onClick={resetarFiltros}
-                    className="flex items-center gap-1"
+                    className="flex items-center gap-1 border border-slate-200"
                   >
                     <RefreshCw className="w-4 h-4" />
                     Resetar

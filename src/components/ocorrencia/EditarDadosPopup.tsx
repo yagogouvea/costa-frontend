@@ -64,7 +64,7 @@ const EditarDadosPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) =>
   const [modelo1, setModelo1] = useState(ocorrencia.modelo1 || '');
   const [cor1, setCor1] = useState(ocorrencia.cor1 || '');
   const [coordenadas, setCoordenadas] = useState(ocorrencia.coordenadas || '');
-  const [cep, setCep] = useState(ocorrencia.cep || '');
+  const [cep, setCep] = useState((ocorrencia as any).cep || '');
   const [endereco, setEndereco] = useState(ocorrencia.endereco || '');
   const [bairro, setBairro] = useState(ocorrencia.bairro || '');
   const [cidade, setCidade] = useState(ocorrencia.cidade || '');
