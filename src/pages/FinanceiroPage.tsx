@@ -20,7 +20,7 @@ import {
   UserCheck
 } from 'lucide-react';
 import PageAccessControl from '@/components/PageAccessControl';
-import api from '@/services/api';
+// import api from '@/services/api';
 
 // Interfaces
 interface FiltroTempo {
@@ -65,14 +65,14 @@ const FinanceiroPage: React.FC = () => {
     kmTotal: 0,
     prestadoresAtivos: 0
   });
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
 
   // Opções para filtros múltiplos
-  const opcoesFiltros = {
-    tipo_ocorrencia: ['Roubo', 'Furto', 'Apreensão', 'Localização'],
-    apoio: ['Fox', 'Eagle', 'Wolf', 'Tiger', 'Lion'],
-    cliente: ['BRK', 'Porto Seguro', 'SulAmérica', 'Bradesco', 'Itaú']
-  };
+  // const opcoesFiltros = {
+  //   tipo_ocorrencia: ['Roubo', 'Furto', 'Apreensão', 'Localização'],
+  //   apoio: ['Fox', 'Eagle', 'Wolf', 'Tiger', 'Lion'],
+  //   cliente: ['BRK', 'Porto Seguro', 'SulAmérica', 'Bradesco', 'Itaú']
+  // };
 
   // Carregar métricas iniciais
   useEffect(() => {
@@ -80,7 +80,6 @@ const FinanceiroPage: React.FC = () => {
   }, [filtroTempo, filtrosMultiplos]);
 
   const carregarMetricas = async () => {
-    setLoading(true);
     try {
       // Simular dados por enquanto - depois integrar com API real
       const dadosSimulados: MetricasFinanceiras = {
@@ -98,8 +97,6 @@ const FinanceiroPage: React.FC = () => {
       setMetricas(dadosSimulados);
     } catch (error) {
       console.error('Erro ao carregar métricas:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -155,18 +152,18 @@ const FinanceiroPage: React.FC = () => {
           {/* Header Elegante */}
           <div className="bg-gradient-to-r from-slate-800/95 to-slate-900/95 backdrop-blur-sm text-white rounded-2xl p-6 mb-8 shadow-xl border border-white/10">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-              <div>
+          <div>
                 <h1 className="text-2xl lg:text-3xl font-bold flex items-center gap-3">
                   <DollarSign className="w-8 h-8 text-green-400" />
-                  Financeiro
-                </h1>
+              Financeiro
+            </h1>
                 <p className="text-slate-300 mt-2 text-sm lg:text-base">
                   Controle financeiro e análise de desempenho
-                </p>
-              </div>
+            </p>
+          </div>
               
               {/* Abas */}
-              <div className="flex gap-2 items-center">
+          <div className="flex gap-2 items-center">
                 <Button 
                   variant={aba === 'resumo' ? 'default' : 'ghost'} 
                   onClick={() => setAba('resumo')} 
@@ -174,7 +171,7 @@ const FinanceiroPage: React.FC = () => {
                 >
                   <BarChart2 className="w-4 h-4" />
                   Resumo Geral
-                </Button>
+            </Button>
                 <Button 
                   variant={aba === 'detalhado' ? 'default' : 'ghost'} 
                   onClick={() => setAba('detalhado')} 
@@ -182,7 +179,7 @@ const FinanceiroPage: React.FC = () => {
                 >
                   <Table className="w-4 h-4" />
                   Controle Detalhado
-                </Button>
+            </Button>
                 <Button 
                   variant={aba === 'prestadores' ? 'default' : 'ghost'} 
                   onClick={() => setAba('prestadores')} 
@@ -190,9 +187,9 @@ const FinanceiroPage: React.FC = () => {
                 >
                   <Users className="w-4 h-4" />
                   Controle Prestadores
-                </Button>
-              </div>
-            </div>
+            </Button>
+          </div>
+        </div>
           </div>
 
           {/* Filtros */}
@@ -299,8 +296,8 @@ const FinanceiroPage: React.FC = () => {
                     </span>
                   ))}
                 </div>
-              </div>
-            )}
+          </div>
+        )}
 
             {/* Período Atual */}
             <div className="mt-4 pt-4 border-t border-gray-200">
@@ -451,21 +448,21 @@ const FinanceiroPage: React.FC = () => {
                 Controle Detalhado
               </h2>
               <p className="text-gray-600">Tabela detalhada de ocorrências será implementada aqui.</p>
-            </div>
-          )}
+          </div>
+        )}
 
-          {aba === 'prestadores' && (
+        {aba === 'prestadores' && (
             <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 p-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
                 <Users className="w-5 h-5 text-blue-600" />
                 Controle Prestadores
               </h2>
               <p className="text-gray-600">Relatórios e controle de prestadores será implementado aqui.</p>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
-    </PageAccessControl>
+    </div>
+      </PageAccessControl>
   );
 };
 

@@ -742,14 +742,16 @@ const OcorrenciasDashboard: React.FC = () => {
               <span className="text-slate-500 text-xs md:text-xs sm:text-xs font-medium">#{ocorrencia.id}</span>
             </div>
             <p className="text-slate-700 text-xs md:text-xs sm:text-sm mb-1 font-medium truncate">{getNomeCliente(String(ocorrencia.cliente || '')) || '–'}</p>
-            <p className="text-slate-500 text-xs flex items-center gap-1 md:gap-2">
-              <User className="w-3 h-3" />
-              <span className="truncate">{String(ocorrencia.operador || '–')}</span>
+            <p className="text-slate-500 text-xs flex flex-wrap items-center gap-x-2 gap-y-1">
+              <span className="inline-flex items-center gap-1 min-w-0">
+                <User className="w-3 h-3" />
+                <span className="truncate max-w-[140px] sm:max-w-[200px]">{String(ocorrencia.operador || '–')}</span>
+              </span>
               <span className="hidden sm:inline">•</span>
-              <span className="truncate">{String(ocorrencia.tipo || '–')}</span>
+              <span className="truncate max-w-[140px] sm:max-w-[200px]">{String(ocorrencia.tipo || '–')}</span>
             </p>
           </div>
-          <div className="flex-shrink-0 ml-2 md:ml-4">
+          <div className="flex-shrink-0 ml-2 md:ml-4 hidden sm:block">
             {(() => {
               if ((ocorrencia.status || '').toLowerCase() === 'em_andamento') {
                 return (
@@ -789,16 +791,56 @@ const OcorrenciasDashboard: React.FC = () => {
             })()}
           </div>
         </div>
+
+        {/* Badge de resultado em linha separada no mobile para evitar sobreposição */}
+        <div className="sm:hidden mb-3 -mt-2">
+          {(() => {
+            if ((ocorrencia.status || '').toLowerCase() === 'em_andamento') {
+              return (
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-sm">
+                  <div className="w-1.5 h-1.5 bg-white rounded-full mr-1 animate-pulse"></div>
+                  Em Andamento
+                </span>
+              );
+            }
+            if (ocorrencia.resultado && ['RECUPERADO', 'NAO_RECUPERADO', 'CANCELADO', 'LOCALIZADO'].includes(ocorrencia.resultado)) {
+              const isRecuperado = ocorrencia.resultado === 'RECUPERADO';
+              const isCancelado = ocorrencia.resultado === 'CANCELADO';
+              const isLocalizado = ocorrencia.resultado === 'LOCALIZADO';
+              return (
+                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium shadow-sm ${
+                  isRecuperado ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white' : 
+                  isCancelado ? 'bg-gradient-to-r from-red-500 to-pink-500 text-white' : 
+                  isLocalizado ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white' :
+                  'bg-gradient-to-r from-yellow-500 to-orange-500 text-white'
+                }`}>
+                  {isRecuperado && <CheckCircle className="w-3 h-3 mr-1" />}
+                  {isCancelado && <XCircle className="w-3 h-3 mr-1" />}
+                  {isLocalizado && <MapPin className="w-3 h-3 mr-1" />}
+                  <span className="truncate max-w-[220px]">{String(ocorrencia.resultado)}</span>
+                  {ocorrencia.sub_resultado && isRecuperado && (
+                    <span className="ml-1 text-xs opacity-90">({ocorrencia.sub_resultado.replace(/_/g, ' ').toLowerCase()})</span>
+                  )}
+                </span>
+              );
+            }
+            return (
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-slate-500 to-gray-500 text-white shadow-sm">
+                <span className="truncate">{String(ocorrencia.status || '–')}</span>
+              </span>
+            );
+          })()}
+        </div>
         
         {/* Informações em destaque - Prestador e Horários para todos os dispositivos */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 lg:gap-4 mb-3 sm:mb-4">
           {/* Prestador */}
-          <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-lg p-2 sm:p-3 border border-indigo-200 shadow-sm">
+          <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-lg p-2 sm:p-3 border border-indigo-200 shadow-sm col-span-full sm:col-span-1">
             <div className="flex items-center gap-2 mb-1">
               <User className="w-3 h-3 sm:w-4 sm:h-4 text-indigo-600" />
               <span className="text-indigo-800 font-semibold text-xs sm:text-sm">Prestador</span>
             </div>
-            <p className="text-indigo-900 font-bold text-xs sm:text-sm truncate">{String(ocorrencia.prestador || '–')}</p>
+            <p className="text-indigo-900 font-bold text-xs sm:text-sm truncate max-w-full">{String(ocorrencia.prestador || '–')}</p>
           </div>
           
           {/* Horários */}
