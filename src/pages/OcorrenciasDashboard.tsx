@@ -1592,10 +1592,10 @@ const OcorrenciasDashboard: React.FC = () => {
         {/* Dialog unificado para todos os popups */}
         {popupData && (
           <Dialog open={!!popupData} onOpenChange={() => handlePopupClose()}>
-            <DialogContent className={`bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 ${
-              popupData.type === 'fotos' 
-                ? 'max-w-7xl w-[95vw] h-[90vh] overflow-y-auto' 
-                : 'max-w-[95vw] md:max-w-4xl max-h-[90vh] overflow-y-auto'
+            <DialogContent className={`bg-white rounded-xl shadow-2xl border border-gray-200 ${
+              popupData.type === 'fotos'
+                ? 'max-w-7xl w-[95vw] h-[90vh] overflow-y-auto'
+                : 'w-[95vw] sm:w-[90vw] md:w-[720px] lg:w-[680px] xl:w-[720px] max-h-[90vh] overflow-y-auto p-0'
             }`}>
               {popupData.type === 'horarios' && (
                 <HorariosPopup

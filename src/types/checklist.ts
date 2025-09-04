@@ -77,6 +77,14 @@ export interface CreateCheckListDTO {
   nome_dp_batalhao?: string;
   endereco_apreensao?: string;
   numero_bo_noc?: string;
+  // Liberado no local
+  liberado_local_selecionado?: boolean;
+  liberado_nome_responsavel?: string;
+  liberado_numero_referencia?: string;
+  // Liberado no local
+  liberado_local_selecionado?: boolean;
+  liberado_nome_responsavel?: string;
+  liberado_numero_referencia?: string;
   
   // Recuperado com chave
   recuperado_com_chave?: string;

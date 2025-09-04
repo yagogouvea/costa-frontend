@@ -20,7 +20,7 @@ export const Dialog: React.FC<DialogProps> = ({ open, onOpenChange, children }) 
         className="fixed inset-0 bg-black bg-opacity-50" 
         onClick={() => onOpenChange(false)}
       />
-      <div className="relative bg-white rounded-lg shadow-xl">
+      <div className="relative bg-white rounded-lg shadow-xl max-w-[96vw] w-auto">
         {children}
       </div>
     </div>
@@ -44,7 +44,7 @@ export const DialogTrigger: React.FC<{
 
 export const DialogContent: React.FC<DialogContentProps> = ({ children, className = '' }) => {
   return (
-    <div className={`p-6 w-[95vw] max-w-[95vw] sm:max-w-[90vw] md:max-w-[80vw] lg:max-w-[70vw] max-h-[90vh] overflow-y-auto rounded-lg ${className}`}>
+    <div className={`p-4 sm:p-5 md:p-6 w-auto max-w-none max-h-[90vh] overflow-y-auto rounded-lg ${className}`}>
       {children}
     </div>
   );

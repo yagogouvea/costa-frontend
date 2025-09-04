@@ -205,6 +205,16 @@ const gerarTextoPassagem = async (o: Ocorrencia): Promise<string> => {
         checklistSections.push(apreensaoInfo.join('\n'));
       }
 
+      // Seção LIBERADO NO LOCAL
+      if (checklist.liberado_local_selecionado) {
+        const liberadoInfo = [
+          '✅ *LIBERADO NO LOCAL*'
+        ];
+        if (checklist.liberado_nome_responsavel) liberadoInfo.push(`• *RESPONSÁVEL:* ${checklist.liberado_nome_responsavel.toUpperCase()}`);
+        if (checklist.liberado_numero_referencia) liberadoInfo.push(`• *REF.:* ${checklist.liberado_numero_referencia.toUpperCase()}`);
+        checklistSections.push(liberadoInfo.join('\n'));
+      }
+
       // Seção INFORMAÇÕES GERAIS
       const infoGerais = [];
       if (checklist.recuperado_com_chave) {

@@ -751,7 +751,7 @@ const RelatorioPDF = ({ dados }: { dados: RelatorioDados }) => {
               {/* === INFORMAÇÕES CONDICIONAIS - APARECEM APENAS QUANDO SELECIONADAS === */}
               
               {/* Destino - Apenas quando alguma opção for selecionada */}
-              {(checklist.loja_selecionada || checklist.guincho_selecionado || checklist.apreensao_selecionada) && (
+              {(checklist.loja_selecionada || checklist.guincho_selecionado || checklist.apreensao_selecionada || checklist.liberado_local_selecionado) && (
                 <View style={styles.secaoCondicional}>
                   <View style={styles.linhaDivisoria} />
                   <Text style={styles.subtituloQuadrante}>DESTINO SELECIONADO</Text>
@@ -766,6 +766,8 @@ const RelatorioPDF = ({ dados }: { dados: RelatorioDados }) => {
                           return 'Guincho';
                         } else if (checklist.apreensao_selecionada) {
                           return 'Apreensão';
+                        } else if (checklist.liberado_local_selecionado) {
+                          return 'Liberado no local';
                         }
                         return '-';
                       })()}
@@ -845,6 +847,20 @@ const RelatorioPDF = ({ dados }: { dados: RelatorioDados }) => {
                     <Text style={styles.rotulo}>BO/NOC:</Text>
                     <Text style={styles.valor}>{renderizarValor(checklist.numero_bo_noc)}</Text>
                   </View>
+                </View>
+              )}
+              {checklist.liberado_local_selecionado && (
+                <View style={styles.secaoCondicional}>
+                  <View style={styles.linhaQuadrante}>
+                    <Text style={styles.rotulo}>Responsável:</Text>
+                    <Text style={styles.valor}>{renderizarValor(checklist.liberado_nome_responsavel)}</Text>
+                  </View>
+                  {checklist.liberado_numero_referencia ? (
+                    <View style={styles.linhaQuadrante}>
+                      <Text style={styles.rotulo}>Ref. (B.O/NOC/Token/Talão):</Text>
+                      <Text style={styles.valor}>{renderizarValor(checklist.liberado_numero_referencia)}</Text>
+                    </View>
+                  ) : null}
                 </View>
               )}
             </View>

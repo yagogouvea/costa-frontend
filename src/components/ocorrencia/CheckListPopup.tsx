@@ -22,7 +22,7 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
   // Removido: destinoVeiculo - agora é título do popup
 
   // Tipo de destino (radio button - seleção única)
-  const [tipoDestino, setTipoDestino] = useState(''); // 'loja', 'guincho', 'apreensao'
+  const [tipoDestino, setTipoDestino] = useState(''); // 'loja', 'guincho', 'apreensao', 'liberado'
   
   // Loja
   const [nomeLoja, setNomeLoja] = useState('');
@@ -43,6 +43,10 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
   const [nomeDpBatalhao, setNomeDpBatalhao] = useState('');
   const [enderecoApreensao, setEnderecoApreensao] = useState('');
   const [numeroBoNoc, setNumeroBoNoc] = useState('');
+
+  // Liberado no local
+  const [liberadoNomeResponsavel, setLiberadoNomeResponsavel] = useState('');
+  const [liberadoNumeroReferencia, setLiberadoNumeroReferencia] = useState('');
 
   // Recuperado com chave
   const [recuperadoComChave, setRecuperadoComChave] = useState('');
@@ -123,6 +127,9 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
         } else if (checklist.apreensao_selecionada) {
           console.log('✅ Definindo tipo: apreensao');
           setTipoDestino('apreensao');
+        } else if (checklist.liberado_local_selecionado) {
+          console.log('✅ Definindo tipo: liberado');
+          setTipoDestino('liberado');
         }
         
         // Loja
@@ -150,6 +157,10 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
         setNomeDpBatalhao(checklist.nome_dp_batalhao || '');
         setEnderecoApreensao(checklist.endereco_apreensao || '');
         setNumeroBoNoc(checklist.numero_bo_noc || '');
+
+        // Liberado no local
+        setLiberadoNomeResponsavel(checklist.liberado_nome_responsavel || '');
+        setLiberadoNumeroReferencia(checklist.liberado_numero_referencia || '');
         
         // Outros campos
         setRecuperadoComChave(checklist.recuperado_com_chave || '');
@@ -206,6 +217,10 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
       if (!nomeDpBatalhao.trim()) novosErros.nomeDpBatalhao = 'Nome do DP/Batalhão é obrigatório';
       if (!enderecoApreensao.trim()) novosErros.enderecoApreensao = 'Endereço é obrigatório';
       if (!numeroBoNoc.trim()) novosErros.numeroBoNoc = 'Número do B.O/NOC é obrigatório';
+    }
+
+    if (tipoDestino === 'liberado') {
+      if (!liberadoNomeResponsavel.trim()) novosErros.liberadoNomeResponsavel = 'Nome do responsável é obrigatório';
     }
     
     // 3. VALIDAÇÕES PADRÃO (obrigatórias para todas as opções)
@@ -283,6 +298,11 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
         nome_dp_batalhao: (tipoDestino === 'apreensao') ? nomeDpBatalhao || undefined : undefined,
         endereco_apreensao: (tipoDestino === 'apreensao') ? enderecoApreensao || undefined : undefined,
         numero_bo_noc: (tipoDestino === 'apreensao') ? numeroBoNoc || undefined : undefined,
+
+        // Liberado no local
+        liberado_local_selecionado: dispensarChecklist ? false : (tipoDestino === 'liberado'),
+        liberado_nome_responsavel: (tipoDestino === 'liberado') ? liberadoNomeResponsavel || undefined : undefined,
+        liberado_numero_referencia: (tipoDestino === 'liberado') ? liberadoNumeroReferencia || undefined : undefined,
         
         // Outros campos
         recuperado_com_chave: recuperadoComChave || undefined,
@@ -397,6 +417,22 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
                 className="text-blue-600"
               />
               <Label htmlFor="apreensao_radio" className="font-semibold">Apreensão</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <input
+                type="radio"
+                id="liberado_radio"
+                name="tipo_destino"
+                value="liberado"
+                checked={tipoDestino === 'liberado'}
+                onChange={(e) => {
+                  if (dispensarChecklist) return;
+                  setTipoDestino(e.target.value);
+                  limparErro('tipoDestino');
+                }}
+                className="text-blue-600"
+              />
+              <Label htmlFor="liberado_radio" className="font-semibold">Liberado no local</Label>
             </div>
           </div>
           {/* ✅ MENSAGEM DE ERRO PARA TIPO DE DESTINO */}
@@ -766,6 +802,43 @@ const CheckListPopup: React.FC<Props> = ({ ocorrencia, onUpdate, onClose }) => {
               </div>
             </div>
           )}
+          {tipoDestino === 'liberado' && (
+            <div className="border p-4 rounded-lg bg-emerald-50">
+              <h3 className="text-md font-semibold text-gray-800 mb-4">Liberado no local</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label>
+                    Nome do proprietário/Responsável <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    type="text"
+                    placeholder="Digite o nome do responsável"
+                    value={liberadoNomeResponsavel}
+                    onChange={(e) => {
+                      setLiberadoNomeResponsavel(e.target.value);
+                      limparErro('liberadoNomeResponsavel');
+                    }}
+                    className={erros.liberadoNomeResponsavel ? 'border-red-500' : ''}
+                  />
+                  {erros.liberadoNomeResponsavel && (
+                    <p className="text-red-500 text-sm mt-1">{erros.liberadoNomeResponsavel}</p>
+                  )}
+                </div>
+                <div>
+                  <Label>
+                    Nº B.O/NOC/Token/Talão
+                  </Label>
+                  <Input
+                    type="text"
+                    placeholder="Digite o número (se houver)"
+                    value={liberadoNumeroReferencia}
+                    onChange={(e) => setLiberadoNumeroReferencia(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
 
         {/* Seção: Informações Gerais */}
