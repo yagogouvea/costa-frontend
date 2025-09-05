@@ -30,10 +30,9 @@ export default function PermissionButton({
 }: PermissionButtonProps) {
   const { user } = useAuth();
   
-  // Admin tem acesso total a tudo
-  const isAdmin = user?.role === 'admin';
-  const hasPermission = isAdmin || (Array.isArray(user?.permissions) && 
-    user.permissions.includes(requiredPermission));
+  // Autorização baseada apenas em permissões explícitas
+  const hasPermission = Array.isArray(user?.permissions) && 
+    user.permissions.includes(requiredPermission);
 
   const handleClick = () => {
     if (!hasPermission) {

@@ -15,6 +15,7 @@ import FinanceiroPage from './pages/FinanceiroPage';
 import DashboardLayout from "./components/DashboardLayout";
 import { AuthProvider } from "./contexts/AuthContext";
 import RequireAuth from "./components/RequireAuth";
+import RequirePermission from "./components/RequirePermission";
 
 import {
   LayoutDashboard,
@@ -58,12 +59,12 @@ function App() {
                 <DashboardLayout sidebarButtons={sidebarButtons}>
                   <Routes>
                     <Route path="/dashboard" element={<Home />} />
-                    <Route path="/cadastro-clientes" element={<CadastroClientes />} />
-                    <Route path="/cadastro-prestadores" element={<CadastroPrestadores />} />
+                    <Route path="/cadastro-clientes" element={<RequirePermission requiredPermission="access:clientes"><CadastroClientes /></RequirePermission>} />
+                    <Route path="/cadastro-prestadores" element={<RequirePermission requiredPermission="access:prestadores"><CadastroPrestadores /></RequirePermission>} />
                     <Route path="/ocorrencias" element={<OcorrenciasDashboard />} />
                     <Route path="/tratar-ocorrencia/:id" element={<TratarOcorrencia />} />
                     <Route path="/relatorios" element={<Relatorios />} />
-                    <Route path="/usuarios" element={<UsersPage />} />
+                    <Route path="/usuarios" element={<RequirePermission requiredPermission="access:usuarios"><UsersPage /></RequirePermission>} />
                     <Route path="/mapa-prestadores" element={<MapaPrestadoresPage />} />
                     <Route path="/financeiro" element={<FinanceiroPage />} />
                   </Routes>

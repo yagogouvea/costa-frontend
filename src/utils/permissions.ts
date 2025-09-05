@@ -118,22 +118,7 @@ export function convertPermissionsArrayToObject(permissions: string[] | Permissi
  * Hook para verificar permissões específicas de um recurso
  */
 export function usePermissions(userPermissions: string[] | PermissionsObject | undefined, userRole?: string) {
-  // Se o usuário é admin, retorna todas as permissões como true
-  if (userRole === 'admin') {
-    return {
-      users: { read: true, create: true, update: true, delete: true },
-      ocorrencias: { read: true, create: true, update: true, delete: true },
-      dashboard: { read: true },
-      prestadores: { read: true, create: true, update: true, delete: true },
-      relatorios: { read: true, create: true, update: true, delete: true },
-      clientes: { read: true, create: true, update: true, delete: true },
-      financeiro: { read: true },
-      fotos: { read: true, create: true, update: true, delete: true, upload: true },
-      contratos: { read: true, create: true, update: true, delete: true },
-      veiculos: { read: true, create: true, update: true, delete: true },
-      config: { read: true, update: true }
-    };
-  }
+  // Cargo não concede mais permissões automaticamente; tudo é via lista de permissões
 
   if (!userPermissions) {
     return {

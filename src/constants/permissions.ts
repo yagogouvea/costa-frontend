@@ -52,7 +52,12 @@ export const PERMISSIONS: Permission[] = [
   {
     key: 'access:usuarios',
     description: 'Usuários',
-    category: 'page'
+    category: 'page',
+    children: [
+      { key: 'usuarios:create', description: 'Criar Usuário', category: 'feature' },
+      { key: 'usuarios:edit', description: 'Editar Usuário', category: 'feature' },
+      { key: 'usuarios:delete', description: 'Excluir Usuário', category: 'feature' }
+    ]
   }
 ];
 
@@ -96,15 +101,11 @@ export const ADMIN_PERMISSIONS: string[] = PERMISSIONS.map(p => {
 
 // Mapeamento de permissões por cargo
 export const ROLE_PERMISSIONS: Record<string, string[]> = {
-  operator: DEFAULT_OPERATOR_PERMISSIONS,
-  manager: SUPERVISOR_PERMISSIONS, // Mudou de 'supervisor' para 'manager'
-  admin: ADMIN_PERMISSIONS
+  usuario: DEFAULT_OPERATOR_PERMISSIONS
 };
 
 export const ROLE_DESCRIPTIONS: Record<string, string> = {
-  operator: "Operador - Acesso às páginas do sistema",
-  manager: "Supervisor - Acesso às páginas + funcionalidades de prestadores e clientes", // Mudou de 'supervisor' para 'manager'
-  admin: "Administrador - Acesso total ao sistema"
+  usuario: "Usuário"
 };
 
 // Função para verificar se usuário tem acesso a uma página

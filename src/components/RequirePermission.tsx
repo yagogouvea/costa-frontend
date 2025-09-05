@@ -20,11 +20,7 @@ export default function RequirePermission({ children, requiredPermission, fallba
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Admin tem acesso total a tudo
-  if (user?.role === 'admin') {
-    console.log('✅ Usuário é admin, permitindo acesso total');
-    return <>{children}</>;
-  }
+  // Removido bypass por cargo. A autorização é 100% baseada em permissões específicas
 
   // Verificar se o usuário tem a permissão específica
   const hasPermission = Array.isArray(user?.permissions) && user.permissions.includes(requiredPermission);

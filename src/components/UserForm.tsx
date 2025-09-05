@@ -19,8 +19,8 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
   const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
-    role: "operator",
-    permissions: ROLE_PERMISSIONS.operator,
+    role: "usuario",
+    permissions: Array.isArray((ROLE_PERMISSIONS as any)?.usuario) ? (ROLE_PERMISSIONS as any).usuario : [],
     active: true,
     password: "",
   });
@@ -37,17 +37,17 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
       console.log('🔄 USERFORM - Permissões do usuário:', user.permissions);
       console.log('🔄 USERFORM - Tipo das permissões:', typeof user.permissions);
       
-      // Se for admin, define todas as permissões
-      const permissions = user.role === 'admin' 
-        ? PERMISSIONS.map(p => p.key) 
-        : (Array.isArray(user.permissions) ? user.permissions : ROLE_PERMISSIONS[user.role as keyof typeof ROLE_PERMISSIONS] || ROLE_PERMISSIONS.operator);
+      // Sem mais cargo admin implícito; sempre usar permissões explícitas
+      const permissions = Array.isArray(user.permissions) 
+        ? user.permissions 
+        : (ROLE_PERMISSIONS as any)[user.role] || [];
       
       console.log('🔄 USERFORM - Permissões processadas:', permissions);
       
       setFormData({
         name: user.name || "",
         email: user.email || "",
-        role: user.role || "operator",
+        role: user.role || "usuario",
         permissions: permissions,
         active: user.active !== false,
       });
@@ -235,20 +235,18 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
             </div>
           )}
 
-          {/* CARGO */}
+          {/* CARGO - unificado */}
           <div className="space-y-2">
             <label className="block text-xs sm:text-sm font-medium text-gray-700">Cargo</label>
             <select
               name="role"
               className="w-full border p-2 rounded"
-              value={formData.role || ""}
+              value={formData.role || "usuario"}
               onChange={handleChange}
             >
-              <option value="operator">Operador</option>
-              <option value="manager">Supervisor</option>
-              <option value="admin">Administrador</option>
+              <option value="usuario">Usuário</option>
             </select>
-            <p className="text-xs sm:text-sm text-gray-500">{ROLE_DESCRIPTIONS[formData.role || "operator"]}</p>
+            <p className="text-xs sm:text-sm text-gray-500">{ROLE_DESCRIPTIONS[formData.role || "usuario"]}</p>
           </div>
 
           {/* PERMISSÕES */}
@@ -259,11 +257,7 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
               availablePermissions={PERMISSIONS}
               disabled={false}
             />
-            <p className="text-xs sm:text-sm text-gray-500 mt-4">
-              {formData.role === 'admin' 
-                ? "Administradores têm acesso total ao sistema automaticamente."
-                : "Você pode personalizar as permissões independentemente do cargo selecionado."}
-            </p>
+            <p className="text-xs sm:text-sm text-gray-500 mt-4">Configure abaixo as permissões deste usuário.</p>
           </div>
 
           {/* STATUS */}

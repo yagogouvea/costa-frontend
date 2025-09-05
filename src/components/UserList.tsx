@@ -34,7 +34,7 @@ export default function UserList({ users, onEdit, onDelete }: UserListProps) {
               <td className="px-6 py-4 whitespace-nowrap text-sm">
                 <div className="flex gap-2">
                   <PermissionButton
-                    requiredPermission="update:user"
+                    requiredPermission="usuarios:edit"
                     onClick={() => onEdit(user)}
                     className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded shadow transition-colors"
                     size="sm"
@@ -43,7 +43,7 @@ export default function UserList({ users, onEdit, onDelete }: UserListProps) {
                     Editar
                   </PermissionButton>
                   <PermissionButton
-                    requiredPermission="delete:user"
+                    requiredPermission="usuarios:delete"
                     onClick={() => onDelete(user.id)}
                     className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded shadow transition-colors"
                     size="sm"

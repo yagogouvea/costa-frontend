@@ -177,7 +177,7 @@ export default function UsersPage() {
               Debug Info
             </button>
             <PermissionButton
-              requiredPermission="create:user"
+              requiredPermission="usuarios:create"
               onClick={() => {
                 setSelectedUser(null);
                 setShowForm(true);
