@@ -66,7 +66,7 @@ function App() {
                     <Route path="/relatorios" element={<Relatorios />} />
                     <Route path="/usuarios" element={<RequirePermission requiredPermission="access:usuarios"><UsersPage /></RequirePermission>} />
                     <Route path="/mapa-prestadores" element={<MapaPrestadoresPage />} />
-                    <Route path="/financeiro" element={<FinanceiroPage />} />
+                    <Route path="/financeiro" element={<RequirePermission requiredPermission="access:financeiro"><FinanceiroPage /></RequirePermission>} />
                   </Routes>
                 </DashboardLayout>
               </RequireAuth>
