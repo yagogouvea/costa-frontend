@@ -117,7 +117,7 @@ export function convertPermissionsArrayToObject(permissions: string[] | Permissi
 /**
  * Hook para verificar permissões específicas de um recurso
  */
-export function usePermissions(userPermissions: string[] | PermissionsObject | undefined, userRole?: string) {
+export function usePermissions(userPermissions: string[] | PermissionsObject | undefined) {
   // Cargo não concede mais permissões automaticamente; tudo é via lista de permissões
 
   if (!userPermissions) {
