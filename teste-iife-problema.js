@@ -102,3 +102,4 @@ console.log('   • O problema pode estar na interpretação do React-PDF da IIF
 console.log('   • A IIFE pode estar criando um contexto extra que o React-PDF interpreta como conteúdo');
 console.log('   • A solução é remover a IIFE e usar renderização direta');
 
+

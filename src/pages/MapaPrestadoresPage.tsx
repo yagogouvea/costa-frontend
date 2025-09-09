@@ -11,11 +11,9 @@ const MapaPrestadoresPage: React.FC = () => {
   useMapaAutoUpdate();
 
   return (
-    <RequirePermission requiredPermission="read:prestador">
-      <PrestadoresProvider autoRefresh={true} refreshInterval={3000}>
-        <MapaPrestadores />
-      </PrestadoresProvider>
-    </RequirePermission>
+    <PrestadoresProvider autoRefresh={true} refreshInterval={3000}>
+      <MapaPrestadores />
+    </PrestadoresProvider>
   );
 };
 

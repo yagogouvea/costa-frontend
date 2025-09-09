@@ -123,34 +123,31 @@ const PainelPrestadores: React.FC<PainelPrestadoresProps> = ({
   };
 
   return (
-    <aside className="fixed right-0 top-0 h-full w-[420px] bg-white shadow-lg z-10 flex flex-col">
-      <div className="p-4 border-b font-bold text-lg bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+    <aside className="h-full w-full bg-white border-l border-gray-200 flex flex-col">
+      <div className="p-4 border-b bg-white">
         <div className="flex items-center justify-between">
-          <div>
-            Prestadores {prestadores.some(p => p.distanciaKm !== undefined) ? 'Próximos' : 'Encontrados'}
+          <div className="min-w-0">
+            <div className="text-base font-bold text-gray-800 truncate">Prestadores {prestadores.some(p => p.distanciaKm !== undefined) ? 'Próximos' : 'Encontrados'}</div>
             {prestadores.some(p => p.distanciaKm !== undefined) && (
-              <span className="text-sm font-normal text-blue-100 ml-2">
+              <div className="text-xs text-gray-500 mt-1 truncate">
                 {directionsService.isApiDisponivel() && temposDeslocamento.size > 0 
-                  ? '(ordenados por tempo de chegada)' 
-                  : '(ordenados por distância)'
-                }
-              </span>
+                  ? 'Ordenados por tempo de chegada' 
+                  : 'Ordenados por distância'}
+              </div>
+            )}
+            {pontoReferencia && (
+              <div className="text-xs text-blue-700 mt-1 truncate">📍 {pontoReferencia.endereco}</div>
             )}
           </div>
           {rotaAtiva && (
             <button
               onClick={onLimparRota}
-              className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600"
+              className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 whitespace-nowrap"
             >
               ✕ Limpar Rota
             </button>
           )}
         </div>
-        {pontoReferencia && (
-          <div className="text-sm text-blue-100 mt-2">
-            📍 Ponto: {pontoReferencia.endereco}
-          </div>
-        )}
       </div>
       
       <div className="flex-1 overflow-y-auto p-4 space-y-3">

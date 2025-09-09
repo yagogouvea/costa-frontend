@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { User, Loader2 } from "lucide-react";
+import { User, Loader2, Link as LinkIcon } from "lucide-react";
 import api from "@/services/api";
 
 interface Prestador {
@@ -14,6 +14,19 @@ const Prestadores = () => {
   const [prestadores, setPrestadores] = useState<Prestador[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const EXTERNAL_SIGNUP_URL = 'https://painel.costaecamargo.seg.br/cadastro-prestador';
+
+  const handleCopyExternalLink = async () => {
+    try {
+      await navigator.clipboard.writeText(EXTERNAL_SIGNUP_URL);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Erro ao copiar link para a área de transferência:', err);
+    }
+  };
 
   useEffect(() => {
     const fetchPrestadores = async () => {
@@ -41,6 +54,20 @@ const Prestadores = () => {
             <User size={20} /> Prestadores de Serviço
           </h1>
           <p className="text-gray-500 mt-2">Lista de prestadores cadastrados</p>
+        </div>
+        <div>
+          <button
+            type="button"
+            onClick={handleCopyExternalLink}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+            title="Copiar link de cadastro externo"
+          >
+            <LinkIcon size={16} />
+            Link cadastro externo
+            {copied && (
+              <span className="ml-2 text-xs text-white/90">Copiado!</span>
+            )}
+          </button>
         </div>
       </div>
 

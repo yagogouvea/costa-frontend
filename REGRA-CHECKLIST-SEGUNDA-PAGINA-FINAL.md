@@ -196,3 +196,4 @@ const QUEBRA_PAGINA = {
 3. Confirme que não há cortes no conteúdo do checklist
 4. Valide o comportamento em diferentes dispositivos
 
+

@@ -357,8 +357,8 @@ const Mapa = forwardRef<any, MapaProps>(({
     <MapContainer
       center={center}
       zoom={zoom}
-      style={{ height: '100vh', width: '100%' }}
-      className="z-0"
+      style={{ height: '100%', width: '100%' }}
+      className="absolute inset-0"
       ref={mapRef}
     >
       <TileLayer

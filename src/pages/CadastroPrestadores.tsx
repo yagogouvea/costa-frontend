@@ -10,6 +10,7 @@ import { formatarValorMonetario } from '@/utils/prestadorUtils';
 import { normalizarTexto } from '@/utils/textUtils';
 import * as XLSX from 'xlsx';
 import { Download } from 'lucide-react';
+import { Link as LinkIcon } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { dispararAtualizacaoMapa } from '@/hooks/useMapaAutoUpdate';
@@ -121,6 +122,18 @@ const CadastroPrestadores: React.FC = () => {
   const [buscou, setBuscou] = useState(false);
   const [loading, setLoading] = useState(false);
   const [regiaoInput, setRegiaoInput] = useState('');
+  const [copied, setCopied] = useState(false);
+  const EXTERNAL_SIGNUP_URL = 'https://painel.costaecamargo.seg.br/cadastro-prestador';
+
+  const handleCopyExternalLink = async () => {
+    try {
+      await navigator.clipboard.writeText(EXTERNAL_SIGNUP_URL);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Erro ao copiar link para a área de transferência:', err);
+    }
+  };
   
   // Estados de paginação
   const [paginaAtual, setPaginaAtual] = useState(1);
@@ -505,13 +518,25 @@ const CadastroPrestadores: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
               <Button
                 variant="ghost"
+                className="flex items-center gap-2 border border-white/20 hover:bg-white/10 text-white w-full sm:w-auto"
+                onClick={handleCopyExternalLink}
+                title="Copiar link de cadastro externo"
+              >
+                <LinkIcon className="w-4 h-4" />
+                Link cadastro externo
+                {copied && (
+                  <span className="ml-2 text-xs text-white/90">Copiado!</span>
+                )}
+              </Button>
+              <Button
+                variant="ghost"
                 className="border-2 border-blue-600 bg-white/10 text-white hover:bg-blue-600 hover:text-white transition-all duration-300 font-medium"
                 onClick={() => navigate('/mapa-prestadores')}
               >
                 🗺️ Ver Mapa de Prestadores
               </Button>
               <PermissionButton
-                requiredPermission="read:prestador"
+                requiredPermission="prestadores:export"
                 onClick={exportarParaExcel}
                 variant="ghost"
                 className="flex items-center gap-2 border border-white/20 hover:bg-white/10 text-white w-full sm:w-auto"
@@ -522,7 +547,7 @@ const CadastroPrestadores: React.FC = () => {
                 {loading ? 'Exportando...' : 'Exportar Excel'}
               </PermissionButton>
               <PermissionButton
-                requiredPermission="create:prestador"
+                requiredPermission="prestadores:create"
                 onClick={() => {
                   setPrestadorSelecionado(null);
                   setPopupAberto(true);
@@ -870,24 +895,28 @@ const CadastroPrestadores: React.FC = () => {
                       </div>
 
                       <div className="flex flex-wrap gap-2">
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          onClick={() => handleEditar(prestador)} 
+                        <PermissionButton
+                          requiredPermission="prestadores:edit"
+                          onClick={() => handleEditar(prestador)}
+                          variant="ghost"
+                          size="sm"
                           className="flex items-center gap-2 p-2 hover:bg-blue-50 hover:text-blue-600 transition-colors rounded-lg text-xs bg-white/50 backdrop-blur-sm border border-white/30"
+                          message="Você não tem permissão para editar prestadores."
                         >
                           <Edit className="w-4 h-4 text-blue-600" />
                           <span>Editar</span>
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          onClick={() => handleExcluir(prestador.id)} 
+                        </PermissionButton>
+                        <PermissionButton
+                          requiredPermission="prestadores:delete"
+                          onClick={() => handleExcluir(prestador.id)}
+                          variant="ghost"
+                          size="sm"
                           className="flex items-center gap-2 p-2 hover:bg-red-50 hover:text-red-600 transition-colors rounded-lg text-xs bg-white/50 backdrop-blur-sm border border-white/30"
+                          message="Você não tem permissão para excluir prestadores."
                         >
                           <XCircle className="w-4 h-4 text-red-600" />
                           <span>Excluir</span>
-                        </Button>
+                        </PermissionButton>
                         {prestador.telefone && (
                           <Button 
                             variant="ghost" 

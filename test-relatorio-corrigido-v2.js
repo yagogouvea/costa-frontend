@@ -122,3 +122,4 @@ console.log('2. Verificar se a numeração está sequencial (1, 2, 3, 4...)');
 console.log('3. Confirmar que não há páginas em branco');
 console.log('4. Validar se as informações "Relatório gerado" foram removidas');
 
+

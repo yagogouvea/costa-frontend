@@ -445,43 +445,40 @@ const MapaPrestadores: React.FC = () => {
   return (
     <div className="h-screen w-screen overflow-hidden bg-gray-50 flex flex-col">
       {/* Header superior fixo com barra de busca */}
-      <div className="bg-white border-b border-gray-200 shadow-sm z-30 flex-shrink-0">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between gap-6">
+      <div className="bg-white border-b border-gray-200 z-30 flex-shrink-0">
+        <div className="px-4 py-3">
+          <div className="grid grid-cols-12 items-center gap-3">
             {/* Título e estatísticas */}
-            <div className={`flex items-center ${isTablet ? 'gap-4' : 'gap-8'}`}>
-              <div>
-                <h1 className={`${isTablet ? 'text-lg' : 'text-xl'} font-bold text-gray-800`}>Mapa de Prestadores</h1>
-                <p className="text-sm text-gray-600">Encontre prestadores próximos</p>
+            <div className="col-span-12 md:col-span-4 flex items-center gap-3 min-w-0">
+              <div className="min-w-0">
+                <h1 className="text-lg md:text-xl font-bold text-gray-800 truncate">Mapa de Prestadores</h1>
+                <p className="text-xs md:text-sm text-gray-600 truncate">Encontre prestadores próximos</p>
               </div>
-              
-              {/* Estatísticas compactas */}
-              <div className={`flex items-center ${isTablet ? 'gap-3' : 'gap-6'}`}>
-                <div className="flex items-center gap-2 bg-blue-50 px-3 py-1 rounded-full">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <span className="text-sm font-medium text-blue-700">{prestadores.length} Total</span>
+              <div className="hidden md:flex items-center gap-3">
+                <div className="flex items-center gap-2 bg-blue-50 px-2.5 py-1 rounded-full">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  <span className="text-xs font-medium text-blue-700">{prestadores.length} Total</span>
                 </div>
-                <div className="flex items-center gap-2 bg-green-50 px-3 py-1 rounded-full">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="text-sm font-medium text-green-700">{prestadoresFiltrados.length} Próximos</span>
+                <div className="flex items-center gap-2 bg-green-50 px-2.5 py-1 rounded-full">
+                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                  <span className="text-xs font-medium text-green-700">{prestadoresFiltrados.length} Próximos</span>
                 </div>
                 {pontoReferencia && (
-                  <div className="flex items-center gap-2 bg-purple-50 px-3 py-1 rounded-full">
+                  <div className="flex items-center gap-2 bg-purple-50 px-2.5 py-1 rounded-full">
                     <span className="text-purple-600">📍</span>
-                    <span className="text-sm font-medium text-purple-700">Referência ativa</span>
+                    <span className="text-xs font-medium text-purple-700">Referência ativa</span>
                   </div>
                 )}
               </div>
             </div>
-            
-            {/* Barra de busca centralizada */}
-            <div className="flex-1 max-w-md mx-8">
+
+            {/* Barra de busca */}
+            <div className="col-span-12 md:col-span-5">
               <BuscadorEndereco onBuscar={handleBuscar} />
             </div>
-            
+
             {/* Controles à direita */}
-            <div className="flex items-center gap-3">
-              {/* Botão de localização atual */}
+            <div className="col-span-12 md:col-span-3 flex items-center justify-start md:justify-end gap-2">
               <button
                 onClick={() => {
                   if (navigator.geolocation) {
@@ -494,13 +491,11 @@ const MapaPrestadores: React.FC = () => {
                     );
                   }
                 }}
-                className="bg-green-600 hover:bg-green-700 text-white p-2 rounded-lg shadow-md transition-all duration-200 hover:shadow-lg"
+                className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg shadow-sm transition-all"
                 title="Minha localização"
               >
-                📍
+                📍 Minha localização
               </button>
-              
-              {/* Botão de reset */}
               {pontoReferencia && (
                 <button
                   onClick={() => {
@@ -509,89 +504,84 @@ const MapaPrestadores: React.FC = () => {
                     setMapCenter([-23.55052, -46.633308]);
                     setMapZoom(11);
                   }}
-                  className="bg-gray-600 hover:bg-gray-700 text-white p-2 rounded-lg shadow-md transition-all duration-200 hover:shadow-lg"
+                  className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded-lg shadow-sm transition-all"
                   title="Limpar busca"
                 >
-                  🔄
+                  🔄 Limpar
                 </button>
               )}
             </div>
           </div>
-          
-          {/* Informações do ponto de referência (compacta) */}
-          {pontoReferencia && (
-            <div className="mt-3 bg-blue-50 border-l-4 border-blue-500 px-4 py-2 rounded-r-lg">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-blue-800">
-                  <strong>📍 Referência:</strong> {pontoReferencia.endereco}
-                </span>
-              </div>
-            </div>
-          )}
         </div>
       </div>
-      
+
       {/* Área principal com mapa e painel lateral */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Área do mapa */}
-        <div className="flex-1 relative">
-          <Mapa
-            prestadores={prestadoresFiltrados}
-            center={mapCenter}
-            zoom={mapZoom}
-            pontoReferencia={pontoReferencia}
-            prestadorSelecionado={prestadorSelecionado}
-            rotaAtiva={rotaAtiva}
-            onSelecionarPrestador={handleSelecionarPrestador}
-            onTraçarRota={handleTraçarRota}
-            onLimparRota={handleLimparRota}
-            ref={mapaRef}
-          />
-          
-          {/* Controles flutuantes minimalistas */}
-          <div className="absolute bottom-6 right-6 z-10 flex flex-col gap-2">
-            {/* Zoom controls */}
-            <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
-              <button
-                onClick={() => {
-                  if (mapaRef.current?.getMap) {
-                    const map = mapaRef.current.getMap();
-                    map.setZoom(map.getZoom() + 1);
-                  }
-                }}
-                className="block w-10 h-10 bg-white hover:bg-gray-50 text-gray-700 border-b border-gray-200 transition-colors"
-                title="Zoom in"
-              >
-                +
-              </button>
-              <button
-                onClick={() => {
-                  if (mapaRef.current?.getMap) {
-                    const map = mapaRef.current.getMap();
-                    map.setZoom(map.getZoom() - 1);
-                  }
-                }}
-                className="block w-10 h-10 bg-white hover:bg-gray-50 text-gray-700 transition-colors"
-                title="Zoom out"
-              >
-                −
-              </button>
+      <div className="flex-1 grid grid-cols-12 overflow-hidden">
+        {/* Área do mapa dentro de um card com margens ilustradas */}
+        <div className="col-span-12 lg:col-span-9">
+          <div className="mx-4 my-4 rounded-2xl p-3 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+            <div className="relative h-[60vh] rounded-xl overflow-hidden shadow-xl border border-gray-200 bg-white">
+              <Mapa
+                prestadores={prestadoresFiltrados}
+                center={mapCenter}
+                zoom={mapZoom}
+                pontoReferencia={pontoReferencia}
+                prestadorSelecionado={prestadorSelecionado}
+                rotaAtiva={rotaAtiva}
+                onSelecionarPrestador={handleSelecionarPrestador}
+                onTraçarRota={handleTraçarRota}
+                onLimparRota={handleLimparRota}
+                ref={mapaRef}
+              />
+              {/* Controles flutuantes dentro do card (canto inferior esquerdo) */}
+              <div className="absolute bottom-4 left-4 z-10 flex flex-col gap-2 pointer-events-auto">
+                <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+                  <button
+                    onClick={() => {
+                      if (mapaRef.current?.getMap) {
+                        const map = mapaRef.current.getMap();
+                        map.setZoom(map.getZoom() + 1);
+                      }
+                    }}
+                    className="block w-10 h-10 bg-white hover:bg-gray-50 text-gray-700 border-b border-gray-200 transition-colors"
+                    title="Zoom in"
+                  >
+                    +
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (mapaRef.current?.getMap) {
+                        const map = mapaRef.current.getMap();
+                        map.setZoom(map.getZoom() - 1);
+                      }
+                    }}
+                    className="block w-10 h-10 bg-white hover:bg-gray-50 text-gray-700 transition-colors"
+                    title="Zoom out"
+                  >
+                    −
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        
-        {/* Painel lateral responsivo */}
-        <div className={`${isTablet ? 'w-72' : 'w-80'} bg-white border-l border-gray-200 flex flex-col shadow-lg`}>
-          <PainelPrestadores
-            prestadores={prestadoresFiltrados}
-            totalPrestadores={prestadores.length}
-            onSelecionarPrestador={handleSelecionarPrestador}
-            onTraçarRota={handleTraçarRota}
-            prestadorSelecionado={prestadorSelecionado}
-            rotaAtiva={rotaAtiva}
-            onLimparRota={handleLimparRota}
-            pontoReferencia={pontoReferencia}
-          />
+
+        {/* Painel lateral em card com a mesma proporção e margens ilustradas */}
+        <div className="hidden lg:block col-span-3">
+          <div className="my-4 mr-4 rounded-2xl p-3 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+            <div className="h-[60vh] rounded-xl overflow-hidden shadow-xl border border-gray-200 bg-white">
+              <PainelPrestadores
+                prestadores={prestadoresFiltrados}
+                totalPrestadores={prestadores.length}
+                onSelecionarPrestador={handleSelecionarPrestador}
+                onTraçarRota={handleTraçarRota}
+                prestadorSelecionado={prestadorSelecionado}
+                rotaAtiva={rotaAtiva}
+                onLimparRota={handleLimparRota}
+                pontoReferencia={pontoReferencia}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>

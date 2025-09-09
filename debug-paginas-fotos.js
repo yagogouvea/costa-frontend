@@ -152,3 +152,4 @@ console.log('1. Aplicar a lógica corrigida no RelatorioPDF.tsx');
 console.log('2. Testar com 8 fotos para confirmar que não há páginas em branco');
 console.log('3. Verificar se a numeração está correta (3, 4)');
 
+

@@ -121,3 +121,4 @@ quadrantesContainer: {
 - **Versão**: 1.1
 - **Status**: ✅ Corrigido e testado
 
+

@@ -116,7 +116,7 @@ const CadastroClientes: React.FC = () => {
               </p>
             </div>
             <PermissionButton
-              requiredPermission="create:cliente"
+              requiredPermission="clientes:create"
               onClick={() => {
                 setClienteEdicao(null);
                 setPopupAberto(true);
@@ -269,7 +269,7 @@ const CadastroClientes: React.FC = () => {
 
                   <div className="flex flex-wrap gap-2">
                     <PermissionButton
-                      requiredPermission="update:cliente"
+                      requiredPermission="clientes:edit"
                       variant="ghost"
                       size="sm"
                       onClick={() => handleEditar(cliente)}
@@ -281,7 +281,7 @@ const CadastroClientes: React.FC = () => {
                     </PermissionButton>
                     {cliente.id && (
                       <PermissionButton
-                        requiredPermission="delete:cliente"
+                        requiredPermission="clientes:delete"
                         variant="ghost"
                         size="sm"
                         onClick={() => handleExcluir(cliente.id as number)}
