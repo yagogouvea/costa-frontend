@@ -4,7 +4,7 @@ import ClientePopup from "@/components/ClientePopup";
 import { Button } from "@/components/ui/button";
 import PermissionButton from "@/components/PermissionButton";
 import { Input } from "@/components/ui/input";
-import { Pencil, Trash2, Phone, Mail, MapPin, Building, Users, CheckCircle } from "lucide-react";
+import { Pencil, Trash2, Phone, Mail, MapPin, Building, Users, CheckCircle, List, LayoutGrid } from "lucide-react";
 import { Cliente, Contrato } from "@/types/cliente";
 import { toast } from 'react-hot-toast';
 import { API_URL } from '@/config/api';
@@ -41,6 +41,7 @@ const CadastroClientes: React.FC = () => {
   const [filtros, setFiltros] = useState({ nome: '', cnpj: '' });
   const [buscou, setBuscou] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [layout, setLayout] = useState<'cards' | 'list'>('cards');
 
   const carregarClientes = async () => {
     setLoading(true);
@@ -115,7 +116,17 @@ const CadastroClientes: React.FC = () => {
                 Gerencie e cadastre todos os clientes da empresa
               </p>
             </div>
-            <PermissionButton
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+              <Button
+                variant="ghost"
+                className="flex items-center gap-2 border border-white/20 hover:bg-white/10 text-white w-full sm:w-auto"
+                onClick={() => setLayout(layout === 'cards' ? 'list' : 'cards')}
+                title={layout === 'cards' ? 'Ver como lista' : 'Ver como cards'}
+              >
+                {layout === 'cards' ? <List className="w-4 h-4" /> : <LayoutGrid className="w-4 h-4" />}
+                {layout === 'cards' ? 'Lista' : 'Cards'}
+              </Button>
+              <PermissionButton
               requiredPermission="clientes:create"
               onClick={() => {
                 setClienteEdicao(null);
@@ -126,6 +137,7 @@ const CadastroClientes: React.FC = () => {
             >
               + Novo Cliente
             </PermissionButton>
+            </div>
           </div>
         </div>
 
@@ -196,6 +208,7 @@ const CadastroClientes: React.FC = () => {
             </div>
           </div>
         ) : (
+          layout === 'cards' ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-2 sm:gap-3 sm:p-6">
             {clientes.map((cliente) => (
               <div key={cliente.id} className="bg-gradient-to-br from-slate-500/10 to-gray-500/10 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-200/50 p-3 sm:p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden">
@@ -343,6 +356,55 @@ const CadastroClientes: React.FC = () => {
               </div>
             ))}
           </div>
+          ) : (
+            <div className="overflow-x-auto bg-gradient-to-r from-white/80 to-slate-50/80 rounded-xl border border-slate-200">
+              <table className="min-w-[900px] w-full divide-y divide-slate-200 text-slate-800 bg-transparent">
+                <thead>
+                  <tr>
+                    <th className="px-3 py-2 text-left text-xs font-semibold whitespace-nowrap">#</th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold whitespace-nowrap">Nome</th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold whitespace-nowrap">CNPJ</th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold whitespace-nowrap">Telefone</th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold whitespace-nowrap">Email</th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold whitespace-nowrap">Cidade/UF</th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold whitespace-nowrap">Contratos</th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold whitespace-nowrap">Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {clientes.map((c) => (
+                    <tr key={c.id} className="hover:bg-blue-50/60">
+                      <td className="px-3 py-2 text-xs">{c.id}</td>
+                      <td className="px-3 py-2 text-xs font-medium truncate max-w-[220px]" title={c.nome_fantasia || c.nome}>{c.nome_fantasia || c.nome}</td>
+                      <td className="px-3 py-2 text-xs truncate max-w-[140px]" title={c.cnpj}>{c.cnpj}</td>
+                      <td className="px-3 py-2 text-xs truncate max-w-[120px]" title={c.telefone || ''}>{c.telefone || '–'}</td>
+                      <td className="px-3 py-2 text-xs truncate max-w-[200px]" title={c.email || ''}>{c.email || '–'}</td>
+                      <td className="px-3 py-2 text-xs truncate max-w-[160px]" title={(c.cidade && c.estado) ? `${c.cidade}, ${c.estado}` : ''}>
+                        {c.cidade && c.estado ? `${c.cidade}, ${c.estado}` : '–'}
+                      </td>
+                      <td className="px-3 py-2 text-xs truncate max-w-[220px]" title={String(c.contratos?.length || 0)}>
+                        {c.contratos?.length || 0}
+                      </td>
+                      <td className="px-3 py-2 text-xs">
+                        <div className="flex flex-wrap gap-1">
+                          <Button variant="ghost" size="sm" onClick={() => handleEditar(c)} title="Editar" className="p-1"><Pencil className="w-4 h-4 text-blue-600" /></Button>
+                          {c.id && (
+                            <Button variant="ghost" size="sm" onClick={() => handleExcluir(c.id as number)} title="Excluir" className="p-1"><Trash2 className="w-4 h-4 text-red-600" /></Button>
+                          )}
+                          {c.telefone && (
+                            <Button variant="ghost" size="sm" onClick={() => window.open(`tel:${c.telefone}`, '_blank')} title="Ligar" className="p-1"><Phone className="w-4 h-4 text-green-600" /></Button>
+                          )}
+                          {c.email && (
+                            <Button variant="ghost" size="sm" onClick={() => window.open(`mailto:${c.email}`, '_blank')} title="Email" className="p-1"><Mail className="w-4 h-4 text-purple-600" /></Button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )
         )}
 
         {popupAberto && (

@@ -15,7 +15,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { dispararAtualizacaoMapa } from '@/hooks/useMapaAutoUpdate';
 import { UserCog } from 'lucide-react';
-import { Phone, MapPin, User, CheckCircle, DollarSign, Clock, Edit, XCircle } from 'lucide-react';
+import { Phone, MapPin, User, CheckCircle, DollarSign, Clock, Edit, XCircle, List, LayoutGrid } from 'lucide-react';
 
 // Adicionar declaração global para evitar erro TS
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -143,6 +143,7 @@ const CadastroPrestadores: React.FC = () => {
   // Estados para gerenciamento de usuários
   const [usuariosStatus, setUsuariosStatus] = useState<Record<number, any>>({});
   const [gerandoUsuario, setGerandoUsuario] = useState<number | null>(null);
+  const [layout, setLayout] = useState<'cards' | 'list'>('cards');
 
   // Verificar se o usuário tem permissão para exportar (apenas supervisores e admins)
   const podeExportar = user?.role === 'admin' || user?.role === 'supervisor';
@@ -519,6 +520,15 @@ const CadastroPrestadores: React.FC = () => {
               <Button
                 variant="ghost"
                 className="flex items-center gap-2 border border-white/20 hover:bg-white/10 text-white w-full sm:w-auto"
+                onClick={() => setLayout(layout === 'cards' ? 'list' : 'cards')}
+                title={layout === 'cards' ? 'Ver como lista' : 'Ver como cards'}
+              >
+                {layout === 'cards' ? <List className="w-4 h-4" /> : <LayoutGrid className="w-4 h-4" />}
+                {layout === 'cards' ? 'Lista' : 'Cards'}
+              </Button>
+              <Button
+                variant="ghost"
+                className="flex items-center gap-2 border border-white/20 hover:bg-white/10 text-white w-full sm:w-auto"
                 onClick={handleCopyExternalLink}
                 title="Copiar link de cadastro externo"
               >
@@ -794,6 +804,7 @@ const CadastroPrestadores: React.FC = () => {
               </div>
             </div>
             
+            {layout === 'cards' ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-2 sm:gap-3 sm:p-6">
               {prestadores.map((prestador) => {
                 // Verificar se faltam valores monetários
@@ -1067,6 +1078,57 @@ const CadastroPrestadores: React.FC = () => {
                 );
               })}
             </div>
+            ) : (
+              <div className="overflow-x-auto bg-gradient-to-r from-white/80 to-slate-50/80 rounded-xl border border-slate-200">
+                <table className="min-w-[900px] w-full divide-y divide-slate-200 text-slate-800 bg-transparent">
+                  <thead>
+                    <tr>
+                      <th className="px-3 py-2 text-left text-xs font-semibold whitespace-nowrap">#</th>
+                      <th className="px-3 py-2 text-left text-xs font-semibold whitespace-nowrap">Nome</th>
+                      <th className="px-3 py-2 text-left text-xs font-semibold whitespace-nowrap">Codinome</th>
+                      <th className="px-3 py-2 text-left text-xs font-semibold whitespace-nowrap">Telefone</th>
+                      <th className="px-3 py-2 text-left text-xs font-semibold whitespace-nowrap">Email</th>
+                      <th className="px-3 py-2 text-left text-xs font-semibold whitespace-nowrap">Localização</th>
+                      <th className="px-3 py-2 text-left text-xs font-semibold whitespace-nowrap">Funções</th>
+                      <th className="px-3 py-2 text-left text-xs font-semibold whitespace-nowrap">Valores</th>
+                      <th className="px-3 py-2 text-left text-xs font-semibold whitespace-nowrap">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {prestadores.map((p) => {
+                      const funcoesStr = Array.isArray(p.funcoes)
+                        ? p.funcoes.map((f: any) => (typeof f === 'string' ? f : f.nome || f.funcao || String(f))).join(', ')
+                        : '';
+                      return (
+                        <tr key={p.id} className="hover:bg-blue-50/60">
+                          <td className="px-3 py-2 text-xs">{p.id}</td>
+                          <td className="px-3 py-2 text-xs font-medium truncate max-w-[180px]" title={p.nome}>{p.nome}</td>
+                          <td className="px-3 py-2 text-xs truncate max-w-[120px]" title={p.cod_nome || ''}>{p.cod_nome || '–'}</td>
+                          <td className="px-3 py-2 text-xs truncate max-w-[120px]" title={p.telefone || ''}>{p.telefone || '–'}</td>
+                          <td className="px-3 py-2 text-xs truncate max-w-[180px]" title={p.email || ''}>{p.email || '–'}</td>
+                          <td className="px-3 py-2 text-xs truncate max-w-[200px]" title={[p.bairro, p.cidade, p.estado].filter(Boolean).join(', ')}>
+                            {[p.bairro, p.cidade, p.estado].filter(Boolean).join(', ') || '–'}
+                          </td>
+                          <td className="px-3 py-2 text-xs truncate max-w-[220px]" title={funcoesStr}>{funcoesStr || '–'}</td>
+                          <td className="px-3 py-2 text-xs truncate max-w-[220px]">
+                            {p.valor_acionamento ? formatarValorMonetario(Number(p.valor_acionamento)) : '–'} | {p.valor_hora_adc ? formatarValorMonetario(Number(p.valor_hora_adc)) : '–'} | {p.valor_km_adc ? formatarValorMonetario(Number(p.valor_km_adc)) : '–'}
+                          </td>
+                          <td className="px-3 py-2 text-xs">
+                            <div className="flex flex-wrap gap-1">
+                              <Button variant="ghost" size="sm" onClick={() => handleEditar(p)} title="Editar" className="p-1"><Edit className="w-4 h-4 text-blue-600" /></Button>
+                              <Button variant="ghost" size="sm" onClick={() => handleExcluir(p.id!)} title="Excluir" className="p-1"><XCircle className="w-4 h-4 text-red-600" /></Button>
+                              {p.telefone && (
+                                <Button variant="ghost" size="sm" onClick={() => window.open(`https://wa.me/55${p.telefone?.replace(/\D/g, '')}`, '_blank')} title="WhatsApp" className="p-1"><Phone className="w-4 h-4 text-green-600" /></Button>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         )}
 

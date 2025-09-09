@@ -44,24 +44,31 @@ const selectedIcon = L.divIcon({
 
 L.Marker.prototype.options.icon = defaultIcon;
 
+// Função utilitária para extrair nome da função de diferentes formatos
+const getFuncaoNome = (f: any): string => {
+  if (typeof f === 'string') return f;
+  if (f && typeof f.funcao === 'string') return f.funcao;
+  return '';
+};
+
 // Função para determinar o ícone baseado nas funções do prestador
-const getIconForPrestador = (funcoes?: { funcao: string }[], isSelected: boolean = false) => {
+const getIconForPrestador = (funcoes?: any[], isSelected: boolean = false) => {
   if (isSelected) return selectedIcon;
   
   if (!funcoes || funcoes.length === 0) return defaultIcon;
   
   // Verificar se tem função de antenista
-  const isAntenista = funcoes.some(f => 
-    f.funcao.toLowerCase().includes('antenista')
-  );
+  const isAntenista = funcoes.some((f: any) => {
+    const nome = getFuncaoNome(f);
+    return nome.toLowerCase().includes('antenista');
+  });
   
   // Verificar se tem função policial/armado (e não é antenista)
-  const isPolicial = !isAntenista && funcoes.some(f => 
-    f.funcao.toLowerCase().includes('policial') || 
-    f.funcao.toLowerCase().includes('armado') ||
-    f.funcao.toLowerCase().includes('segurança') ||
-    f.funcao.toLowerCase().includes('guarda')
-  );
+  const isPolicial = !isAntenista && funcoes.some((f: any) => {
+    const nome = getFuncaoNome(f);
+    const lower = nome.toLowerCase();
+    return lower.includes('policial') || lower.includes('armado') || lower.includes('segurança') || lower.includes('seguranca') || lower.includes('guarda');
+  });
   
   if (isAntenista) return antennaIcon;
   if (isPolicial) return policeIcon;
@@ -412,10 +419,10 @@ const Mapa = forwardRef<any, MapaProps>(({
                   )}
                   {p.funcoes && p.funcoes.length > 0 && (
                     <div className="text-xs text-gray-700 mt-1">
-                      Tipo de apoio: {p.funcoes.map(f => f.funcao).join(', ')}
+                      Tipo de apoio: {p.funcoes.map((f: any) => getFuncaoNome(f)).filter(Boolean).join(', ')}
                       
                       {/* Observação para antenistas */}
-                      {p.funcoes.some(f => f.funcao.toLowerCase().includes('antenista')) && p.modelo_antena && (
+                      {p.funcoes.some((f: any) => getFuncaoNome(f).toLowerCase().includes('antenista')) && p.modelo_antena && (
                         <div className="mt-1 text-xs text-blue-600 font-medium">
                           📡 Antena: {p.modelo_antena}
                         </div>

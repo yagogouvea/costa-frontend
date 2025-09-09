@@ -222,10 +222,10 @@ const PainelPrestadores: React.FC<PainelPrestadoresProps> = ({
               {/* Funções */}
               {p.funcoes && p.funcoes.length > 0 && (
                 <div className="text-xs text-gray-700">
-                  <span className="font-medium">Funções:</span> {p.funcoes.map(f => f.funcao).join(', ')}
+                  <span className="font-medium">Funções:</span> {p.funcoes.map((f: any) => (typeof f === 'string' ? f : f?.funcao || '')).filter(Boolean).join(', ')}
                   
                   {/* Observação para antenistas */}
-                  {p.funcoes.some(f => f.funcao.toLowerCase().includes('antenista')) && p.modelo_antena && (
+                  {p.funcoes.some((f: any) => (typeof f === 'string' ? f : f?.funcao || '').toLowerCase().includes('antenista')) && p.modelo_antena && (
                     <div className="mt-1 text-xs text-blue-600 font-medium">
                       📡 Antena: {p.modelo_antena}
                     </div>
