@@ -2,7 +2,6 @@ import React from 'react';
 import MapaPrestadores from '@/components/mapa_prestadores/MapaPrestadores';
 import { PrestadoresProvider } from '@/contexts/PrestadoresContext';
 import { useMapaAutoUpdate } from '@/hooks/useMapaAutoUpdate';
-import RequirePermission from '@/components/RequirePermission';
 
 const MapaPrestadoresPage: React.FC = () => {
   console.log('🎯 MapaPrestadoresPage: Página renderizada');

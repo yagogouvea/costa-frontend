@@ -26,23 +26,6 @@ const useIsMobile = () => {
   return isMobile;
 };
 
-// Hook para detectar tablet
-const useIsTablet = () => {
-  const [isTablet, setIsTablet] = useState(false);
-
-  useEffect(() => {
-    const checkIsTablet = () => {
-      const isTabletScreen = window.innerWidth > 768 && window.innerWidth <= 1024;
-      setIsTablet(isTabletScreen);
-    };
-
-    checkIsTablet();
-    window.addEventListener('resize', checkIsTablet);
-    return () => window.removeEventListener('resize', checkIsTablet);
-  }, []);
-
-  return isTablet;
-};
 
 interface PontoReferencia {
   latitude: number;
@@ -79,7 +62,6 @@ const MapaPrestadores: React.FC = () => {
   const [showMobileList, setShowMobileList] = useState(false);
   const mapaRef = useRef<any>(null);
   const isMobile = useIsMobile();
-  const isTablet = useIsTablet();
 
   // Função para geocodificar endereço
   const geocodificarEndereco = async (endereco: string): Promise<[number, number] | null> => {
