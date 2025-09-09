@@ -20,40 +20,71 @@ export default function RequirePermission({ children, requiredPermission, fallba
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Verificação de permissão mais robusta: aceita array, string JSON ou objeto estruturado
+  // Verificação de permissão mais robusta: aceita array, string JSON, string com espaços, ou objeto estruturado
   const isAdmin = (user?.role || '').toLowerCase() === 'admin';
 
   const permissionsRaw = user?.permissions as any;
   let hasPermission = false;
 
-  // 1) Array simples de strings
-  if (Array.isArray(permissionsRaw)) {
-    hasPermission = permissionsRaw.includes(requiredPermission);
-  } else if (typeof permissionsRaw === 'string') {
-    // 2) String JSON contendo array
-    try {
-      const parsed = JSON.parse(permissionsRaw);
-      if (Array.isArray(parsed)) {
-        hasPermission = parsed.includes(requiredPermission);
+  const parsePermissions = (raw: any): { arr: string[]; obj: Record<string, any> } => {
+    // Saídas normalizadas
+    let arr: string[] = [];
+    let obj: Record<string, any> = {};
+
+    if (Array.isArray(raw)) {
+      arr = raw as string[];
+    } else if (typeof raw === 'string') {
+      const s = raw.trim();
+      try {
+        const parsed = JSON.parse(s);
+        if (Array.isArray(parsed)) {
+          arr = parsed as string[];
+        } else if (parsed && typeof parsed === 'object') {
+          obj = parsed as Record<string, any>;
+        }
+      } catch {
+        // fallback: string de escopos separada por espaço ou vírgula
+        arr = s.split(/[\s,]+/).filter(Boolean);
       }
-    } catch {
-      // ignora
+    } else if (raw && typeof raw === 'object') {
+      obj = raw as Record<string, any>;
     }
-  } else if (permissionsRaw && typeof permissionsRaw === 'object') {
-    // 3) Objeto estruturado (ex.: { prestadores: { read: true, create: false } })
-    const accessMatch = requiredPermission.match(/^access:(.+)$/);
-    const crudMatch = requiredPermission.match(/^(read|create|update|delete):(.+)$/);
-    const resourceActionMatch = requiredPermission.match(/^([a-z_]+):(read|create|update|edit|delete|remove|export)$/i);
+
+    // Normalizar chaves do objeto: lower-case e recursos uniformes
+    if (obj && typeof obj === 'object') {
+      const norm: Record<string, any> = {};
+      Object.keys(obj).forEach((k) => {
+        norm[normalizarResource(k)] = obj[k];
+      });
+      obj = norm;
+    }
+
+    return { arr, obj };
+  };
+
+  const { arr: permsArray, obj: permsObj } = parsePermissions(permissionsRaw);
+
+  // 1) Checar match direto na lista (read:recurso | access:recurso | recurso:read)
+  if (permsArray.length > 0) {
+    const rp = requiredPermission.toLowerCase();
+    hasPermission = permsArray.some(p => String(p).toLowerCase() === rp);
+  }
+
+  // 2) Checar objeto estruturado (ex.: { prestadores: { read: true, create: false } })
+  if (!hasPermission && permsObj && Object.keys(permsObj).length > 0) {
+    const accessMatch = requiredPermission.match(/^access:(.+)$/i);
+    const crudMatch = requiredPermission.match(/^(read|create|update|delete):(.+)$/i);
+    const resourceActionMatch = requiredPermission.match(/^([a-z_\-]+):(read|create|update|edit|delete|remove|export)$/i);
 
     if (accessMatch) {
       const resource = accessMatch[1];
       const resourceKey = normalizarResource(resource);
-      hasPermission = !!permissionsRaw[resourceKey]?.read;
+      hasPermission = !!permsObj[resourceKey]?.read;
     } else if (crudMatch) {
-      const action = crudMatch[1];
+      const action = crudMatch[1].toLowerCase();
       const resource = crudMatch[2];
       const resourceKey = normalizarResource(resource);
-      hasPermission = !!permissionsRaw[resourceKey]?.[action];
+      hasPermission = !!permsObj[resourceKey]?.[action];
     } else if (resourceActionMatch) {
       const resource = resourceActionMatch[1];
       const actionRaw = resourceActionMatch[2].toLowerCase();
@@ -65,10 +96,10 @@ export default function RequirePermission({ children, requiredPermission, fallba
         edit: 'update',
         delete: 'delete',
         remove: 'delete',
-        export: 'read'
+        export: 'export'
       };
       const action = actionMap[actionRaw] || actionRaw;
-      hasPermission = !!permissionsRaw[resourceKey]?.[action];
+      hasPermission = !!permsObj[resourceKey]?.[action];
     }
   }
 
@@ -78,8 +109,9 @@ export default function RequirePermission({ children, requiredPermission, fallba
   }
 
   function normalizarResource(res: string): string {
-    // Alinhar nomes como 'prestador'/'prestadores'
-    const singular = res.replace(/s$/i, '');
+    // Alinhar nomes como 'prestador'/'prestadores' e hifen/underscore
+    const base = (res || '').toString().toLowerCase().replace(/-/g, '_');
+    const singular = base.replace(/s$/i, '');
     switch (singular) {
       case 'prestador':
         return 'prestadores';
