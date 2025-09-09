@@ -11,6 +11,7 @@ import UsersPage from "./pages/UsersPage";
 import CadastroPrestadorPublico from './pages/CadastroPrestadorPublico';
 import MapaPrestadoresPage from './pages/MapaPrestadoresPage';
 import FinanceiroPage from './pages/FinanceiroPage';
+import ControleDetalhadoPage from './pages/ControleDetalhadoPage';
 
 import DashboardLayout from "./components/DashboardLayout";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -50,6 +51,18 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           {/* <Route path="/test-register" element={<TestRegister />} /> */}
           <Route path="/cadastro-prestador" element={<CadastroPrestadorPublico />} />
+
+          {/* Rota fullscreen (sem DashboardLayout) */}
+          <Route
+            path="/financeiro/controle-detalhado"
+            element={
+              <RequireAuth>
+                <RequirePermission requiredPermission="access:financeiro">
+                  <ControleDetalhadoPage />
+                </RequirePermission>
+              </RequireAuth>
+            }
+          />
 
           {/* Rotas protegidas com layout */}
           <Route

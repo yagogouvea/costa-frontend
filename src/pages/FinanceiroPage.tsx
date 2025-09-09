@@ -174,8 +174,9 @@ const FinanceiroPage: React.FC = () => {
             </Button>
                 <Button 
                   variant={aba === 'detalhado' ? 'default' : 'ghost'} 
-                  onClick={() => setAba('detalhado')} 
+                  onClick={() => window.open('/financeiro/controle-detalhado?fs=1', '_blank')} 
                   className="flex items-center gap-2 text-white hover:text-white"
+                  title="Abrir em tela cheia (nova aba)"
                 >
                   <Table className="w-4 h-4" />
                   Controle Detalhado

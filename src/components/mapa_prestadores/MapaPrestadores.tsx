@@ -423,7 +423,7 @@ const MapaPrestadores: React.FC = () => {
     );
   }
 
-  // Layout Desktop (reestruturado e moderno)
+  // Layout Desktop (reestruturado e moderno, compacto e sem scroll horizontal)
   return (
     <div className="h-screen w-screen overflow-hidden bg-gray-50 flex flex-col">
       {/* Header superior fixo com barra de busca */}
@@ -497,12 +497,13 @@ const MapaPrestadores: React.FC = () => {
         </div>
       </div>
 
-      {/* Área principal com mapa e painel lateral */}
-      <div className="flex-1 grid grid-cols-12 overflow-hidden">
-        {/* Área do mapa dentro de um card com margens ilustradas */}
-        <div className="col-span-12 lg:col-span-9">
-          <div className="mx-4 my-4 rounded-2xl p-3 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-            <div className="relative h-[60vh] rounded-xl overflow-hidden shadow-xl border border-gray-200 bg-white">
+      {/* Área principal com mapa e painel lateral (layout flex, gap interno e sem margens externas) */}
+      <div className="flex-1">
+        <div className="flex h-full w-full overflow-hidden gap-3 p-3">
+          {/* Mapa */}
+          <div className="flex-1 min-w-0">
+            <div className="rounded-2xl p-3 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+              <div className="relative h-[60vh] rounded-xl overflow-hidden shadow-xl border border-gray-200 bg-white">
               <Mapa
                 prestadores={prestadoresFiltrados}
                 center={mapCenter}
@@ -544,24 +545,25 @@ const MapaPrestadores: React.FC = () => {
                   </button>
                 </div>
               </div>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Painel lateral em card com a mesma proporção e margens ilustradas */}
-        <div className="hidden lg:block col-span-3">
-          <div className="my-4 mr-4 rounded-2xl p-3 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-            <div className="h-[60vh] rounded-xl overflow-hidden shadow-xl border border-gray-200 bg-white">
-              <PainelPrestadores
-                prestadores={prestadoresFiltrados}
-                totalPrestadores={prestadores.length}
-                onSelecionarPrestador={handleSelecionarPrestador}
-                onTraçarRota={handleTraçarRota}
-                prestadorSelecionado={prestadorSelecionado}
-                rotaAtiva={rotaAtiva}
-                onLimparRota={handleLimparRota}
-                pontoReferencia={pontoReferencia}
-              />
+          {/* Painel lateral fixo */}
+          <div className="hidden lg:flex w-[380px] flex-shrink-0">
+            <div className="w-full rounded-2xl p-3 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+              <div className="h-[60vh] rounded-xl overflow-hidden shadow-xl border border-gray-200 bg-white">
+                <PainelPrestadores
+                  prestadores={prestadoresFiltrados}
+                  totalPrestadores={prestadores.length}
+                  onSelecionarPrestador={handleSelecionarPrestador}
+                  onTraçarRota={handleTraçarRota}
+                  prestadorSelecionado={prestadorSelecionado}
+                  rotaAtiva={rotaAtiva}
+                  onLimparRota={handleLimparRota}
+                  pontoReferencia={pontoReferencia}
+                />
+              </div>
             </div>
           </div>
         </div>

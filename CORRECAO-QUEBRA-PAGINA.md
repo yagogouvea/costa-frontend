@@ -122,3 +122,4 @@ quadrantesContainer: {
 - **Status**: ✅ Corrigido e testado
 
 
+

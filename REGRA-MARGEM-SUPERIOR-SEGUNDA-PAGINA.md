@@ -191,3 +191,4 @@ descricaoBox: {
 - **Status**: ✅ Implementado e documentado
 
 
+
