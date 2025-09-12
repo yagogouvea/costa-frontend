@@ -6,6 +6,7 @@ import { DialogTitle } from '@/components/ui/dialog';
 import { Ocorrencia } from '@/types/ocorrencia';
 import { CopyCheck, Copy, CheckCircle, X } from 'lucide-react';
 import { toast } from 'react-toastify';
+import { definirMacro, normalizarEstado } from '@/utils/cidadeUtils';
 
 interface Props {
   ocorrencia: Ocorrencia;
@@ -27,66 +28,6 @@ const formatarDataHora = (data: string | Date | null | undefined): string => {
   return new Date(data).toLocaleString('pt-BR');
 };
 
-const normalizarEstado = (estado: string = ''): string => {
-  const estadoNormalizado = estado
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toUpperCase()
-    .trim();
-
-  const mapaEstados: Record<string, string> = {
-    'ACRE': 'AC', 'AC': 'AC',
-    'ALAGOAS': 'AL', 'AL': 'AL',
-    'AMAPA': 'AP', 'AP': 'AP',
-    'AMAZONAS': 'AM', 'AM': 'AM',
-    'BAHIA': 'BA', 'BA': 'BA',
-    'CEARA': 'CE', 'CE': 'CE',
-    'DISTRITO FEDERAL': 'DF', 'DF': 'DF',
-    'ESPIRITO SANTO': 'ES', 'ES': 'ES',
-    'GOIAS': 'GO', 'GO': 'GO',
-    'MARANHAO': 'MA', 'MA': 'MA',
-    'MATO GROSSO': 'MT', 'MT': 'MT',
-    'MATO GROSSO DO SUL': 'MS', 'MS': 'MS',
-    'MINAS GERAIS': 'MG', 'MG': 'MG',
-    'PARA': 'PA', 'PA': 'PA',
-    'PARAIBA': 'PB', 'PB': 'PB',
-    'PARANA': 'PR', 'PR': 'PR',
-    'PERNAMBUCO': 'PE', 'PE': 'PE',
-    'PIAUI': 'PI', 'PI': 'PI',
-    'RIO DE JANEIRO': 'RJ', 'RJ': 'RJ',
-    'RIO GRANDE DO NORTE': 'RN', 'RN': 'RN',
-    'RIO GRANDE DO SUL': 'RS', 'RS': 'RS',
-    'RONDONIA': 'RO', 'RO': 'RO',
-    'RORAIMA': 'RR', 'RR': 'RR',
-    'SANTA CATARINA': 'SC', 'SC': 'SC',
-    'SAO PAULO': 'SP', 'SP': 'SP',
-    'SERGIPE': 'SE', 'SE': 'SE',
-    'TOCANTINS': 'TO', 'TO': 'TO'
-  };
-
-  return mapaEstados[estadoNormalizado] || estadoNormalizado;
-};
-
-const definirMacro = (estado?: string | null, cidade?: string | null): string => {
-  const estadoUF = normalizarEstado(estado || '');
-  const cidadeNome = (cidade || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().trim();
-
-  if (!estadoUF || estadoUF !== 'SP') return 'OUTROS ESTADOS';
-
-  if (cidadeNome.includes('SAO PAULO')) return 'CAPITAL';
-
-  const cidadesGrandeSP = [
-    'SANTO ANDRE', 'SAO BERNARDO', 'SAO CAETANO', 'DIADEMA',
-    'MAUA', 'GUARULHOS', 'OSASCO', 'TABOAO DA SERRA',
-    'CARAPICUIBA', 'EMBU DAS ARTES', 'ITAPEVI', 'COTIA', 'BARUERI'
-  ];
-
-  if (cidadesGrandeSP.some(c => cidadeNome.includes(c))) {
-    return 'GRANDE SP';
-  }
-
-  return 'INTERIOR';
-};
 
 const gerarTextoPassagem = async (o: Ocorrencia): Promise<string> => {
   const despesas = o.despesas_detalhadas || [];

@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import PageAccessControl from '@/components/PageAccessControl';
 import { ArrowLeft, Calendar, Download, Filter, Table, X } from 'lucide-react';
+import { formatarResultadoCompleto } from '@/utils/resultadoUtils';
 
 interface OcorrenciaRow {
   id: number;
@@ -202,7 +203,10 @@ const ControleDetalhadoPage: React.FC = () => {
   };
 
   const dadosVeiculo = (o: OcorrenciaRow) => [o.modelo1, o.cor1].filter(Boolean).join(' • ');
-  const resultadoUnificado = (o: OcorrenciaRow) => [o.resultado, o.sub_resultado].filter(Boolean).join(' / ');
+  const resultadoUnificado = (o: OcorrenciaRow) => {
+    // Usar a função utilitária para formatar corretamente o resultado do popup de encerramento
+    return formatarResultadoCompleto(o.resultado, o.sub_resultado);
+  };
 
   const isPrestadorCadastrado = (nome?: string | null) => {
     if (!nome) return false;

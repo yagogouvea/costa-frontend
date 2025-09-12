@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { formatarResultadoCompleto } from '@/utils/resultadoUtils';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -52,7 +53,6 @@ import CheckListPopup from '@/components/ocorrencia/CheckListPopup';
 import api from '@/services/api';
 import { getClientes } from '@/services/clienteService';
 import type { ClienteResumo } from '@/components/ocorrencia/AdicionarOcorrenciaPopup';
-import { useAuth } from '@/contexts/AuthContext';
 
 interface PopupData {
   id: number;
@@ -144,7 +144,6 @@ const verificarSegundoApoioCompleto = async (ocorrenciaId: number): Promise<bool
 };
 
 const OcorrenciasDashboard: React.FC = () => {
-  const { user } = useAuth();
   const [ocorrenciasEmAndamento, setOcorrenciasEmAndamento] = useState<Ocorrencia[]>([]);
   const [ocorrenciasFinalizadas, setOcorrenciasFinalizadas] = useState<Ocorrencia[]>([]);
   const [popupData, setPopupData] = useState<PopupData | null>(null);
@@ -235,47 +234,41 @@ const OcorrenciasDashboard: React.FC = () => {
       });
   }, []);
 
-  // Recarregar filtros quando o usuário mudar (garante escopo por login)
-  useEffect(() => {
-    carregarFiltrosPersistidos();
-  }, [user]);
-
   // ✅ FILTROS SEPARADOS: Carregar filtros persistidos do localStorage
   const carregarFiltrosPersistidos = () => {
     try {
-      const key = (suffix: string) => `dashboard:${String(user?.id ?? user?.email ?? 'anon')}:${suffix}`;
       // Filtros para ocorrências em andamento
-      const filtroOperadorEmAndamentoSalvo = localStorage.getItem(key('filtro-operador-andamento'));
-      const filtroPlacaEmAndamentoSalvo = localStorage.getItem(key('filtro-placa-andamento'));
-      const mostrarFiltrosEmAndamentoSalvo = localStorage.getItem(key('mostrar-filtros-andamento'));
+      const filtroOperadorEmAndamentoSalvo = localStorage.getItem('dashboard-filtro-operador-andamento');
+      const filtroPlacaEmAndamentoSalvo = localStorage.getItem('dashboard-filtro-placa-andamento');
+      const mostrarFiltrosEmAndamentoSalvo = localStorage.getItem('dashboard-mostrar-filtros-andamento');
 
       if (filtroOperadorEmAndamentoSalvo) {
-        setFiltroOperadorEmAndamento(filtroOperadorEmAndamentoSalvo.trim());
+        setFiltroOperadorEmAndamento(filtroOperadorEmAndamentoSalvo);
       }
       if (filtroPlacaEmAndamentoSalvo) {
-        setFiltroPlacaEmAndamento(filtroPlacaEmAndamentoSalvo.trim());
+        setFiltroPlacaEmAndamento(filtroPlacaEmAndamentoSalvo);
       }
       if (mostrarFiltrosEmAndamentoSalvo === 'true') {
         setMostrarFiltrosEmAndamento(true);
       }
 
       // Filtros para ocorrências finalizadas
-      const filtroOperadorFinalizadasSalvo = localStorage.getItem(key('filtro-operador-finalizadas'));
-      const filtroPlacaFinalizadasSalvo = localStorage.getItem(key('filtro-placa-finalizadas'));
-      const mostrarFiltrosFinalizadasSalvo = localStorage.getItem(key('mostrar-filtros-finalizadas'));
+      const filtroOperadorFinalizadasSalvo = localStorage.getItem('dashboard-filtro-operador-finalizadas');
+      const filtroPlacaFinalizadasSalvo = localStorage.getItem('dashboard-filtro-placa-finalizadas');
+      const mostrarFiltrosFinalizadasSalvo = localStorage.getItem('dashboard-mostrar-filtros-finalizadas');
 
       if (filtroOperadorFinalizadasSalvo) {
-        setFiltroOperadorFinalizadas(filtroOperadorFinalizadasSalvo.trim());
+        setFiltroOperadorFinalizadas(filtroOperadorFinalizadasSalvo);
       }
       if (filtroPlacaFinalizadasSalvo) {
-        setFiltroPlacaFinalizadas(filtroPlacaFinalizadasSalvo.trim());
+        setFiltroPlacaFinalizadas(filtroPlacaFinalizadasSalvo);
       }
       if (mostrarFiltrosFinalizadasSalvo === 'true') {
         setMostrarFiltrosFinalizadas(true);
       }
 
       // Estado do grid de finalizadas
-      const gridFinalizadasExpandidoSalvo = localStorage.getItem(key('grid-finalizadas-expandido'));
+      const gridFinalizadasExpandidoSalvo = localStorage.getItem('dashboard-grid-finalizadas-expandido');
       if (gridFinalizadasExpandidoSalvo === 'false') {
         setGridFinalizadasExpandido(false);
       }
@@ -287,10 +280,9 @@ const OcorrenciasDashboard: React.FC = () => {
   // ✅ FILTROS SEPARADOS: Salvar filtros no localStorage
   const salvarFiltrosEmAndamentoPersistidos = (operador: string, placa: string, mostrar: boolean) => {
     try {
-      const key = (suffix: string) => `dashboard:${String(user?.id ?? user?.email ?? 'anon')}:${suffix}`;
-      localStorage.setItem(key('filtro-operador-andamento'), (operador || '').trim());
-      localStorage.setItem(key('filtro-placa-andamento'), (placa || '').trim());
-      localStorage.setItem(key('mostrar-filtros-andamento'), mostrar.toString());
+      localStorage.setItem('dashboard-filtro-operador-andamento', operador);
+      localStorage.setItem('dashboard-filtro-placa-andamento', placa);
+      localStorage.setItem('dashboard-mostrar-filtros-andamento', mostrar.toString());
     } catch (error) {
       console.error('❌ Erro ao salvar filtros em andamento persistidos:', error);
     }
@@ -298,10 +290,9 @@ const OcorrenciasDashboard: React.FC = () => {
 
   const salvarFiltrosFinalizadasPersistidos = (operador: string, placa: string, mostrar: boolean) => {
     try {
-      const key = (suffix: string) => `dashboard:${String(user?.id ?? user?.email ?? 'anon')}:${suffix}`;
-      localStorage.setItem(key('filtro-operador-finalizadas'), (operador || '').trim());
-      localStorage.setItem(key('filtro-placa-finalizadas'), (placa || '').trim());
-      localStorage.setItem(key('mostrar-filtros-finalizadas'), mostrar.toString());
+      localStorage.setItem('dashboard-filtro-operador-finalizadas', operador);
+      localStorage.setItem('dashboard-filtro-placa-finalizadas', placa);
+      localStorage.setItem('dashboard-mostrar-filtros-finalizadas', mostrar.toString());
     } catch (error) {
       console.error('❌ Erro ao salvar filtros finalizadas persistidos:', error);
     }
@@ -309,8 +300,7 @@ const OcorrenciasDashboard: React.FC = () => {
 
   const salvarGridFinalizadasExpandidoPersistido = (expandido: boolean) => {
     try {
-      const key = (suffix: string) => `dashboard:${String(user?.id ?? user?.email ?? 'anon')}:${suffix}`;
-      localStorage.setItem(key('grid-finalizadas-expandido'), expandido.toString());
+      localStorage.setItem('dashboard-grid-finalizadas-expandido', expandido.toString());
     } catch (error) {
       console.error('❌ Erro ao salvar estado do grid finalizadas:', error);
     }
@@ -340,7 +330,7 @@ const OcorrenciasDashboard: React.FC = () => {
     // Filtro por operador (em andamento)
     if (filtroOperadorEmAndamento && filtroOperadorEmAndamento !== 'todos') {
       emAndamentoFiltradas = emAndamentoFiltradas.filter(o => 
-        (o.operador || '').trim().toLowerCase() === filtroOperadorEmAndamento.trim().toLowerCase()
+        o.operador && o.operador.toLowerCase() === filtroOperadorEmAndamento.toLowerCase()
       );
     }
     
@@ -364,7 +354,7 @@ const OcorrenciasDashboard: React.FC = () => {
     // Filtro por operador (finalizadas)
     if (filtroOperadorFinalizadas && filtroOperadorFinalizadas !== 'todos') {
       finalizadasFiltradas = finalizadasFiltradas.filter(o => 
-        (o.operador || '').trim().toLowerCase() === filtroOperadorFinalizadas.trim().toLowerCase()
+        o.operador && o.operador.toLowerCase() === filtroOperadorFinalizadas.toLowerCase()
       );
     }
     
@@ -1545,7 +1535,9 @@ const OcorrenciasDashboard: React.FC = () => {
                                 <td className="px-2 md:px-3 py-2 text-xs truncate max-w-[80px] md:max-w-[100px]" title={o.operador}>{o.operador}</td>
                                 <td className="px-2 md:px-3 py-2 text-xs truncate max-w-[70px] md:max-w-[90px]" title={o.tipo}>{o.tipo}</td>
                                 <td className="px-2 md:px-3 py-2 text-xs truncate max-w-[100px] md:max-w-[120px]" title={String(getPrestadorDisplay(o))}>{getPrestadorDisplay(o)}</td>
-                                <td className="px-2 md:px-3 py-2 text-xs truncate max-w-[90px] md:max-w-[110px]" title={o.resultado}>{o.resultado ? o.resultado : '-'}</td>
+                                <td className="px-2 md:px-3 py-2 text-xs truncate max-w-[90px] md:max-w-[110px]" title={formatarResultadoCompleto(o.resultado, o.sub_resultado)}>
+                                  {formatarResultadoCompleto(o.resultado, o.sub_resultado)}
+                                </td>
                                 <td className="px-2 md:px-3 py-2 text-xs">
                                   <div className="space-y-0.5">
                                     {o.inicio ? <div className="truncate" title={formatarDataHora(o.inicio)}>Início: {formatarDataHora(o.inicio)}</div> : null}

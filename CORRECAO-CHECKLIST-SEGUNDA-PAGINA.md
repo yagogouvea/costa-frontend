@@ -191,3 +191,5 @@ const ESTRUTURA_QUADRANTES = {
 
 
 
+
+

@@ -12,6 +12,7 @@ import CadastroPrestadorPublico from './pages/CadastroPrestadorPublico';
 import MapaPrestadoresPage from './pages/MapaPrestadoresPage';
 import FinanceiroPage from './pages/FinanceiroPage';
 import ControleDetalhadoPage from './pages/ControleDetalhadoPage';
+import ControlePrestadoresPage from './pages/ControlePrestadoresPage';
 
 import DashboardLayout from "./components/DashboardLayout";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -59,6 +60,16 @@ function App() {
               <RequireAuth>
                 <RequirePermission requiredPermission="access:financeiro">
                   <ControleDetalhadoPage />
+                </RequirePermission>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/financeiro/controle-prestadores"
+            element={
+              <RequireAuth>
+                <RequirePermission requiredPermission="access:financeiro">
+                  <ControlePrestadoresPage />
                 </RequirePermission>
               </RequireAuth>
             }

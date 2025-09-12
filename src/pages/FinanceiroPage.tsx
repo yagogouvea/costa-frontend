@@ -20,7 +20,7 @@ import {
   UserCheck
 } from 'lucide-react';
 import PageAccessControl from '@/components/PageAccessControl';
-// import api from '@/services/api';
+import { api } from '@/services/api';
 
 // Interfaces
 interface FiltroTempo {
@@ -183,7 +183,7 @@ const FinanceiroPage: React.FC = () => {
             </Button>
                 <Button 
                   variant={aba === 'prestadores' ? 'default' : 'ghost'} 
-                  onClick={() => setAba('prestadores')} 
+                  onClick={() => window.open('/financeiro/controle-prestadores', '_blank')} 
                   className="flex items-center gap-2 text-white hover:text-white"
                 >
                   <Users className="w-4 h-4" />

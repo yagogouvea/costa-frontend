@@ -540,7 +540,7 @@ export default function RelatoriosPage() {
                         
                         {/* ✅ BOTÕES PEQUENOS EM UMA LINHA - MANTENDO FUNCIONALIDADES */}
                         <PermissionButton 
-                          requiredPermission="update:relatorio"
+                          requiredPermission="access:relatorios"
                           variant="ghost" 
                           size="sm" 
                           className={`border p-1 h-8 w-8 flex items-center justify-center transition-all duration-200 ${
@@ -555,7 +555,7 @@ export default function RelatoriosPage() {
                         </PermissionButton>
                         
                         <PermissionButton 
-                          requiredPermission="update:relatorio"
+                          requiredPermission="access:relatorios"
                           variant="ghost" 
                           size="sm" 
                           className={`border p-1 h-8 w-8 flex items-center justify-center transition-all duration-200 ${
@@ -570,7 +570,7 @@ export default function RelatoriosPage() {
                         </PermissionButton>
                         
                         <PermissionButton 
-                          requiredPermission="update:relatorio"
+                          requiredPermission="access:relatorios"
                           variant="ghost" 
                           size="sm" 
                           className={`border p-1 h-8 w-8 flex items-center justify-center transition-all duration-200 ${
@@ -585,7 +585,7 @@ export default function RelatoriosPage() {
                         </PermissionButton>
                         
                         <PermissionButton 
-                          requiredPermission="update:relatorio"
+                          requiredPermission="access:relatorios"
                           variant="ghost" 
                           size="sm" 
                           className="border border-purple-300 bg-purple-50 hover:bg-purple-100 text-purple-700 p-1 h-8 w-8 flex items-center justify-center transition-all duration-200"
@@ -596,7 +596,7 @@ export default function RelatoriosPage() {
                         </PermissionButton>
                         
                         <PermissionButton 
-                          requiredPermission="update:relatorio"
+                          requiredPermission="access:relatorios"
                           variant="ghost" 
                           size="sm" 
                           className={`border p-1 h-8 w-8 flex items-center justify-center transition-all duration-200 ${
@@ -611,7 +611,7 @@ export default function RelatoriosPage() {
                         </PermissionButton>
                         
                         <PermissionButton 
-                          requiredPermission="update:relatorio"
+                          requiredPermission="access:relatorios"
                           variant="ghost" 
                           size="sm" 
                           className={`border p-1 h-8 w-8 flex items-center justify-center transition-all duration-200 ${
@@ -626,7 +626,7 @@ export default function RelatoriosPage() {
                         </PermissionButton>
                         
                         <PermissionButton 
-                          requiredPermission="update:relatorio"
+                          requiredPermission="access:relatorios"
                           variant="ghost" 
                           size="sm" 
                           className={`border p-1 h-8 w-8 flex items-center justify-center transition-all duration-200 ${
@@ -641,7 +641,7 @@ export default function RelatoriosPage() {
                         </PermissionButton>
                         
                         <PermissionButton 
-                          requiredPermission="update:relatorio"
+                          requiredPermission="access:relatorios"
                           variant="ghost" 
                           size="sm" 
                           className="border border-gray-300 bg-gray-50 hover:bg-gray-100 text-gray-700 p-1 h-8 w-8 flex items-center justify-center transition-all duration-200"
@@ -666,7 +666,7 @@ export default function RelatoriosPage() {
                         </Button>
 
                         <PermissionButton 
-                          requiredPermission="update:relatorio"
+                          requiredPermission="access:relatorios"
                           variant="ghost" 
                           size="sm" 
                           className={`border p-1 h-8 w-8 flex items-center justify-center transition-all duration-200 ${
@@ -681,7 +681,7 @@ export default function RelatoriosPage() {
                         </PermissionButton>
                         
                         <PermissionButton 
-                          requiredPermission="update:relatorio"
+                          requiredPermission="access:relatorios"
                           variant="ghost" 
                           size="sm" 
                           className="border border-blue-300 bg-blue-50 hover:bg-blue-100 text-blue-700 p-1 h-8 w-8 flex items-center justify-center transition-all duration-200"
