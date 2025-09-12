@@ -20,7 +20,6 @@ import {
   UserCheck
 } from 'lucide-react';
 import PageAccessControl from '@/components/PageAccessControl';
-import { api } from '@/services/api';
 
 // Interfaces
 interface FiltroTempo {

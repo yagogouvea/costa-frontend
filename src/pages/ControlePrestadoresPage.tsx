@@ -19,6 +19,8 @@ interface Row {
   substatus?: string;
   sub_status?: string;
   sub_status_descricao?: string;
+  resultado?: string;
+  sub_resultado?: string;
   inicio?: string;
   chegada?: string;
   termino?: string;
