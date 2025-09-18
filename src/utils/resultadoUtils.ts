@@ -49,3 +49,7 @@ export const formatarResultadoSimples = (resultado?: string | null): string => {
       return resultado.replace(/_/g, ' ').toLowerCase();
   }
 };
+
+
+
+
